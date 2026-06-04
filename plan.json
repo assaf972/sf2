@@ -45,11 +45,11 @@
     }
   },
   "summary": {
-    "total_stories": 25,
-    "total_tests": 35,
+    "total_stories": 31,
+    "total_tests": 46,
     "stories_completed": 25,
     "tests_green": 35,
-    "last_updated": "2026-06-04T16:15:00Z"
+    "last_updated": "2026-06-04T17:00:00Z"
   },
   "stories": [
     {
@@ -1558,6 +1558,415 @@
         }
       ],
       "green_test_at": "2026-06-04T16:15:00Z"
+    },
+    {
+      "id": "S26",
+      "title": "Instrument audio input (Guitar/Bass in)",
+      "user_story": "As a guitarist/bassist, I want to plug into the GigSynth ¼″ instrument input so the device can process my signal in real time.",
+      "description": "Capture mono audio from the ¼″ instrument jack through the ADC into the engine input buffer (mirror of the S24 audio path, inbound). Add an input stage: input gain, a noise gate, and an RMS/peak input level meter. The live ADC tap is hardware-bound (driver2 callback on a real DAC/HAT); the gain/gate DSP and meter math are pure-Go and unit-tested.",
+      "steps_to_reproduce": [
+        "Plug a guitar into the ¼″ input",
+        "Open the Rig view; see the input meter respond",
+        "Set input gain and noise-gate threshold; quiet hum is gated out"
+      ],
+      "acceptance_criteria": [
+        "Mono instrument input is read into a Go input buffer (engine boundary)",
+        "Input gain scales the signal; noise gate silences below threshold, passes above",
+        "Input level meter reports RMS + peak",
+        "Live ADC capture documented as the hardware-bound step (like S24's output tap)"
+      ],
+      "components": [
+        "internal/engine/engine.go",
+        "internal/guitar/input.go (new)",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S01",
+        "S24"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S26-T01",
+          "name": "Noise gate + input gain",
+          "description": "Below the gate threshold the output is silenced; above it passes; input gain scales linearly.",
+          "how_we_test": "Go unit tests feed known buffers through the input stage and assert gating + gain.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/input_test.go"
+          ],
+          "test_code": "// planned: gate(threshold) silences low-level noise, passes signal; gain scales by factor",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S26-T02",
+          "name": "Input level meter (RMS/peak)",
+          "description": "The meter computes correct RMS and peak for a known block (e.g. full-scale sine).",
+          "how_we_test": "Go unit test asserts RMS≈0.707 and peak≈1.0 for a unit sine block.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/input_test.go"
+          ],
+          "test_code": "// planned: Meter(sine) -> rms ~0.707, peak ~1.0",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S27",
+      "title": "Cabinet impulse-response (IR) convolution",
+      "user_story": "As a guitarist, I want to load a cabinet impulse response so my tone has a real speaker-cabinet character.",
+      "description": "Load a cabinet IR from a .wav file and convolve the signal with it (real-time-safe partitioned or block convolution). Implements the fx.Node interface so it slots into the rig chain; bypasses to dry when disabled.",
+      "steps_to_reproduce": [
+        "Pick a cabinet IR (e.g. 4x12 V30) in the Rig view",
+        "Hear the cabinet colour applied",
+        "Disable the cab; signal is dry"
+      ],
+      "acceptance_criteria": [
+        "Loads a mono .wav IR and reports its length",
+        "Convolution of an impulse equals the IR samples (delta response)",
+        "Real-time-safe: no allocation in Process; bypass is identity",
+        "Implements fx.Node"
+      ],
+      "components": [
+        "internal/guitar/ir.go (new)",
+        "internal/recording/wav.go (reader)",
+        "internal/fx/fx.go"
+      ],
+      "depends_on": [
+        "S26",
+        "S12"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S27-T01",
+          "name": "IR convolution delta response",
+          "description": "Convolving a unit impulse with a loaded IR yields the IR samples back, in order.",
+          "how_we_test": "Go unit test loads a small known IR, processes an impulse, asserts the output equals the IR.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/ir_test.go"
+          ],
+          "test_code": "// planned: impulse * IR == IR samples; bypass identity; no-alloc Process",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S27-T02",
+          "name": "IR .wav loader",
+          "description": "A 16-bit PCM mono WAV IR is parsed into float samples with the right length and sample rate.",
+          "how_we_test": "Go unit test writes a WAV (via recording.WriteWAV) and reads it back into an IR.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/ir_test.go"
+          ],
+          "test_code": "// planned: ReadWAV roundtrip -> sample count + rate match",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S28",
+      "title": "Neural amp model (NAM) loader + inference",
+      "user_story": "As a guitarist, I want to load open-source Neural Amp Modeler (.nam) amp captures so the device sounds like real amps.",
+      "description": "Parse a Neural Amp Modeler '.nam' model file (JSON: architecture, config, weights) and run its inference (WaveNet/LSTM) over each audio block. Implemented as an fx.Node; passes the dry signal when no model is loaded. May wrap an open-source inference lib (NAM core) via cgo, or a pure-Go reference for small models; Guitarix models are an alternative backend.",
+      "steps_to_reproduce": [
+        "Select a NAM amp (e.g. Tweed Deluxe) in the Rig view",
+        "Play; hear the amp model",
+        "Clear the model; signal passes dry"
+      ],
+      "acceptance_criteria": [
+        "Parses a .nam JSON (architecture + metadata) and reports model name/type",
+        "A tiny known model produces deterministic output for a known input",
+        "No model loaded => dry passthrough",
+        "Implements fx.Node"
+      ],
+      "components": [
+        "internal/guitar/nam.go (new)",
+        "internal/fx/fx.go"
+      ],
+      "depends_on": [
+        "S26",
+        "S12"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S28-T01",
+          "name": "NAM model parse + metadata",
+          "description": "A .nam JSON is parsed into architecture/config/weights with the expected fields.",
+          "how_we_test": "Go unit test loads a minimal fixture .nam and asserts parsed metadata.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/nam_test.go"
+          ],
+          "test_code": "// planned: ParseNAM(fixture) -> arch, name, sampleRate",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S28-T02",
+          "name": "Inference deterministic + dry passthrough",
+          "description": "A tiny model yields a deterministic block; with no model the node is identity.",
+          "how_we_test": "Go unit test runs inference on a fixed input and asserts a stable result + bypass identity.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/nam_test.go"
+          ],
+          "test_code": "// planned: tiny model deterministic; no model => dry",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S29",
+      "title": "Guitar/Bass rig chain + factory presets",
+      "user_story": "As a player, I want a full rig (input -> amp -> cab -> EQ -> effects) with ready-made presets for guitar and bass.",
+      "description": "Assemble the rig chain: Input gain/gate -> Amp (NAM) -> Cabinet IR -> 3-band EQ -> the existing per-keyboard FX (Chorus/Delay/Phaser/Flanger) -> output. Bass mode blends a clean DI with the amp. Ship factory rig presets (Clean, Crunch, Lead, Bass DI) referencing bundled NAM models + IRs.",
+      "steps_to_reproduce": [
+        "Load the 'Crunch' guitar preset",
+        "Play through amp+cab+pedals",
+        "Switch to 'Bass DI'; DI blend engages"
+      ],
+      "acceptance_criteria": [
+        "Rig processes a buffer through every enabled node in order",
+        "Disabling a node bypasses just that stage",
+        "Bass mode blends DI with the amp path",
+        "Factory presets set the expected amp/cab/EQ/FX params"
+      ],
+      "components": [
+        "internal/guitar/rig.go (new)",
+        "internal/guitar/presets.go (new)",
+        "internal/fx/fx.go",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S26",
+        "S27",
+        "S28",
+        "S13",
+        "S14",
+        "S19",
+        "S20"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S29-T01",
+          "name": "Rig chain ordering + bypass",
+          "description": "The rig runs input->amp->cab->EQ->FX in order; a disabled stage is skipped; the chain stays stable/bounded.",
+          "how_we_test": "Go unit test wires fakes/identity nodes and asserts call order + bypass.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/rig_test.go"
+          ],
+          "test_code": "// planned: ordered Process; disabled stage skipped; bounded output",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S29-T02",
+          "name": "Factory presets apply",
+          "description": "Applying each factory preset sets the documented amp/cab/EQ/FX parameters and bass-mode flag.",
+          "how_we_test": "Go unit test applies presets and asserts the resulting rig params.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/presets_test.go"
+          ],
+          "test_code": "// planned: Clean/Crunch/Lead/BassDI -> expected params",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S30",
+      "title": "Rig UI on all screens (desktop, 7-inch, Pi Zero)",
+      "user_story": "As a player on any GigSynth screen, I want to dial my rig — pick amp, cab and pedals and watch input level — sized for that display.",
+      "description": "Add a desktop 'Rig' view (new top-level tab) with the input meter, amp (NAM) picker, cabinet (IR) picker, 3-band EQ, pedalboard and output. A 7-inch focus layout with finger-sized amp knobs. A Pi Zero rig page banking the four encoders across Gain/Gate/Amp/Level with amp/cab list rows. UI flow mockups already drafted in docs/screenshots/{desktop,touch7,pizero}-rig.svg.",
+      "steps_to_reproduce": [
+        "Open the Rig tab on desktop; pick amp + cab",
+        "On the 7-inch screen, dial the amp knobs",
+        "On Pi Zero, bank the encoders and scroll the amp/cab rows"
+      ],
+      "acceptance_criteria": [
+        "Desktop shell has a Rig tab that builds the rig view",
+        "Amp/cab pickers + input meter render and reflect rig state",
+        "Pi Zero rig page banks 4 encoders across rig params",
+        "7-inch layout shows finger-sized amp controls"
+      ],
+      "components": [
+        "internal/ui/rig.go (new)",
+        "internal/ui/shell.go",
+        "internal/ui/touch7.go",
+        "internal/ui/pizero.go"
+      ],
+      "depends_on": [
+        "S29",
+        "S03",
+        "S15",
+        "S16"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S30-T01",
+          "name": "Desktop Rig view + tab",
+          "description": "The shell exposes a Rig tab and the rig view builds with amp/cab pickers and the input meter.",
+          "how_we_test": "Headless Fyne test asserts the Rig tab exists and the view's widgets are present.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/rig_test.go"
+          ],
+          "test_code": "// planned: shell tabs include Rig; rig view builds",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S30-T02",
+          "name": "Pi Zero rig encoder banking",
+          "description": "The Pi Zero rig page banks the four encoders across Gain/Gate/Amp/Level and drives the rig.",
+          "how_we_test": "Headless Fyne test drives the rig VM through the encoder banks and asserts param changes.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/rig_test.go"
+          ],
+          "test_code": "// planned: encoder banks Gain/Gate/Amp/Level",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S31",
+      "title": "Rig persistence + per-product instrument-input mapping",
+      "user_story": "As a player, I want my rig saved per Part and the onboard controls wired to it, so a part recall restores my whole guitar/bass sound.",
+      "description": "Persist the rig (amp model path, IR path, input gain, gate, EQ, bass-mode, pedal states) per Part in SQLite (new part_channels columns or a part_rig table). Add rig CC targets to midimap so the onboard knobs/sliders drive rig params, and extend the GS-49/GS-61/GS-Desktop factory presets. Add provisioning notes for the ADC/instrument-input overlay.",
+      "steps_to_reproduce": [
+        "Build a rig and Save Part",
+        "Recall the part later; the rig (amp/cab/EQ/pedals) returns",
+        "Move an onboard knob mapped to amp gain; the rig responds"
+      ],
+      "acceptance_criteria": [
+        "Rig state round-trips through the SQLite part",
+        "midimap rig actions resolve and drive rig params",
+        "Product presets include instrument-input controls",
+        "Provisioning documents the ADC/instrument-in overlay"
+      ],
+      "components": [
+        "internal/db/db.go",
+        "internal/db/crud.go",
+        "internal/app/library.go",
+        "internal/midimap/midimap.go",
+        "internal/provision/assets/install.sh"
+      ],
+      "depends_on": [
+        "S29",
+        "S02",
+        "S23",
+        "S22"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S31-T01",
+          "name": "Rig round-trips through the Part DB",
+          "description": "A saved rig (amp/IR paths, gain, gate, EQ, bass-mode, pedals) reloads identically with its Part.",
+          "how_we_test": "Go unit test saves a part with a rig and asserts equality after reload from an in-memory SQLite db.",
+          "tools": [
+            "Go testing",
+            "testify",
+            "modernc.org/sqlite"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/db/rig_persistence_test.go"
+          ],
+          "test_code": "// planned: SetPartChannel(rig) -> GetPart -> rig equal",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
     }
   ]
 }

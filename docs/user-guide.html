@@ -70,6 +70,7 @@
   <a href="#live">Live view</a>
   <a href="#fx">Effects (chorus · delay · phaser · flanger)</a>
   <a href="#recording">Recording (MIDI &amp; audio)</a>
+  <a href="#rig">Guitar &amp; bass rig <span style="color:#ffbd2e">(planned)</span></a>
   <a href="#mp3">MP3 backing player</a>
   <a href="#songs">Songs &amp; Parts view</a>
   <a href="#settings">Settings view</a>
@@ -250,6 +251,40 @@ go build -o gigsynth .
   <div class="note">On the GigSynth instruments, recording works the same; on a desktop build the
   audio is captured from the live output. See <a href="product-brochure.html">the product line</a> and
   <a href="products/provisioning.html">Pi provisioning</a> for the hardware.</div>
+
+  <h2 id="rig">Guitar &amp; bass rig (audio input) <span class="pill" style="border-color:var(--amber);color:var(--amber)">planned</span></h2>
+  <p>Every GigSynth instrument — the keyboards <i>and</i> the desktop module — has a <b>¼″ guitar/bass
+  input</b>, so you can build a full amp-and-cabinet rig right on the device. The signal runs through an
+  open-source <b>Neural Amp Modeler (NAM)</b> amp capture and a cabinet <b>impulse response (IR)</b>, then
+  the same per-keyboard effects you already have.</p>
+  <div class="note warn"><b>Status: planned.</b> This page describes the designed experience and the
+  hardware input that ships on every product. The DSP engine (audio input, IR convolution, NAM
+  inference) is on the roadmap — stories <b>S26–S31</b> in the <a href="plan.html">build plan</a>.</div>
+
+  <figure>
+    <img src="products/guitar-rig-signal-flow.svg" alt="Guitar rig signal flow: input, gate, amp (NAM), cabinet IR, EQ, FX, out"/>
+    <figcaption>The rig signal chain: <b>Guitar/Bass IN</b> → input gain + noise gate → <b>Amp</b>
+    (Neural Amp Modeler <code>.nam</code>) → <b>Cabinet IR</b> (<code>.wav</code> impulse response) →
+    3-band EQ → your Chorus/Delay/Phaser/Flanger → output. Bass mode adds a clean DI blend.</figcaption>
+  </figure>
+
+  <table>
+    <tr><th>Stage</th><th>What it does</th></tr>
+    <tr><td><b>Input</b></td><td>¼″ instrument jack → input gain and a noise gate, with a live input level meter.</td></tr>
+    <tr><td><b>Amp</b></td><td>Loads an open-source <b>NAM</b> amp capture (e.g. Tweed Deluxe, Plexi, Bassman) — Gain / Bass / Mid / Treble / Master. Guitarix models are an alternative backend.</td></tr>
+    <tr><td><b>Cabinet (IR)</b></td><td>Convolves a cabinet impulse response (e.g. 4×12 V30, 2×12, or a DI). Level + low-cut.</td></tr>
+    <tr><td><b>Pedals</b></td><td>Reuses the per-keyboard Chorus, Delay, Phaser and Flanger as post-amp effects.</td></tr>
+    <tr><td><b>Bass mode</b></td><td>Blends a clean DI with the amped signal for bass rigs.</td></tr>
+  </table>
+  <p>The whole rig is part of a <a href="#songs">Part</a>, so it recalls per song section, and the
+  onboard knobs/sliders map to it just like the mixer and FX.</p>
+
+  <h3>On every screen</h3>
+  <div class="grid2">
+    <figure><img src="screenshots/desktop-rig.svg" alt="Desktop Rig view"/><figcaption>Desktop — the full rig as a left-to-right signal chain (Input · Amp · Cab · EQ · Pedals · Out).</figcaption></figure>
+    <figure><img src="screenshots/touch7-rig.svg" alt="7-inch Rig view"/><figcaption>7″ Pi 5 — finger-sized amp knobs with tap-to-pick amp and cabinet.</figcaption></figure>
+  </div>
+  <figure><img src="screenshots/pizero-rig.svg" alt="Pi Zero Rig page"/><figcaption>Pi Zero — two menu rows (amp models / cabinet IRs) and four always-live encoders: Gain · Gate · Amp · Level.</figcaption></figure>
 
   <h3 id="mp3">MP3 backing player</h3>
   <p>Select a track with <b>Browse…</b>, then:</p>

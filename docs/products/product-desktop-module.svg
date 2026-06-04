@@ -111,6 +111,11 @@
     <circle cx="330" cy="410" r="14" fill="#161b23" stroke="#3a4452" stroke-width="1.5"/><circle cx="330" cy="410" r="5" fill="#0b0e13" stroke="#4cc2ff"/>
     <text x="330" y="442" fill="#8b97a7" font-size="9" text-anchor="middle">PHONES</text>
   </g>
+  <!-- Guitar / bass instrument input (1/4") -->
+  <g>
+    <circle cx="366" cy="410" r="14" fill="#161b23" stroke="#3a4452" stroke-width="1.5"/><circle cx="366" cy="410" r="6" fill="#14181f" stroke="#2d3543" stroke-width="1.5"/><circle cx="366" cy="410" r="2.5" fill="#0b0e13"/>
+    <text x="366" y="458" fill="#8b97a7" font-size="9" text-anchor="middle">GUITAR IN (¼″)</text>
+  </g>
 
   <!-- 3x USB-A host -->
   <g>
@@ -167,6 +172,7 @@
     <path d="M 598 424 L 598 548 L 760 548"/>
     <path d="M 139 424 L 139 560 L 300 560"/>
     <path d="M 973 402 L 973 320 L 1040 320"/>
+    <path d="M 366 396 L 366 320 L 600 320"/>
   </g>
   <g fill="#8b97a7" font-size="11">
     <text x="954" y="132" fill="#e6edf3">7″ touchscreen (dominant) — app live</text>
@@ -177,5 +183,6 @@
     <text x="764" y="552">USB-C power · Ethernet / HDMI service ports</text>
     <text x="304" y="564">L/R stereo out (1/4″) · AUX out · headphone</text>
     <text x="1044" y="324">microSD: songs .db + .sf2</text>
+    <text x="604" y="324" fill="#4cc2ff">GUITAR / BASS IN (¼″) — build your own guitar rig (NAM + IR)</text>
   </g>
 </svg>

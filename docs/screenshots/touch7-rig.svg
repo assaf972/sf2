@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 800 480" font-family="'DejaVu Sans', 'Segoe UI', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11151c"/><stop offset="1" stop-color="#0b0e13"/>
+    </linearGradient>
+    <style>
+      .txt{fill:#e6edf3}.muted{fill:#8b97a7}.accent{fill:#4cc2ff}
+      .panel{fill:#1a1f29;stroke:#2b3340;stroke-width:1}
+      .panel2{fill:#232a36;stroke:#323b4a;stroke-width:1}
+      .field{fill:#161b23;stroke:#323b4a;stroke-width:1}
+      .lbl{fill:#8b97a7;font-size:11px;letter-spacing:.5px}
+      .kv{fill:#e6edf3;font-size:20px;font-weight:700}.kl{fill:#9aa6b6;font-size:12px}
+    </style>
+  </defs>
+  <rect width="800" height="480" fill="url(#bg)"/>
+
+  <!-- Top bar: Guitar/Bass tabs + input meter -->
+  <rect x="0" y="0" width="800" height="56" fill="#141922"/>
+  <rect x="16" y="12" width="200" height="32" rx="16" fill="#161b23" stroke="#323b4a"/>
+  <rect x="18" y="14" width="98" height="28" rx="14" fill="#4cc2ff" opacity="0.18" stroke="#4cc2ff"/>
+  <text x="67" y="33" text-anchor="middle" class="accent" font-size="14" font-weight="700">Guitar</text>
+  <text x="166" y="33" text-anchor="middle" class="muted" font-size="14">Bass</text>
+  <text x="248" y="24" class="lbl" font-size="10">INPUT</text>
+  <!-- input meter -->
+  <g transform="translate(248,30)">
+    <rect x="0" y="0" width="300" height="16" rx="5" fill="#161b23" stroke="#323b4a"/>
+    <rect x="4" y="3" width="20" height="10" rx="2" fill="#27c93f"/>
+    <rect x="28" y="3" width="20" height="10" rx="2" fill="#27c93f"/>
+    <rect x="52" y="3" width="20" height="10" rx="2" fill="#27c93f"/>
+    <rect x="76" y="3" width="20" height="10" rx="2" fill="#27c93f"/>
+    <rect x="100" y="3" width="20" height="10" rx="2" fill="#27c93f"/>
+    <rect x="124" y="3" width="20" height="10" rx="2" fill="#27c93f"/>
+    <rect x="148" y="3" width="20" height="10" rx="2" fill="#27c93f"/>
+    <rect x="172" y="3" width="20" height="10" rx="2" fill="#ffbd2e"/>
+    <rect x="196" y="3" width="20" height="10" rx="2" fill="#ffbd2e"/>
+    <rect x="220" y="3" width="20" height="10" rx="2" fill="#2d3543"/>
+    <rect x="244" y="3" width="20" height="10" rx="2" fill="#2d3543"/>
+    <rect x="268" y="3" width="20" height="10" rx="2" fill="#2d3543"/>
+  </g>
+  <text x="784" y="36" text-anchor="end" class="accent" font-size="14" font-weight="700">RIG</text>
+
+  <!-- Big knobs row: Gain Bass Mid Treble Master -->
+  <g transform="translate(0,70)">
+    <text x="24" y="14" class="lbl">AMP — TONE</text>
+    <g transform="translate(96,110)"><circle r="60" fill="none" stroke="#2d3543" stroke-width="9" stroke-linecap="round" stroke-dasharray="282.7 94.2" transform="rotate(135)"/><circle r="60" fill="none" stroke="#4cc2ff" stroke-width="9" stroke-linecap="round" stroke-dasharray="184.0 377.0" transform="rotate(135)"/><circle r="40" fill="#232a36"/><text y="6" text-anchor="middle" class="kv">6.8</text><text y="92" text-anchor="middle" class="kl">GAIN</text></g>
+    <g transform="translate(248,110)"><circle r="60" fill="none" stroke="#2d3543" stroke-width="9" stroke-linecap="round" stroke-dasharray="282.7 94.2" transform="rotate(135)"/><circle r="60" fill="none" stroke="#4cc2ff" stroke-width="9" stroke-linecap="round" stroke-dasharray="127.2 377.0" transform="rotate(135)"/><circle r="40" fill="#232a36"/><text y="6" text-anchor="middle" class="kv">5.0</text><text y="92" text-anchor="middle" class="kl">BASS</text></g>
+    <g transform="translate(400,110)"><circle r="60" fill="none" stroke="#2d3543" stroke-width="9" stroke-linecap="round" stroke-dasharray="282.7 94.2" transform="rotate(135)"/><circle r="60" fill="none" stroke="#4cc2ff" stroke-width="9" stroke-linecap="round" stroke-dasharray="155.6 377.0" transform="rotate(135)"/><circle r="40" fill="#232a36"/><text y="6" text-anchor="middle" class="kv">5.6</text><text y="92" text-anchor="middle" class="kl">MID</text></g>
+    <g transform="translate(552,110)"><circle r="60" fill="none" stroke="#2d3543" stroke-width="9" stroke-linecap="round" stroke-dasharray="282.7 94.2" transform="rotate(135)"/><circle r="60" fill="none" stroke="#4cc2ff" stroke-width="9" stroke-linecap="round" stroke-dasharray="170.0 377.0" transform="rotate(135)"/><circle r="40" fill="#232a36"/><text y="6" text-anchor="middle" class="kv">6.2</text><text y="92" text-anchor="middle" class="kl">TREBLE</text></g>
+    <g transform="translate(704,110)"><circle r="60" fill="none" stroke="#2d3543" stroke-width="9" stroke-linecap="round" stroke-dasharray="282.7 94.2" transform="rotate(135)"/><circle r="60" fill="none" stroke="#4cc2ff" stroke-width="9" stroke-linecap="round" stroke-dasharray="148.5 377.0" transform="rotate(135)"/><circle r="40" fill="#232a36"/><text y="6" text-anchor="middle" class="kv">5.3</text><text y="92" text-anchor="middle" class="kl">MASTER</text></g>
+  </g>
+
+  <!-- AMP / CAB big tap targets -->
+  <g transform="translate(24,320)">
+    <rect class="field" x="0" y="0" width="368" height="62" rx="10"/>
+    <text x="18" y="24" class="lbl" font-size="10">AMP — NAM MODEL</text>
+    <text x="18" y="48" class="accent" font-size="20" font-weight="700">Tweed Deluxe</text>
+    <text x="350" y="40" text-anchor="end" class="muted" font-size="20">▾</text>
+  </g>
+  <g transform="translate(408,320)">
+    <rect class="field" x="0" y="0" width="368" height="62" rx="10"/>
+    <text x="18" y="24" class="lbl" font-size="10">CAB — IR (.wav)</text>
+    <text x="18" y="48" class="accent" font-size="20" font-weight="700">4x12 V30</text>
+    <text x="350" y="40" text-anchor="end" class="muted" font-size="20">▾</text>
+  </g>
+
+  <!-- Compact pedal on/off row -->
+  <g transform="translate(24,398)">
+    <rect x="0" y="0" width="180" height="60" rx="10" fill="#143040" stroke="#4cc2ff"/>
+    <circle cx="22" cy="30" r="6" fill="#4cc2ff"/><text x="40" y="35" class="accent" font-size="16" font-weight="700">CHORUS</text>
+    <rect x="190" y="0" width="180" height="60" rx="10" fill="#143040" stroke="#4cc2ff"/>
+    <circle cx="212" cy="30" r="6" fill="#4cc2ff"/><text x="230" y="35" class="accent" font-size="16" font-weight="700">DELAY</text>
+    <rect x="380" y="0" width="180" height="60" rx="10" fill="#232a36" stroke="#323b4a"/>
+    <circle cx="402" cy="30" r="6" fill="#5a6678"/><text x="420" y="35" class="muted" font-size="16" font-weight="700">PHASER</text>
+    <rect x="570" y="0" width="180" height="60" rx="10" fill="#232a36" stroke="#323b4a"/>
+    <circle cx="592" cy="30" r="6" fill="#5a6678"/><text x="610" y="35" class="muted" font-size="16" font-weight="700">FLANGER</text>
+  </g>
+</svg>

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 480 320" font-family="'DejaVu Sans', 'Segoe UI', Arial, sans-serif">
+  <defs>
+    <style>
+      .scr { fill:#0b0e13; } .txt { fill:#e6edf3; } .muted { fill:#7f8b9b; }
+      .accent { fill:#4cc2ff; } .lbl { fill:#7f8b9b; font-size:9px; letter-spacing:.5px; }
+      .btn { fill:#232a36; stroke:#323b4a; }
+      .kv { fill:#e6edf3; font-size:11px; font-weight:700; } .kl { fill:#9aa6b6; font-size:9px; }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="480" height="320" rx="10" fill="#000"/>
+  <rect x="4" y="4" width="472" height="312" rx="7" class="scr"/>
+
+  <rect x="4" y="4" width="472" height="26" rx="7" fill="#11151c"/><rect x="4" y="16" width="472" height="14" fill="#11151c"/>
+  <text x="14" y="22" class="accent" font-size="13" font-weight="700">GIGSYNTH</text>
+  <text x="468" y="21" text-anchor="end" class="muted" font-size="10">RIG · GUITAR</text>
+
+  <!-- input meter strip -->
+  <rect x="12" y="38" width="456" height="34" rx="8" fill="#161b23" stroke="#2b3340"/>
+  <text x="24" y="58" class="lbl">INPUT</text>
+  <g transform="translate(64,49)">
+    <rect x="0" y="0" width="280" height="12" rx="3" fill="#0b0e13" stroke="#323b4a"/>
+    <rect x="3" y="2" width="16" height="8" rx="2" fill="#27c93f"/>
+    <rect x="22" y="2" width="16" height="8" rx="2" fill="#27c93f"/>
+    <rect x="41" y="2" width="16" height="8" rx="2" fill="#27c93f"/>
+    <rect x="60" y="2" width="16" height="8" rx="2" fill="#27c93f"/>
+    <rect x="79" y="2" width="16" height="8" rx="2" fill="#27c93f"/>
+    <rect x="98" y="2" width="16" height="8" rx="2" fill="#27c93f"/>
+    <rect x="117" y="2" width="16" height="8" rx="2" fill="#27c93f"/>
+    <rect x="136" y="2" width="16" height="8" rx="2" fill="#27c93f"/>
+    <rect x="155" y="2" width="16" height="8" rx="2" fill="#ffbd2e"/>
+    <rect x="174" y="2" width="16" height="8" rx="2" fill="#ffbd2e"/>
+    <rect x="193" y="2" width="16" height="8" rx="2" fill="#2d3543"/>
+    <rect x="212" y="2" width="16" height="8" rx="2" fill="#2d3543"/>
+    <rect x="231" y="2" width="16" height="8" rx="2" fill="#2d3543"/>
+    <rect x="250" y="2" width="16" height="8" rx="2" fill="#2d3543"/>
+  </g>
+  <text x="456" y="58" text-anchor="end" class="muted" font-size="9">-12 dB</text>
+
+  <!-- Row 1: AMP model list (highlighted, encoders active) -->
+  <rect x="12" y="80" width="456" height="58" rx="8" fill="#0e1b24" stroke="#4cc2ff"/>
+  <text x="24" y="98" class="lbl">AMP MODEL (.nam)</text>
+  <rect x="20" y="106" width="118" height="24" rx="6" fill="#143040" stroke="#4cc2ff"/><text x="79" y="122" text-anchor="middle" class="accent" font-size="11" font-weight="700">Tweed Deluxe</text>
+  <rect x="146" y="106" width="90" height="24" rx="6" class="btn"/><text x="191" y="122" text-anchor="middle" class="txt" font-size="11">Plexi</text>
+  <rect x="244" y="106" width="90" height="24" rx="6" class="btn"/><text x="289" y="122" text-anchor="middle" class="txt" font-size="11">Bassman</text>
+  <rect x="380" y="104" width="78" height="28" rx="6" fill="#4cc2ff" opacity="0.18" stroke="#4cc2ff"/><text x="419" y="122" text-anchor="middle" class="accent" font-size="9">◀ ENCODERS</text>
+
+  <!-- Row 2: CAB IR list -->
+  <rect x="12" y="146" width="456" height="58" rx="8" fill="#11161e" stroke="#2b3340"/>
+  <text x="24" y="164" class="lbl">CAB IR (.wav)</text>
+  <rect x="20" y="172" width="100" height="24" rx="6" fill="#143040" stroke="#4cc2ff"/><text x="70" y="188" text-anchor="middle" class="accent" font-size="11" font-weight="700">4x12 V30</text>
+  <rect x="128" y="172" width="76" height="24" rx="6" class="btn"/><text x="166" y="188" text-anchor="middle" class="txt" font-size="11">2x12</text>
+  <rect x="212" y="172" width="56" height="24" rx="6" class="btn"/><text x="240" y="188" text-anchor="middle" class="txt" font-size="11">DI</text>
+
+  <!-- Four always-live encoders -->
+  <g transform="translate(64,250)"><circle r="22" fill="none" stroke="#2d3543" stroke-width="5" stroke-linecap="round" stroke-dasharray="103.7 34.6" transform="rotate(135)"/><circle r="22" fill="none" stroke="#4cc2ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="50.0 138.2" transform="rotate(135)"/><circle r="13" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">+6</text><text y="34" text-anchor="middle" class="kl">GAIN</text></g>
+  <g transform="translate(178,250)"><circle r="22" fill="none" stroke="#2d3543" stroke-width="5" stroke-linecap="round" stroke-dasharray="103.7 34.6" transform="rotate(135)"/><circle r="22" fill="none" stroke="#4cc2ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="28.0 138.2" transform="rotate(135)"/><circle r="13" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">-48</text><text y="34" text-anchor="middle" class="kl">GATE</text></g>
+  <g transform="translate(292,250)"><circle r="22" fill="none" stroke="#2d3543" stroke-width="5" stroke-linecap="round" stroke-dasharray="103.7 34.6" transform="rotate(135)"/><circle r="22" fill="none" stroke="#4cc2ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="72.0 138.2" transform="rotate(135)"/><circle r="13" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">6.8</text><text y="34" text-anchor="middle" class="kl">AMP</text></g>
+  <g transform="translate(406,250)"><circle r="22" fill="none" stroke="#2d3543" stroke-width="5" stroke-linecap="round" stroke-dasharray="103.7 34.6" transform="rotate(135)"/><circle r="22" fill="none" stroke="#4cc2ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="62.0 138.2" transform="rotate(135)"/><circle r="13" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">-2</text><text y="34" text-anchor="middle" class="kl">LEVEL</text></g>
+
+  <!-- footer -->
+  <rect class="btn" x="12" y="290" width="120" height="22" rx="6"/><text x="72" y="305" text-anchor="middle" class="txt" font-size="10">◀ Back / Home</text>
+  <text x="468" y="305" text-anchor="end" class="muted" font-size="9">4 encoders address the highlighted row</text>
+</svg>
