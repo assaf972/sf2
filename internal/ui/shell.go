@@ -15,16 +15,18 @@ import (
 
 // shellTabLive/Songs/Settings are the three top-level view names.
 const (
-	shellTabLive     = "Live"
-	shellTabSongs    = "Songs"
-	shellTabSettings = "Settings"
+	shellTabLive       = "Live"
+	shellTabSongs      = "Songs"
+	shellTabSettings   = "Settings"
+	shellTabRecordings = "Recordings"
 )
 
-// buildShell composes the three-view application shell.
+// buildShell composes the application shell views.
 func (u *UI) buildShell() *container.AppTabs {
 	tabs := container.NewAppTabs(
 		container.NewTabItem(shellTabLive, u.liveContent()),
 		container.NewTabItem(shellTabSongs, u.buildSongsView()),
+		container.NewTabItem(shellTabRecordings, u.buildRecordingsView()),
 		container.NewTabItem(shellTabSettings, u.buildSettingsView()),
 	)
 	tabs.SetTabLocation(container.TabLocationTop)

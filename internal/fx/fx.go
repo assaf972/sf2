@@ -17,27 +17,36 @@ type Node interface {
 	SetParam(name string, v float64)
 }
 
-// Chain is the per-keyboard insert chain: Chorus then Delay.
+// Chain is the per-keyboard insert chain: Chorus -> Phaser -> Flanger -> Delay.
+// Modulation effects sit before the delay so their movement is echoed.
 type Chain struct {
-	Chorus *Chorus
-	Delay  *Delay
+	Chorus  *Chorus
+	Phaser  *Phaser
+	Flanger *Flanger
+	Delay   *Delay
 }
 
 // NewChain builds a disabled-by-default chain at the given sample rate.
 func NewChain(sampleRate float64) *Chain {
 	return &Chain{
-		Chorus: NewChorus(sampleRate),
-		Delay:  NewDelay(sampleRate),
+		Chorus:  NewChorus(sampleRate),
+		Phaser:  NewPhaser(sampleRate),
+		Flanger: NewFlanger(sampleRate),
+		Delay:   NewDelay(sampleRate),
 	}
 }
 
-// Process runs the buffer through chorus then delay.
+// Process runs the buffer through chorus, phaser, flanger, then delay.
 func (c *Chain) Process(buf []float32) {
 	c.Chorus.Process(buf)
+	c.Phaser.Process(buf)
+	c.Flanger.Process(buf)
 	c.Delay.Process(buf)
 }
 
 var (
 	_ Node = (*Chorus)(nil)
+	_ Node = (*Phaser)(nil)
+	_ Node = (*Flanger)(nil)
 	_ Node = (*Delay)(nil)
 )

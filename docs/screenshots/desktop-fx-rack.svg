@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11151c"/><stop offset="1" stop-color="#0b0e13"/>
+    </linearGradient>
+    <style>
+      .panel{fill:#1a1f29;stroke:#2b3340;stroke-width:1}
+      .panel2{fill:#232a36;stroke:#323b4a;stroke-width:1}
+      .txt{fill:#e6edf3}.muted{fill:#8b97a7}.accent{fill:#4cc2ff}
+      .lbl{fill:#8b97a7;font-size:12px}.big{fill:#e6edf3;font-size:20px;font-weight:600}
+      .h{fill:#cdd7e2;font-size:14px;font-weight:600}.num{fill:#4cc2ff;font-size:13px;font-weight:600}
+      .kv{fill:#e6edf3;font-size:10px;font-weight:700}.kl{fill:#8b97a7;font-size:9px}
+      .ghdr{fill:#cdd7e2;font-size:11px;font-weight:600;letter-spacing:.5px}
+      .fxname{fill:#e6edf3;font-size:16px;font-weight:700;letter-spacing:.5px}
+    </style>
+  </defs>
+  <rect width="1280" height="860" fill="url(#bg)"/>
+
+  <!-- Title bar + tabs -->
+  <rect x="0" y="0" width="1280" height="36" fill="#0a0d12"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f56"/><circle cx="42" cy="18" r="6" fill="#ffbd2e"/><circle cx="62" cy="18" r="6" fill="#27c93f"/>
+  <text x="640" y="23" text-anchor="middle" class="muted" font-size="13">GigSynth — FluidSynth Live Rig</text>
+  <rect x="0" y="36" width="1280" height="44" fill="#141922"/>
+  <rect x="24" y="48" width="96" height="22" rx="4" fill="#4cc2ff" opacity="0.16"/>
+  <text x="72" y="63" text-anchor="middle" class="accent" font-size="14" font-weight="600">Live</text>
+  <text x="170" y="63" text-anchor="middle" class="muted" font-size="14">Songs</text>
+  <text x="268" y="63" text-anchor="middle" class="muted" font-size="14">Settings</text>
+  <rect x="0" y="79" width="1280" height="1" fill="#2b3340"/>
+
+  <!-- Keyboard header / context -->
+  <g transform="translate(24,96)">
+    <rect class="panel" x="0" y="0" width="1232" height="64" rx="10"/>
+    <rect x="0" y="0" width="1232" height="64" rx="10" fill="#202734"/>
+    <circle cx="26" cy="32" r="6" fill="#27c93f"/>
+    <text x="44" y="29" class="h" font-size="16">Keyboard 1 — Effects Rack</text>
+    <text x="44" y="50" class="muted" font-size="12">M-Audio Keystation 61 · Part 5 — Rhodes Verse</text>
+    <text x="700" y="26" class="lbl">SELECTED SOUND</text>
+    <text x="700" y="50" class="big" font-size="18">Fender Rhodes</text>
+    <text x="1212" y="29" text-anchor="end" class="muted" font-size="12">PER-KEYBOARD INSERT CHAIN</text>
+    <text x="1212" y="50" text-anchor="end" class="accent" font-size="13" font-weight="600">Chorus → Phaser → Flanger → Delay</text>
+  </g>
+
+  <!-- ===== FX RACK ===== -->
+  <g transform="translate(24,176)">
+
+    <!-- CHORUS (On) -->
+    <g transform="translate(0,0)">
+      <rect class="panel" x="0" y="0" width="294" height="600" rx="12"/>
+      <rect x="0" y="0" width="294" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="294" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">CHORUS</text>
+      <rect x="200" y="14" width="76" height="22" rx="11" fill="#143040" stroke="#4cc2ff"/>
+      <circle cx="216" cy="25" r="4" fill="#4cc2ff"/><text x="248" y="29" text-anchor="middle" class="accent" font-size="11">On</text>
+      <text x="20" y="78" class="muted" font-size="11">Modulated short delay · adds shimmer</text>
+      <text x="20" y="104" class="lbl">2 PARAMETERS</text>
+      <line x1="20" y1="116" x2="274" y2="116" stroke="#2b3340"/>
+      <!-- knobs -->
+      <g transform="translate(85,200)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="64.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">0.8</text><text y="56" text-anchor="middle" class="kl" font-size="11">RATE Hz</text></g>
+      <g transform="translate(209,200)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="88.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">55</text><text y="56" text-anchor="middle" class="kl" font-size="11">DEPTH</text></g>
+    </g>
+
+    <!-- PHASER (On) -->
+    <g transform="translate(310,0)">
+      <rect class="panel" x="0" y="0" width="294" height="600" rx="12"/>
+      <rect x="0" y="0" width="294" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="294" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">PHASER</text>
+      <rect x="200" y="14" width="76" height="22" rx="11" fill="#143040" stroke="#4cc2ff"/>
+      <circle cx="216" cy="25" r="4" fill="#4cc2ff"/><text x="248" y="29" text-anchor="middle" class="accent" font-size="11">On</text>
+      <text x="20" y="78" class="muted" font-size="11">Sweeping all-pass notches · new in v0</text>
+      <text x="20" y="104" class="lbl">3 PARAMETERS</text>
+      <line x1="20" y1="116" x2="274" y2="116" stroke="#2b3340"/>
+      <!-- knobs -->
+      <g transform="translate(85,200)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="48.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">0.35</text><text y="56" text-anchor="middle" class="kl" font-size="11">RATE Hz</text></g>
+      <g transform="translate(209,200)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="112.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">70</text><text y="56" text-anchor="middle" class="kl" font-size="11">DEPTH</text></g>
+      <g transform="translate(147,350)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="64.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">40</text><text y="56" text-anchor="middle" class="kl" font-size="11">FEEDBACK</text></g>
+    </g>
+
+    <!-- FLANGER (Off) -->
+    <g transform="translate(620,0)" opacity="0.5">
+      <rect class="panel" x="0" y="0" width="294" height="600" rx="12"/>
+      <rect x="0" y="0" width="294" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="294" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">FLANGER</text>
+      <rect x="200" y="14" width="76" height="22" rx="11" fill="#2d3543"/>
+      <circle cx="216" cy="25" r="4" fill="#5a6678"/><text x="248" y="29" text-anchor="middle" class="muted" font-size="11">Off</text>
+      <text x="20" y="78" class="muted" font-size="11">Resonant short-delay sweep · new in v0</text>
+      <text x="20" y="104" class="lbl">4 PARAMETERS</text>
+      <line x1="20" y1="116" x2="274" y2="116" stroke="#2b3340"/>
+      <!-- knobs (greyed track only) -->
+      <g transform="translate(85,200)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">0.2</text><text y="56" text-anchor="middle" class="kl" font-size="11">RATE Hz</text></g>
+      <g transform="translate(209,200)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">60</text><text y="56" text-anchor="middle" class="kl" font-size="11">DEPTH</text></g>
+      <g transform="translate(85,350)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">65</text><text y="56" text-anchor="middle" class="kl" font-size="11">FEEDBACK</text></g>
+      <g transform="translate(209,350)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">50</text><text y="56" text-anchor="middle" class="kl" font-size="11">MIX</text></g>
+    </g>
+
+    <!-- DELAY (On) -->
+    <g transform="translate(930,0)">
+      <rect class="panel" x="0" y="0" width="294" height="600" rx="12"/>
+      <rect x="0" y="0" width="294" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="294" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">DELAY</text>
+      <rect x="200" y="14" width="76" height="22" rx="11" fill="#143040" stroke="#4cc2ff"/>
+      <circle cx="216" cy="25" r="4" fill="#4cc2ff"/><text x="248" y="29" text-anchor="middle" class="accent" font-size="11">On</text>
+      <text x="20" y="78" class="muted" font-size="11">Tempo-style echo · feedback &amp; wet mix</text>
+      <text x="20" y="104" class="lbl">3 PARAMETERS</text>
+      <line x1="20" y1="116" x2="274" y2="116" stroke="#2b3340"/>
+      <!-- knobs -->
+      <g transform="translate(85,200)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="72.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">320</text><text y="56" text-anchor="middle" class="kl" font-size="11">TIME ms</text></g>
+      <g transform="translate(209,200)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="56.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">35</text><text y="56" text-anchor="middle" class="kl" font-size="11">FEEDBACK</text></g>
+      <g transform="translate(147,350)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="48.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">30</text><text y="56" text-anchor="middle" class="kl" font-size="11">MIX</text></g>
+    </g>
+
+  </g>
+</svg>

@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="680" viewBox="0 0 1100 680" font-family="Inter, Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bgI" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0e13"/>
+      <stop offset="1" stop-color="#11151c"/>
+    </linearGradient>
+    <linearGradient id="piBox" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2d3543"/>
+      <stop offset="1" stop-color="#1a1f29"/>
+    </linearGradient>
+    <linearGradient id="box" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#232a36"/>
+      <stop offset="1" stop-color="#161b23"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#4cc2ff"/>
+    </marker>
+  </defs>
+
+  <rect width="1100" height="680" fill="url(#bgI)"/>
+
+  <text x="40" y="44" fill="#e6edf3" font-size="24" font-weight="600">GigSynth — system integration</text>
+  <text x="40" y="66" fill="#8b97a7" font-size="13">How it's wired: Raspberry Pi 5 at the core, app-mapped control surface and I/O</text>
+
+  <!-- Central Pi 5 -->
+  <rect x="430" y="290" width="240" height="120" rx="12" fill="url(#piBox)" stroke="#4cc2ff" stroke-width="2"/>
+  <text x="550" y="330" fill="#e6edf3" font-size="20" font-weight="700" text-anchor="middle">Raspberry Pi 5</text>
+  <text x="550" y="354" fill="#8b97a7" font-size="11" text-anchor="middle">GigSynth app · FluidSynth</text>
+  <text x="550" y="372" fill="#8b97a7" font-size="11" text-anchor="middle">Go + Fyne UI</text>
+  <text x="550" y="392" fill="#4cc2ff" font-size="10" text-anchor="middle">audio engine + scheduler</text>
+
+  <!-- helper boxes -->
+  <!-- DSI touchscreen (top) -->
+  <g>
+    <rect x="430" y="100" width="240" height="70" rx="10" fill="url(#box)" stroke="#323b4a"/>
+    <text x="550" y="128" fill="#e6edf3" font-size="14" font-weight="600" text-anchor="middle">DSI Touchscreen</text>
+    <text x="550" y="148" fill="#8b97a7" font-size="11" text-anchor="middle">5″ / 7″ · runs the app UI</text>
+  </g>
+
+  <!-- Audio DAC/HAT (right) -->
+  <g>
+    <rect x="780" y="120" width="260" height="86" rx="10" fill="url(#box)" stroke="#323b4a"/>
+    <text x="910" y="148" fill="#e6edf3" font-size="14" font-weight="600" text-anchor="middle">Audio DAC / HAT</text>
+    <text x="910" y="168" fill="#8b97a7" font-size="11" text-anchor="middle">line out · aux out</text>
+    <text x="910" y="186" fill="#8b97a7" font-size="11" text-anchor="middle">headphone amp</text>
+  </g>
+
+  <!-- USB MIDI host (right lower) -->
+  <g>
+    <rect x="780" y="300" width="260" height="100" rx="10" fill="url(#box)" stroke="#323b4a"/>
+    <text x="910" y="328" fill="#e6edf3" font-size="14" font-weight="600" text-anchor="middle">USB MIDI Host</text>
+    <text x="910" y="348" fill="#8b97a7" font-size="11" text-anchor="middle">controller keys +</text>
+    <text x="910" y="366" fill="#8b97a7" font-size="11" text-anchor="middle">up to 3 external</text>
+    <text x="910" y="384" fill="#8b97a7" font-size="11" text-anchor="middle">keyboards</text>
+  </g>
+
+  <!-- DIN MIDI IN (right bottom) -->
+  <g>
+    <rect x="780" y="430" width="260" height="70" rx="10" fill="url(#box)" stroke="#323b4a"/>
+    <text x="910" y="458" fill="#e6edf3" font-size="14" font-weight="600" text-anchor="middle">DIN MIDI IN</text>
+    <text x="910" y="478" fill="#8b97a7" font-size="11" text-anchor="middle">legacy 5-pin keyboards</text>
+  </g>
+
+  <!-- microSD (bottom) -->
+  <g>
+    <rect x="430" y="540" width="240" height="86" rx="10" fill="url(#box)" stroke="#323b4a"/>
+    <text x="550" y="568" fill="#e6edf3" font-size="14" font-weight="600" text-anchor="middle">microSD</text>
+    <text x="550" y="588" fill="#8b97a7" font-size="11" text-anchor="middle">songs .db</text>
+    <text x="550" y="606" fill="#8b97a7" font-size="11" text-anchor="middle">SoundFonts .sf2</text>
+  </g>
+
+  <!-- USB-C power (left top) -->
+  <g>
+    <rect x="60" y="120" width="250" height="86" rx="10" fill="url(#box)" stroke="#323b4a"/>
+    <text x="185" y="148" fill="#e6edf3" font-size="14" font-weight="600" text-anchor="middle">USB-C Power</text>
+    <text x="185" y="168" fill="#8b97a7" font-size="11" text-anchor="middle">5V / 5A regulated</text>
+    <text x="185" y="186" fill="#27c93f" font-size="11" text-anchor="middle">● PWR</text>
+  </g>
+
+  <!-- Control surface knobs/sliders (left) -->
+  <g>
+    <rect x="60" y="300" width="250" height="120" rx="10" fill="url(#box)" stroke="#323b4a"/>
+    <text x="185" y="328" fill="#e6edf3" font-size="14" font-weight="600" text-anchor="middle">Knobs / Sliders</text>
+    <text x="185" y="348" fill="#8b97a7" font-size="11" text-anchor="middle">GPIO / ADC or USB-MIDI</text>
+    <text x="185" y="366" fill="#8b97a7" font-size="11" text-anchor="middle">control surface</text>
+    <text x="185" y="386" fill="#4cc2ff" font-size="11" text-anchor="middle">mapped to app params</text>
+    <!-- mini knob+slider glyphs -->
+    <circle cx="120" cy="402" r="9" fill="#2d3543" stroke="#3a4452"/><line x1="120" y1="402" x2="120" y2="395" stroke="#4cc2ff" stroke-width="1.5"/>
+    <rect x="150" y="396" width="5" height="14" rx="2" fill="#232a36"/><rect x="146" y="400" width="13" height="6" rx="2" fill="#2d3543" stroke="#4cc2ff" stroke-width="0.6"/>
+  </g>
+
+  <!-- DSI ribbon / display alt (left bottom) -->
+  <g>
+    <rect x="60" y="540" width="250" height="86" rx="10" fill="url(#box)" stroke="#323b4a"/>
+    <text x="185" y="568" fill="#e6edf3" font-size="14" font-weight="600" text-anchor="middle">Output Jacks</text>
+    <text x="185" y="588" fill="#8b97a7" font-size="11" text-anchor="middle">L/R 1/4″ · AUX</text>
+    <text x="185" y="606" fill="#8b97a7" font-size="11" text-anchor="middle">3.5mm headphone</text>
+  </g>
+
+  <!-- CONNECTORS -->
+  <g stroke="#4cc2ff" stroke-width="1.6" fill="none">
+    <!-- pi <-> DSI (bidirectional-ish, up) -->
+    <path d="M 550 290 L 550 172" marker-end="url(#arrow)"/>
+    <!-- pi -> audio dac -->
+    <path d="M 670 320 L 778 250 L 778 200 L 800 180" marker-end="url(#arrow)"/>
+    <!-- usb midi host -> pi -->
+    <path d="M 780 350 L 672 350" marker-end="url(#arrow)"/>
+    <!-- din midi -> pi (via usb host region) -->
+    <path d="M 780 460 L 700 460 L 700 400 L 672 386" marker-end="url(#arrow)"/>
+    <!-- microSD <-> pi -->
+    <path d="M 550 540 L 550 412" marker-end="url(#arrow)"/>
+    <!-- power -> pi -->
+    <path d="M 250 206 L 250 300 M 250 250 L 430 310" marker-end="url(#arrow)"/>
+    <!-- knobs/sliders -> pi -->
+    <path d="M 310 350 L 428 350" marker-end="url(#arrow)"/>
+    <!-- audio dac -> output jacks (down left) -->
+    <path d="M 780 180 L 360 180 L 320 540" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- connector labels -->
+  <g fill="#8b97a7" font-size="10">
+    <text x="558" y="240">DSI display ribbon</text>
+    <text x="700" y="235">I2S audio</text>
+    <text x="700" y="342">USB</text>
+    <text x="712" y="425">UART MIDI</text>
+    <text x="558" y="480">SDIO</text>
+    <text x="262" y="280">5V rail</text>
+    <text x="330" y="342">GPIO/USB</text>
+    <text x="500" y="172">analog audio → jacks</text>
+  </g>
+
+  <text x="40" y="660" fill="#8b97a7" font-size="11">All control elements are pre-mapped to GigSynth app parameters (volume, cutoff, layer mix, part select).</text>
+</svg>

@@ -75,6 +75,8 @@ func defaultChannel(n int) Channel {
 		KeyLow: 0, KeyHigh: 127,
 		ChorusRate: 0.8, ChorusDepth: 50,
 		DelayTime: 300, DelayFeedback: 30, DelayMix: 25,
+		PhaserRate: 0.5, PhaserDepth: 60, PhaserFeedback: 30,
+		FlangerRate: 0.25, FlangerDepth: 70, FlangerFeedback: 40, FlangerMix: 50,
 	}
 }
 
@@ -84,17 +86,23 @@ func (d *DB) SetPartChannel(partID int64, c Channel) error {
 		INSERT INTO part_channels
 			(part_id, channel, bank, program, instrument_name, level, pan, mute, enabled,
 			 source, key_low, key_high, transpose,
-			 chorus_on, chorus_rate, chorus_depth, delay_on, delay_time, delay_feedback, delay_mix)
-		VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+			 chorus_on, chorus_rate, chorus_depth, delay_on, delay_time, delay_feedback, delay_mix,
+			 phaser_on, phaser_rate, phaser_depth, phaser_feedback,
+			 flanger_on, flanger_rate, flanger_depth, flanger_feedback, flanger_mix)
+		VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 		ON CONFLICT(part_id, channel) DO UPDATE SET
 			bank=excluded.bank, program=excluded.program, instrument_name=excluded.instrument_name,
 			level=excluded.level, pan=excluded.pan, mute=excluded.mute, enabled=excluded.enabled,
 			source=excluded.source, key_low=excluded.key_low, key_high=excluded.key_high, transpose=excluded.transpose,
 			chorus_on=excluded.chorus_on, chorus_rate=excluded.chorus_rate, chorus_depth=excluded.chorus_depth,
-			delay_on=excluded.delay_on, delay_time=excluded.delay_time, delay_feedback=excluded.delay_feedback, delay_mix=excluded.delay_mix`,
+			delay_on=excluded.delay_on, delay_time=excluded.delay_time, delay_feedback=excluded.delay_feedback, delay_mix=excluded.delay_mix,
+			phaser_on=excluded.phaser_on, phaser_rate=excluded.phaser_rate, phaser_depth=excluded.phaser_depth, phaser_feedback=excluded.phaser_feedback,
+			flanger_on=excluded.flanger_on, flanger_rate=excluded.flanger_rate, flanger_depth=excluded.flanger_depth, flanger_feedback=excluded.flanger_feedback, flanger_mix=excluded.flanger_mix`,
 		partID, c.Channel, c.Bank, c.Program, c.InstrumentName, c.Level, c.Pan, b2i(c.Mute), b2i(c.Enabled),
 		c.Source, c.KeyLow, c.KeyHigh, c.Transpose,
-		b2i(c.ChorusOn), c.ChorusRate, c.ChorusDepth, b2i(c.DelayOn), c.DelayTime, c.DelayFeedback, c.DelayMix)
+		b2i(c.ChorusOn), c.ChorusRate, c.ChorusDepth, b2i(c.DelayOn), c.DelayTime, c.DelayFeedback, c.DelayMix,
+		b2i(c.PhaserOn), c.PhaserRate, c.PhaserDepth, c.PhaserFeedback,
+		b2i(c.FlangerOn), c.FlangerRate, c.FlangerDepth, c.FlangerFeedback, c.FlangerMix)
 	return err
 }
 
@@ -141,7 +149,9 @@ func (d *DB) loadChannels(p *Part) error {
 	rows, err := d.sql.Query(`
 		SELECT channel, bank, program, instrument_name, level, pan, mute, enabled,
 		       source, key_low, key_high, transpose,
-		       chorus_on, chorus_rate, chorus_depth, delay_on, delay_time, delay_feedback, delay_mix
+		       chorus_on, chorus_rate, chorus_depth, delay_on, delay_time, delay_feedback, delay_mix,
+		       phaser_on, phaser_rate, phaser_depth, phaser_feedback,
+		       flanger_on, flanger_rate, flanger_depth, flanger_feedback, flanger_mix
 		FROM part_channels WHERE part_id=? ORDER BY channel`, p.ID)
 	if err != nil {
 		return err
@@ -149,13 +159,16 @@ func (d *DB) loadChannels(p *Part) error {
 	defer rows.Close()
 	for rows.Next() {
 		var c Channel
-		var mute, en, chOn, dlOn int
+		var mute, en, chOn, dlOn, phOn, flOn int
 		if err := rows.Scan(&c.Channel, &c.Bank, &c.Program, &c.InstrumentName, &c.Level, &c.Pan, &mute, &en,
 			&c.Source, &c.KeyLow, &c.KeyHigh, &c.Transpose,
-			&chOn, &c.ChorusRate, &c.ChorusDepth, &dlOn, &c.DelayTime, &c.DelayFeedback, &c.DelayMix); err != nil {
+			&chOn, &c.ChorusRate, &c.ChorusDepth, &dlOn, &c.DelayTime, &c.DelayFeedback, &c.DelayMix,
+			&phOn, &c.PhaserRate, &c.PhaserDepth, &c.PhaserFeedback,
+			&flOn, &c.FlangerRate, &c.FlangerDepth, &c.FlangerFeedback, &c.FlangerMix); err != nil {
 			return err
 		}
 		c.Mute, c.Enabled, c.ChorusOn, c.DelayOn = mute == 1, en == 1, chOn == 1, dlOn == 1
+		c.PhaserOn, c.FlangerOn = phOn == 1, flOn == 1
 		if c.Channel >= 1 && c.Channel <= NumChannels {
 			p.Channels[c.Channel-1] = c
 		}

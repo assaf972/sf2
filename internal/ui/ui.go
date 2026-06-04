@@ -18,6 +18,7 @@ import (
 	"gigsynth/internal/db"
 	"gigsynth/internal/engine"
 	"gigsynth/internal/midiio"
+	"gigsynth/internal/recording"
 )
 
 type UI struct {
@@ -51,6 +52,13 @@ type UI struct {
 	settingsSFLabel  *widget.Label
 	kbPanels         []*kbPanel
 	t7               *touch7
+
+	// recordings view + Live REC toggle
+	recList    *widget.List
+	recStatus  *widget.Label
+	recToggle  *widget.Button
+	recordings []recording.Recording
+	recSel     int
 }
 
 type strip struct {
@@ -153,7 +161,7 @@ func (u *UI) buildTopBar() fyne.CanvasObject {
 	)
 	row2 := container.NewBorder(nil, nil,
 		container.NewHBox(masterLabel),
-		container.NewHBox(widget.NewLabel("Scene:"), u.sceneSelect, recallBtn, saveBtn, panic),
+		container.NewHBox(widget.NewLabel("Scene:"), u.sceneSelect, recallBtn, saveBtn, u.buildRecordToggle(), panic),
 		u.masterSlider,
 	)
 	return container.NewVBox(row1, widget.NewSeparator(), row2, widget.NewSeparator())

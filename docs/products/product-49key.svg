@@ -1,0 +1,210 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520" font-family="Inter, Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg49" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0e13"/>
+      <stop offset="1" stop-color="#11151c"/>
+    </linearGradient>
+    <linearGradient id="chassis49" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2d3543"/>
+      <stop offset="0.5" stop-color="#232a36"/>
+      <stop offset="1" stop-color="#1a1f29"/>
+    </linearGradient>
+    <linearGradient id="panel49" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#232a36"/>
+      <stop offset="1" stop-color="#161b23"/>
+    </linearGradient>
+    <linearGradient id="screen49" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11151c"/>
+      <stop offset="1" stop-color="#0b0e13"/>
+    </linearGradient>
+    <linearGradient id="whitekey49" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f3f6fa"/>
+      <stop offset="1" stop-color="#e9edf2"/>
+    </linearGradient>
+    <radialGradient id="screenglow49" cx="0.5" cy="0.4" r="0.8">
+      <stop offset="0" stop-color="#4cc2ff" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#4cc2ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1100" height="520" fill="url(#bg49)"/>
+
+  <!-- Title -->
+  <text x="40" y="44" fill="#e6edf3" font-size="24" font-weight="600">GS-49 · 49-key · 5″ touch</text>
+  <text x="40" y="66" fill="#8b97a7" font-size="13">MIDI keyboard sound module · Raspberry Pi 5 inside</text>
+
+  <!-- Chassis -->
+  <rect x="60" y="90" width="900" height="360" rx="14" fill="url(#chassis49)" stroke="#3a4452" stroke-width="2"/>
+
+  <!-- Control panel area -->
+  <rect x="80" y="108" width="860" height="150" rx="8" fill="url(#panel49)" stroke="#323b4a" stroke-width="1.5"/>
+
+  <!-- Sliders (4) left -->
+  <g>
+    <rect x="100" y="128" width="170" height="112" rx="6" fill="#11151c" stroke="#2d3543"/>
+    <text x="105" y="146" fill="#8b97a7" font-size="10">FADERS</text>
+    <!-- four slider tracks -->
+    <g>
+      <rect x="118" y="156" width="6" height="74" rx="3" fill="#232a36"/>
+      <rect x="112" y="172" width="18" height="12" rx="3" fill="#2d3543" stroke="#4cc2ff" stroke-width="0.8"/>
+      <rect x="152" y="156" width="6" height="74" rx="3" fill="#232a36"/>
+      <rect x="146" y="196" width="18" height="12" rx="3" fill="#2d3543" stroke="#4cc2ff" stroke-width="0.8"/>
+      <rect x="186" y="156" width="6" height="74" rx="3" fill="#232a36"/>
+      <rect x="180" y="184" width="18" height="12" rx="3" fill="#2d3543" stroke="#4cc2ff" stroke-width="0.8"/>
+      <rect x="220" y="156" width="6" height="74" rx="3" fill="#232a36"/>
+      <rect x="214" y="210" width="18" height="12" rx="3" fill="#2d3543" stroke="#4cc2ff" stroke-width="0.8"/>
+    </g>
+  </g>
+
+  <!-- Knobs (4) -->
+  <g>
+    <rect x="290" y="128" width="190" height="112" rx="6" fill="#11151c" stroke="#2d3543"/>
+    <text x="296" y="146" fill="#8b97a7" font-size="10">KNOBS</text>
+    <g stroke="#4cc2ff" stroke-width="2" stroke-linecap="round">
+      <circle cx="330" cy="190" r="22" fill="#2d3543" stroke="#3a4452" stroke-width="1.5"/>
+      <line x1="330" y1="190" x2="330" y2="172"/>
+      <circle cx="385" cy="190" r="22" fill="#2d3543" stroke="#3a4452" stroke-width="1.5"/>
+      <line x1="385" y1="190" x2="399" y2="178"/>
+      <circle cx="440" cy="190" r="22" fill="#2d3543" stroke="#3a4452" stroke-width="1.5"/>
+      <line x1="440" y1="190" x2="426" y2="178"/>
+    </g>
+    <circle cx="330" cy="190" r="22" fill="none" stroke="#3a4452" stroke-width="1.5"/>
+  </g>
+
+  <!-- pitch / mod wheels -->
+  <g>
+    <rect x="498" y="128" width="70" height="112" rx="6" fill="#11151c" stroke="#2d3543"/>
+    <rect x="510" y="142" width="18" height="84" rx="9" fill="#161b23" stroke="#3a4452"/>
+    <rect x="538" y="142" width="18" height="84" rx="9" fill="#161b23" stroke="#3a4452"/>
+    <line x1="510" y1="184" x2="528" y2="184" stroke="#4cc2ff" stroke-width="1.5"/>
+    <line x1="538" y1="184" x2="556" y2="184" stroke="#4cc2ff" stroke-width="1.5"/>
+  </g>
+
+  <!-- Embedded touchscreen 5" landscape right -->
+  <g>
+    <rect x="588" y="118" width="332" height="132" rx="8" fill="#0b0e13" stroke="#3a4452" stroke-width="2"/>
+    <rect x="596" y="126" width="316" height="116" rx="5" fill="url(#screen49)"/>
+    <rect x="596" y="126" width="316" height="116" rx="5" fill="url(#screenglow49)"/>
+    <!-- header strip -->
+    <rect x="596" y="126" width="316" height="22" rx="5" fill="#4cc2ff"/>
+    <text x="606" y="142" fill="#0b0e13" font-size="12" font-weight="700">GIGSYNTH</text>
+    <text x="876" y="142" fill="#0b0e13" font-size="9" text-anchor="end">PERFORM</text>
+    <!-- knob donuts -->
+    <g>
+      <circle cx="640" cy="190" r="20" fill="none" stroke="#2d3543" stroke-width="6"/>
+      <path d="M 640 170 A 20 20 0 0 1 656 200" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="710" cy="190" r="20" fill="none" stroke="#2d3543" stroke-width="6"/>
+      <path d="M 710 170 A 20 20 0 1 1 692 200" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round"/>
+    </g>
+    <text x="640" y="226" fill="#8b97a7" font-size="9" text-anchor="middle">CUTOFF</text>
+    <text x="710" y="226" fill="#8b97a7" font-size="9" text-anchor="middle">REVERB</text>
+    <!-- part/sound label -->
+    <rect x="750" y="160" width="150" height="60" rx="5" fill="#161b23" stroke="#2d3543"/>
+    <text x="760" y="180" fill="#e6edf3" font-size="13" font-weight="600">Grand Piano</text>
+    <text x="760" y="198" fill="#8b97a7" font-size="10">Part A · Bank 0:1</text>
+    <text x="760" y="213" fill="#4cc2ff" font-size="9">▮▮▮▮▮ vel</text>
+  </g>
+
+  <!-- Power LED -->
+  <circle cx="100" cy="118" r="4" fill="#27c93f"/>
+
+  <!-- Keybed (49 keys) -->
+  <g>
+    <rect x="80" y="270" width="840" height="168" rx="4" fill="#0b0e13" stroke="#2d3543"/>
+    <!-- white keys: 29 white keys across 49 -->
+    <g>
+      <!-- generate 29 white keys -->
+      <g fill="url(#whitekey49)" stroke="#c4ccd6" stroke-width="1">
+        <rect x="84" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="111.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="139" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="166.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="194" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="221.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="249" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="276.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="304" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="331.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="359" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="386.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="414" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="441.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="469" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="496.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="524" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="551.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="579" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="606.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="634" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="661.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="689" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="716.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="744" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="771.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="799" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="826.5" y="280" width="27.5" height="150" rx="2"/>
+        <rect x="854" y="280" width="27.5" height="150" rx="2"/>
+      </g>
+      <!-- black keys pattern (groups of 2 and 3) -->
+      <g fill="#14181f">
+        <rect x="104" y="280" width="16" height="95" rx="2"/>
+        <rect x="159" y="280" width="16" height="95" rx="2"/>
+        <rect x="186.5" y="280" width="16" height="95" rx="2"/>
+        <rect x="241.5" y="280" width="16" height="95" rx="2"/>
+        <rect x="269" y="280" width="16" height="95" rx="2"/>
+        <rect x="296.5" y="280" width="16" height="95" rx="2"/>
+        <rect x="351.5" y="280" width="16" height="95" rx="2"/>
+        <rect x="406.5" y="280" width="16" height="95" rx="2"/>
+        <rect x="434" y="280" width="16" height="95" rx="2"/>
+        <rect x="489" y="280" width="16" height="95" rx="2"/>
+        <rect x="516.5" y="280" width="16" height="95" rx="2"/>
+        <rect x="544" y="280" width="16" height="95" rx="2"/>
+        <rect x="599" y="280" width="16" height="95" rx="2"/>
+        <rect x="654" y="280" width="16" height="95" rx="2"/>
+        <rect x="681.5" y="280" width="16" height="95" rx="2"/>
+        <rect x="736.5" y="280" width="16" height="95" rx="2"/>
+        <rect x="764" y="280" width="16" height="95" rx="2"/>
+        <rect x="791.5" y="280" width="16" height="95" rx="2"/>
+        <rect x="846.5" y="280" width="16" height="95" rx="2"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Internal Pi hint (rear) -->
+  <rect x="700" y="96" width="60" height="16" rx="3" fill="#161b23" stroke="#3a4452"/>
+  <text x="730" y="108" fill="#8b97a7" font-size="8" text-anchor="middle">Pi 5</text>
+
+  <!-- Rear ports row (top edge) -->
+  <g>
+    <rect x="120" y="96" width="22" height="14" rx="2" fill="#161b23" stroke="#3a4452"/>
+    <rect x="150" y="96" width="22" height="14" rx="2" fill="#161b23" stroke="#3a4452"/>
+    <rect x="180" y="98" width="14" height="10" rx="5" fill="#161b23" stroke="#3a4452"/>
+  </g>
+
+  <!-- ===== CALLOUTS ===== -->
+  <g stroke="#4cc2ff" stroke-width="1" fill="none">
+    <!-- screen -->
+    <path d="M 754 118 L 754 84 L 980 84"/>
+    <!-- knobs -->
+    <path d="M 385 168 L 385 78 L 300 78"/>
+    <!-- sliders -->
+    <path d="M 165 128 L 165 78 L 90 78"/>
+    <!-- wheels -->
+    <path d="M 533 240 L 533 478 L 360 478"/>
+    <!-- pi -->
+    <path d="M 730 96 L 730 72"/>
+    <!-- usb-c power -->
+    <path d="M 131 96 L 131 76"/>
+    <!-- audio out -->
+    <path d="M 161 96 L 161 470 L 600 470"/>
+  </g>
+  <g fill="#8b97a7" font-size="11">
+    <text x="984" y="88" fill="#e6edf3">5″ touch — replaces drum pads (app live)</text>
+    <text x="296" y="74" text-anchor="end">4 assignable knobs</text>
+    <text x="86" y="74" text-anchor="end">4 faders</text>
+    <text x="356" y="482" text-anchor="end">pitch / mod wheels</text>
+    <text x="722" y="68" text-anchor="end" fill="#4cc2ff">Raspberry Pi 5 inside</text>
+    <text x="135" y="72">USB-C power</text>
+    <text x="604" y="474">stereo + headphone out (rear)</text>
+  </g>
+</svg>

@@ -45,11 +45,11 @@
     }
   },
   "summary": {
-    "total_stories": 18,
-    "total_tests": 25,
-    "stories_completed": 18,
-    "tests_green": 25,
-    "last_updated": "2026-06-04T09:46:29Z"
+    "total_stories": 21,
+    "total_tests": 29,
+    "stories_completed": 21,
+    "tests_green": 29,
+    "last_updated": "2026-06-04T15:30:00Z"
   },
   "stories": [
     {
@@ -1123,6 +1123,198 @@
         }
       ],
       "green_test_at": "2026-06-04T08:49:31Z"
+    },
+    {
+      "id": "S19",
+      "title": "Per-keyboard Phaser (Rate, Depth, Feedback)",
+      "user_story": "As a gigging keyboardist, I want a phaser effect with Rate, Depth and Feedback knobs plus On/Off on each keyboard, controllable live and stored per part.",
+      "description": "Add an fx.Phaser node (4-stage all-pass cascade swept by an LFO, with feedback) to each keyboard's insert chain (Chorus -> Phaser -> Flanger -> Delay). Add Controller.SetPhaser(kb,on,rate,depth,feedback). Persist phaser_on/rate/depth/feedback per part_channel and recall in ApplyScene.",
+      "steps_to_reproduce": [
+        "Enable Keyboard 1 phaser on Live",
+        "Set Rate/Depth/Feedback; hear the moving notches",
+        "Save the part; recall later; phaser returns",
+        "Keyboard 2 phaser stays off"
+      ],
+      "acceptance_criteria": [
+        "Phaser On + Rate + Depth + Feedback controllable from the UI",
+        "Per-keyboard independence",
+        "State persists in the part and recalls",
+        "Disabled phaser is bit-identical bypass",
+        "Defaults: off, rate 0.5 Hz, depth 60%, feedback 30%"
+      ],
+      "components": [
+        "internal/fx/phaser.go",
+        "internal/fx/fx.go",
+        "internal/app/controller.go",
+        "internal/app/types.go",
+        "internal/db/db.go",
+        "internal/db/crud.go",
+        "internal/app/library.go"
+      ],
+      "depends_on": [
+        "S12",
+        "S07"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T15:30:00Z",
+      "completed_at": "2026-06-04T15:30:00Z",
+      "fix_solution": "Implemented fx.Phaser as a real-time-safe 4-stage first-order all-pass cascade with LFO-swept corner (200-1600 Hz) and feedback; added to fx.Chain after Chorus. app.Layer and db.Channel gained phaser fields (on/rate/depth/feedback) with defaults; Controller.SetPhaser/applyPhaser push them to the DSP chain and ApplyScene restores them on recall. db migration adds phaser_* columns via addColumnIfMissing; crud upsert/select and library mapping round-trip the state per part.",
+      "tests": [
+        {
+          "id": "S19-T01",
+          "name": "Phaser bypass identity + colours signal stably",
+          "description": "A disabled phaser passes the dry signal unchanged; an enabled phaser changes a 440 Hz tone while staying finite and bounded (the all-pass+feedback loop is stable).",
+          "how_we_test": "Go unit tests feed buffers through fx.Phaser and assert bypass equality and enabled-path stability/difference.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/fx/phaser_test.go"
+          ],
+          "test_code": "func TestPhaserBypassIsIdentity(t *testing.T){ /* disabled => dry passes unchanged */ }\nfunc TestPhaserAltersSignalAndStaysStable(t *testing.T){ /* enabled => signal differs, stays finite & |x|<=4 */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T15:30:00Z",
+          "last_run_at": "2026-06-04T15:30:00Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T15:30:00Z"
+    },
+    {
+      "id": "S20",
+      "title": "Per-keyboard Flanger (Rate, Depth, Feedback, Mix)",
+      "user_story": "As a gigging keyboardist, I want a flanger effect with Rate, Depth, Feedback and Mix knobs plus On/Off on each keyboard, controllable live and stored per part.",
+      "description": "Add an fx.Flanger node (short sub-15 ms LFO-swept delay with feedback and wet mix) to each keyboard's chain. Add Controller.SetFlanger(kb,on,rate,depth,feedback,mix). Persist flanger_* per part_channel and recall in ApplyScene.",
+      "steps_to_reproduce": [
+        "Enable Keyboard 1 flanger on Live",
+        "Set Rate/Depth/Feedback/Mix; hear the jet sweep",
+        "Save the part; recall later; flanger returns",
+        "Keyboard 2 flanger stays off"
+      ],
+      "acceptance_criteria": [
+        "Flanger On + Rate + Depth + Feedback + Mix controllable from the UI",
+        "Per-keyboard independence",
+        "State persists in the part and recalls",
+        "Disabled flanger is bit-identical bypass",
+        "With LFO frozen + no feedback it behaves as a fixed short comb",
+        "Defaults: off, rate 0.25 Hz, depth 70%, feedback 40%, mix 50%"
+      ],
+      "components": [
+        "internal/fx/flanger.go",
+        "internal/fx/fx.go",
+        "internal/app/controller.go",
+        "internal/app/types.go",
+        "internal/db/db.go",
+        "internal/db/crud.go",
+        "internal/app/library.go"
+      ],
+      "depends_on": [
+        "S12",
+        "S07"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T15:30:00Z",
+      "completed_at": "2026-06-04T15:30:00Z",
+      "fix_solution": "Implemented fx.Flanger as a real-time-safe 1 ms-base + up-to-9 ms-sweep modulated delay with feedback and wet mix, inserted after Phaser in fx.Chain. app.Layer and db.Channel gained flanger fields with defaults; Controller.SetFlanger/applyFlanger drive the DSP node and ApplyScene restores on recall. db migration adds flanger_* columns; crud and library round-trip the state per part.",
+      "tests": [
+        {
+          "id": "S20-T01",
+          "name": "Flanger bypass identity + static comb echo",
+          "description": "A disabled flanger passes the dry signal unchanged; with rate 0 and no feedback an impulse reappears one base-delay (1 ms) later scaled by mix.",
+          "how_we_test": "Go unit tests feed an impulse/known buffer through fx.Flanger at sr=1000 and assert bypass equality and the deterministic single-tap echo.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/fx/flanger_test.go"
+          ],
+          "test_code": "func TestFlangerBypassIsIdentity(t *testing.T){ /* disabled => dry passes unchanged */ }\nfunc TestFlangerStaticCombEchoesImpulse(t *testing.T){ /* rate0,fb0,mix100 => x[1]==1.0, x[2]==0 */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T15:30:00Z",
+          "last_run_at": "2026-06-04T15:30:00Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T15:30:00Z"
+    },
+    {
+      "id": "S21",
+      "title": "Realtime MIDI + audio recording with Recordings view",
+      "user_story": "As a gigging keyboardist, I want to record all MIDI and audio input to a file and replay, stop, loop or delete takes from a Recordings page, with a recording on/off toggle on the Live view.",
+      "description": "New internal/recording package: a Recorder captures timestamped MIDI (device-tagged) + audio frames with an injectable Clock; a Store lists/gets/deletes (and delete-all) finished takes; a Player replays the MIDI timeline with play/stop/loop. Controller gains Start/Stop/IsRecording/Recordings/DeleteRecording/DeleteAllRecordings and taps handleMIDI to capture events. UI adds a red REC toggle on the Live top bar and a new top-level Recordings view (list + transport).",
+      "steps_to_reproduce": [
+        "On Live, press REC to arm; play some notes",
+        "Press Stop; a take appears in the Recordings view",
+        "Select a take; Play / Loop / Stop the replay",
+        "Delete a take, or Delete all"
+      ],
+      "acceptance_criteria": [
+        "REC toggle arms/stops capture and reflects state",
+        "All MIDI events captured with ms offsets and source device",
+        "Audio frame count tracked; duration is max(midi,audio)",
+        "Recordings view lists takes newest-first with duration + MIDI/Audio chips",
+        "Play/Stop/Loop transport and Delete / Delete all work",
+        "Player replays events in order, stops at end, wraps cleanly when looping"
+      ],
+      "components": [
+        "internal/recording/recording.go",
+        "internal/recording/store.go",
+        "internal/recording/player.go",
+        "internal/app/controller.go",
+        "internal/ui/recordings.go",
+        "internal/ui/ui.go",
+        "internal/ui/shell.go"
+      ],
+      "depends_on": [
+        "S03",
+        "S04",
+        "S09"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T15:30:00Z",
+      "completed_at": "2026-06-04T15:30:00Z",
+      "fix_solution": "Added a hardware-free, deterministic recording package: Recorder (Clock-injectable) timestamps MIDI relative to Start and counts audio frames, returning a Recording on Stop; Store assigns stable ids (rec-NNNN) and supports list/get/delete/delete-all; Player advances a playhead by a time delta, emitting due events in order, stopping at the end or wrapping when looping. Controller owns a Recorder+Store, taps handleMIDI for noteon/noteoff/cc/pitch, and exposes Start/Stop/IsRecording/Recordings/DeleteRecording/DeleteAllRecordings + CaptureAudio. UI adds the Live REC toggle and a 4th 'Recordings' tab (list + Play/Stop/Loop/Delete + Delete all).",
+      "tests": [
+        {
+          "id": "S21-T01",
+          "name": "Recorder + Store + Player core",
+          "description": "Recorder timestamps MIDI relative to Start, counts audio, toggles IsRecording, and Stop returns the take; Store add/list(newest-first)/get/delete/delete-all; Player replays in order, stops at end, wraps on loop.",
+          "how_we_test": "Go unit tests with a scripted fakeClock for deterministic timing across recorder, store and player.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/recording/recording_test.go"
+          ],
+          "test_code": "func TestRecorderCapturesTimelineAndAudio(t *testing.T){...}\nfunc TestStoreCRUD(t *testing.T){...}\nfunc TestPlayerReplayStopAndLoop(t *testing.T){...}",
+          "status": "passing",
+          "green_at": "2026-06-04T15:30:00Z",
+          "last_run_at": "2026-06-04T15:30:00Z"
+        },
+        {
+          "id": "S21-T02",
+          "name": "Live REC toggle + Recordings list",
+          "description": "The Live REC toggle arms then stops capture (button label flips), a stopped take is listed in the Recordings view, and the transport Delete removes it.",
+          "how_we_test": "Headless Fyne test drives a real Controller (noopSynth, no MIDI hw); toggles recording, asserts button text + IsRecording, then asserts the recordings list and delete.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/recordings_test.go"
+          ],
+          "test_code": "func TestRecordToggleAndRecordingsList(t *testing.T){ /* arm->stop->listed->delete */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T15:30:00Z",
+          "last_run_at": "2026-06-04T15:30:00Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T15:30:00Z"
     }
   ]
 }

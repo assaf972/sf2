@@ -1,0 +1,181 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" font-family="Inter, Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bgD" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b0e13"/>
+      <stop offset="1" stop-color="#11151c"/>
+    </linearGradient>
+    <linearGradient id="chassisD" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2d3543"/>
+      <stop offset="0.5" stop-color="#232a36"/>
+      <stop offset="1" stop-color="#1a1f29"/>
+    </linearGradient>
+    <linearGradient id="creamD" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#262c36"/>
+      <stop offset="1" stop-color="#1c222b"/>
+    </linearGradient>
+    <linearGradient id="screenD" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11151c"/>
+      <stop offset="1" stop-color="#0b0e13"/>
+    </linearGradient>
+    <radialGradient id="screenglowD" cx="0.5" cy="0.4" r="0.8">
+      <stop offset="0" stop-color="#4cc2ff" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#4cc2ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="640" fill="url(#bgD)"/>
+
+  <text x="40" y="42" fill="#e6edf3" font-size="24" font-weight="600">GS-Desktop · 7″ module · up to 3 keyboards</text>
+  <text x="40" y="64" fill="#8b97a7" font-size="13">Roland-style half-rack desktop sound module · Raspberry Pi 5 inside</text>
+
+  <!-- ============ FRONT VIEW ============ -->
+  <text x="40" y="102" fill="#4cc2ff" font-size="13" font-weight="600">FRONT PANEL</text>
+  <!-- angled front: main face + top bevel -->
+  <polygon points="60,118 940,118 920,138 80,138" fill="#161b23" stroke="#323b4a" stroke-width="1.5"/>
+  <rect x="60" y="138" width="880" height="150" rx="10" fill="url(#chassisD)" stroke="#3a4452" stroke-width="2"/>
+  <rect x="74" y="152" width="852" height="122" rx="6" fill="url(#creamD)" stroke="#323b4a"/>
+
+  <!-- power LED + buttons -->
+  <circle cx="96" cy="166" r="5" fill="#27c93f"/>
+  <text x="108" y="170" fill="#8b97a7" font-size="9">PWR</text>
+  <g>
+    <rect x="92" y="240" width="40" height="22" rx="4" fill="#2d3543" stroke="#3a4452"/>
+    <rect x="140" y="240" width="40" height="22" rx="4" fill="#2d3543" stroke="#3a4452"/>
+    <text x="112" y="255" fill="#8b97a7" font-size="9" text-anchor="middle">MENU</text>
+    <text x="160" y="255" fill="#8b97a7" font-size="9" text-anchor="middle">EXIT</text>
+  </g>
+
+  <!-- 4 faders -->
+  <g>
+    <g fill="#232a36">
+      <rect x="96" y="184" width="6" height="48" rx="3"/>
+      <rect x="121" y="184" width="6" height="48" rx="3"/>
+      <rect x="146" y="184" width="6" height="48" rx="3"/>
+      <rect x="171" y="184" width="6" height="48" rx="3"/>
+    </g>
+    <g fill="#2d3543" stroke="#4cc2ff" stroke-width="0.8">
+      <rect x="90" y="194" width="18" height="11" rx="3"/>
+      <rect x="115" y="210" width="18" height="11" rx="3"/>
+      <rect x="140" y="200" width="18" height="11" rx="3"/>
+      <rect x="165" y="216" width="18" height="11" rx="3"/>
+    </g>
+  </g>
+
+  <!-- 4 knobs -->
+  <g>
+    <g><circle cx="230" cy="200" r="20" fill="#2d3543" stroke="#3a4452" stroke-width="1.5"/><line x1="230" y1="200" x2="230" y2="184" stroke="#4cc2ff" stroke-width="2" stroke-linecap="round"/></g>
+    <g><circle cx="285" cy="200" r="20" fill="#2d3543" stroke="#3a4452" stroke-width="1.5"/><line x1="285" y1="200" x2="298" y2="189" stroke="#4cc2ff" stroke-width="2" stroke-linecap="round"/></g>
+    <g><circle cx="230" cy="248" r="14" fill="#2d3543" stroke="#3a4452" stroke-width="1.5"/><line x1="230" y1="248" x2="230" y2="236" stroke="#4cc2ff" stroke-width="2" stroke-linecap="round"/></g>
+    <g><circle cx="285" cy="248" r="14" fill="#2d3543" stroke="#3a4452" stroke-width="1.5"/><line x1="285" y1="248" x2="295" y2="240" stroke="#4cc2ff" stroke-width="2" stroke-linecap="round"/></g>
+  </g>
+
+  <!-- 7" touchscreen dominant right -->
+  <g>
+    <rect x="540" y="160" width="370" height="106" rx="8" fill="#0b0e13" stroke="#3a4452" stroke-width="2"/>
+    <rect x="548" y="168" width="354" height="90" rx="5" fill="url(#screenD)"/>
+    <rect x="548" y="168" width="354" height="90" rx="5" fill="url(#screenglowD)"/>
+    <rect x="548" y="168" width="354" height="22" rx="5" fill="#4cc2ff"/>
+    <text x="558" y="184" fill="#0b0e13" font-size="12" font-weight="700">GIGSYNTH</text>
+    <text x="892" y="184" fill="#0b0e13" font-size="9" text-anchor="end">3 KBD · MULTI</text>
+    <g>
+      <circle cx="588" cy="222" r="16" fill="none" stroke="#2d3543" stroke-width="5"/>
+      <path d="M 588 206 A 16 16 0 1 1 575 230" fill="none" stroke="#4cc2ff" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="640" cy="222" r="16" fill="none" stroke="#2d3543" stroke-width="5"/>
+      <path d="M 640 206 A 16 16 0 0 1 654 215" fill="none" stroke="#4cc2ff" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    <rect x="680" y="198" width="210" height="52" rx="5" fill="#161b23" stroke="#2d3543"/>
+    <text x="690" y="216" fill="#e6edf3" font-size="12" font-weight="600">KBD1 Piano · KBD2 Strings</text>
+    <text x="690" y="232" fill="#8b97a7" font-size="9">KBD3 Bass · Master 0dB</text>
+    <text x="690" y="245" fill="#4cc2ff" font-size="9">▮▮▮ ▮▮ ▮ — 3 active</text>
+  </g>
+
+  <!-- ============ REAR VIEW ============ -->
+  <text x="40" y="334" fill="#4cc2ff" font-size="13" font-weight="600">REAR PANEL — I/O</text>
+  <rect x="60" y="350" width="1100" height="150" rx="10" fill="url(#chassisD)" stroke="#3a4452" stroke-width="2"/>
+  <rect x="74" y="364" width="1072" height="122" rx="6" fill="#11151c" stroke="#323b4a"/>
+
+  <!-- L/R stereo out 1/4 -->
+  <g>
+    <circle cx="120" cy="410" r="14" fill="#161b23" stroke="#3a4452" stroke-width="1.5"/><circle cx="120" cy="410" r="5" fill="#0b0e13" stroke="#4cc2ff"/>
+    <circle cx="158" cy="410" r="14" fill="#161b23" stroke="#3a4452" stroke-width="1.5"/><circle cx="158" cy="410" r="5" fill="#0b0e13" stroke="#4cc2ff"/>
+    <text x="139" y="442" fill="#8b97a7" font-size="9" text-anchor="middle">L / R OUT 1/4″</text>
+  </g>
+  <!-- AUX out -->
+  <g>
+    <circle cx="226" cy="410" r="14" fill="#161b23" stroke="#3a4452" stroke-width="1.5"/><circle cx="226" cy="410" r="5" fill="#0b0e13" stroke="#4cc2ff"/>
+    <circle cx="264" cy="410" r="14" fill="#161b23" stroke="#3a4452" stroke-width="1.5"/><circle cx="264" cy="410" r="5" fill="#0b0e13" stroke="#4cc2ff"/>
+    <text x="245" y="442" fill="#8b97a7" font-size="9" text-anchor="middle">AUX OUT</text>
+  </g>
+  <!-- headphone -->
+  <g>
+    <circle cx="330" cy="410" r="14" fill="#161b23" stroke="#3a4452" stroke-width="1.5"/><circle cx="330" cy="410" r="5" fill="#0b0e13" stroke="#4cc2ff"/>
+    <text x="330" y="442" fill="#8b97a7" font-size="9" text-anchor="middle">PHONES</text>
+  </g>
+
+  <!-- 3x USB-A host -->
+  <g>
+    <rect x="400" y="400" width="34" height="16" rx="2" fill="#161b23" stroke="#3a4452"/>
+    <rect x="444" y="400" width="34" height="16" rx="2" fill="#161b23" stroke="#3a4452"/>
+    <rect x="488" y="400" width="34" height="16" rx="2" fill="#161b23" stroke="#3a4452"/>
+    <text x="461" y="442" fill="#8b97a7" font-size="9" text-anchor="middle">USB-A HOST ×3</text>
+  </g>
+  <!-- 2x DIN MIDI IN -->
+  <g>
+    <circle cx="575" cy="408" r="16" fill="#161b23" stroke="#3a4452" stroke-width="1.5"/>
+    <g fill="#0b0e13"><circle cx="568" cy="404" r="2"/><circle cx="582" cy="404" r="2"/><circle cx="563" cy="412" r="2"/><circle cx="587" cy="412" r="2"/><circle cx="575" cy="416" r="2"/></g>
+    <circle cx="620" cy="408" r="16" fill="#161b23" stroke="#3a4452" stroke-width="1.5"/>
+    <g fill="#0b0e13"><circle cx="613" cy="404" r="2"/><circle cx="627" cy="404" r="2"/><circle cx="608" cy="412" r="2"/><circle cx="632" cy="412" r="2"/><circle cx="620" cy="416" r="2"/></g>
+    <text x="598" y="442" fill="#8b97a7" font-size="9" text-anchor="middle">2× DIN MIDI IN</text>
+  </g>
+
+  <!-- USB-C power -->
+  <g>
+    <rect x="700" y="404" width="28" height="12" rx="6" fill="#161b23" stroke="#3a4452"/>
+    <text x="714" y="442" fill="#8b97a7" font-size="9" text-anchor="middle">USB-C 5V/5A</text>
+  </g>
+  <!-- Ethernet -->
+  <g>
+    <rect x="780" y="400" width="34" height="20" rx="2" fill="#161b23" stroke="#3a4452"/>
+    <text x="797" y="442" fill="#8b97a7" font-size="9" text-anchor="middle">ETHERNET</text>
+  </g>
+  <!-- HDMI service -->
+  <g>
+    <rect x="860" y="402" width="44" height="14" rx="2" fill="#161b23" stroke="#3a4452"/>
+    <text x="882" y="442" fill="#8b97a7" font-size="9" text-anchor="middle">HDMI (svc)</text>
+  </g>
+  <!-- microSD -->
+  <g>
+    <rect x="960" y="402" width="26" height="16" rx="2" fill="#161b23" stroke="#3a4452"/>
+    <text x="973" y="442" fill="#8b97a7" font-size="9" text-anchor="middle">microSD</text>
+  </g>
+  <!-- vent grille -->
+  <g stroke="#2d3543" stroke-width="2">
+    <line x1="1040" y1="380" x2="1130" y2="380"/>
+    <line x1="1040" y1="392" x2="1130" y2="392"/>
+    <line x1="1040" y1="404" x2="1130" y2="404"/>
+    <line x1="1040" y1="416" x2="1130" y2="416"/>
+    <line x1="1040" y1="428" x2="1130" y2="428"/>
+  </g>
+
+  <!-- ====== CALLOUTS ====== -->
+  <g stroke="#4cc2ff" stroke-width="1" fill="none">
+    <path d="M 725 160 L 725 128 L 950 128"/>
+    <path d="M 285 180 L 285 130 L 360 130"/>
+    <path d="M 137 184 L 137 130 L 80 130"/>
+    <path d="M 96 166 L 60 166 L 60 150"/>
+    <path d="M 461 416 L 461 530 L 600 530"/>
+    <path d="M 598 424 L 598 548 L 760 548"/>
+    <path d="M 139 424 L 139 560 L 300 560"/>
+    <path d="M 973 402 L 973 320 L 1040 320"/>
+  </g>
+  <g fill="#8b97a7" font-size="11">
+    <text x="954" y="132" fill="#e6edf3">7″ touchscreen (dominant) — app live</text>
+    <text x="364" y="134">4 knobs</text>
+    <text x="76" y="134" text-anchor="end">4 faders</text>
+    <text x="40" y="150" fill="#27c93f">power LED + buttons</text>
+    <text x="604" y="534" fill="#4cc2ff">USB-A host ×3 / 2× DIN MIDI IN — up to 3 keyboards</text>
+    <text x="764" y="552">USB-C power · Ethernet / HDMI service ports</text>
+    <text x="304" y="564">L/R stereo out (1/4″) · AUX out · headphone</text>
+    <text x="1044" y="324">microSD: songs .db + .sf2</text>
+  </g>
+</svg>

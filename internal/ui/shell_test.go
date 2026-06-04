@@ -6,8 +6,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// S03-T01: the shell builds an AppTabs with the three named views in order.
-func TestShellHasThreeTabs(t *testing.T) {
+// S03-T01: the shell builds an AppTabs with the named views in order (Recordings
+// added in S21, between Songs and Settings).
+func TestShellHasTopLevelTabs(t *testing.T) {
 	u, _ := newTestUI(t)
 	tabs := u.buildShell()
 
@@ -15,5 +16,5 @@ func TestShellHasThreeTabs(t *testing.T) {
 	for _, it := range tabs.Items {
 		labels = append(labels, it.Text)
 	}
-	assert.Equal(t, []string{"Live", "Songs", "Settings"}, labels)
+	assert.Equal(t, []string{"Live", "Songs", "Recordings", "Settings"}, labels)
 }

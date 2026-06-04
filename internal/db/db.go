@@ -65,6 +65,16 @@ type Channel struct {
 	DelayTime     int // ms
 	DelayFeedback int // %
 	DelayMix      int // %
+	// Per-keyboard modulation effects (S19 phaser / S20 flanger).
+	PhaserOn        bool
+	PhaserRate      float64 // Hz
+	PhaserDepth     int     // %
+	PhaserFeedback  int     // %
+	FlangerOn       bool
+	FlangerRate     float64 // Hz
+	FlangerDepth    int     // %
+	FlangerFeedback int     // %
+	FlangerMix      int     // %
 }
 
 // Keyboard is an entry in the supported-MIDI-keyboard catalog.
@@ -172,6 +182,15 @@ func (d *DB) migrate() error {
 		{"delay_time", "INTEGER NOT NULL DEFAULT 300"},
 		{"delay_feedback", "INTEGER NOT NULL DEFAULT 30"},
 		{"delay_mix", "INTEGER NOT NULL DEFAULT 25"},
+		{"phaser_on", "INTEGER NOT NULL DEFAULT 0"},
+		{"phaser_rate", "REAL NOT NULL DEFAULT 0.5"},
+		{"phaser_depth", "INTEGER NOT NULL DEFAULT 60"},
+		{"phaser_feedback", "INTEGER NOT NULL DEFAULT 30"},
+		{"flanger_on", "INTEGER NOT NULL DEFAULT 0"},
+		{"flanger_rate", "REAL NOT NULL DEFAULT 0.25"},
+		{"flanger_depth", "INTEGER NOT NULL DEFAULT 70"},
+		{"flanger_feedback", "INTEGER NOT NULL DEFAULT 40"},
+		{"flanger_mix", "INTEGER NOT NULL DEFAULT 50"},
 	}
 	for _, c := range fxCols {
 		if err := d.addColumnIfMissing("part_channels", c.name, c.decl); err != nil {
