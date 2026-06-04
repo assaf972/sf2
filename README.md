@@ -1,5 +1,9 @@
 # GigSynth
 
+[![CI](https://github.com/assaf972/sf2/actions/workflows/ci.yml/badge.svg)](https://github.com/assaf972/sf2/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/assaf972/sf2/actions/workflows/codeql.yml/badge.svg)](https://github.com/assaf972/sf2/actions/workflows/codeql.yml)
+[![Trivy](https://github.com/assaf972/sf2/actions/workflows/trivy.yml/badge.svg)](https://github.com/assaf972/sf2/actions/workflows/trivy.yml)
+
 A cross-platform **FluidSynth wrapper with a unified mixer UI** for gigging
 keyboard players. Load one SoundFont (`.sf2`/`.sf3`), layer or split up to **4
 sounds**, drive them from up to **3 MIDI keyboards**, and recall per-song
