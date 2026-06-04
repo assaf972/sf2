@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GigSynth — Pi Provisioning</title>
+<style>
+  :root{--bg:#0b0e13;--panel:#161b23;--panel2:#1a1f29;--line:#2b3340;--txt:#e6edf3;--muted:#8b97a7;--accent:#4cc2ff;--green:#27c93f}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;line-height:1.65}
+  header{background:linear-gradient(160deg,#13212b,#0b0e13 60%);border-bottom:1px solid var(--line);padding:34px 40px}
+  header h1{margin:0;font-size:28px}.accent{color:var(--accent)}
+  header p{margin:8px 0 0;color:var(--muted)}
+  .crumbs{color:var(--muted);font-size:13px;margin-bottom:10px}.crumbs a{color:var(--accent)}
+  main{max-width:920px;margin:0 auto;padding:28px 40px 90px}
+  h2{font-size:21px;margin-top:42px;border-bottom:1px solid var(--line);padding-bottom:8px}
+  p,li{color:#d4dce4}a{color:var(--accent)}
+  code{background:#11151c;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:13px;color:#cdd7e2}
+  pre{background:#11151c;border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow:auto}
+  pre code{border:0;background:none;padding:0;font-size:13.5px}
+  table{border-collapse:collapse;width:100%;margin-top:14px;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left}
+  th{background:var(--panel2);color:var(--accent)}
+  .note{background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0}
+</style>
+</head>
+<body>
+<header>
+  <div class="crumbs"><a href="../product-brochure.html">← Product line</a> · <a href="../user-guide.html">User guide</a></div>
+  <h1><span class="accent">GigSynth</span> — Raspberry Pi Provisioning</h1>
+  <p>Turn a flashed Pi into a GigSynth instrument that boots straight into the rig.</p>
+</header>
+<main>
+  <h2>One command</h2>
+  <p>The binary ships its own setup assets. Run <code>-provision</code> with your hardware model to
+  write a systemd user service and an install script tailored to that build:</p>
+  <pre><code># on the Pi, next to the gigsynth binary
+gigsynth -provision gs-61 -provision-out ./setup -sf2 /opt/gigsynth/Live.sf2
+# -> wrote ./setup/gigsynth-kiosk.service
+# -> wrote ./setup/install.sh
+./setup/install.sh        # installs deps + enables autostart</code></pre>
+
+  <h2>Models</h2>
+  <table>
+    <tr><th>Model</th><th><code>-provision</code> id</th><th>Launches</th><th>Screen</th></tr>
+    <tr><td>GS-49</td><td><code>gs-49</code></td><td><code>gigsynth -mode touch7</code></td><td>5″ DSI</td></tr>
+    <tr><td>GS-61</td><td><code>gs-61</code></td><td><code>gigsynth -mode touch7</code></td><td>7″ DSI</td></tr>
+    <tr><td>GS-Desktop</td><td><code>gs-desktop</code></td><td><code>gigsynth</code> (desktop)</td><td>7″ DSI</td></tr>
+    <tr><td>Pi Zero kiosk</td><td><code>pizero</code></td><td><code>gigsynth -mode pizero</code></td><td>≈480×320 LCD</td></tr>
+  </table>
+
+  <h2>What the install script does</h2>
+  <ul>
+    <li>Installs the runtime libraries (FluidSynth, rtmidi, ALSA, GL) via <code>apt</code>.</li>
+    <li>Copies the generated <code>gigsynth-kiosk.service</code> into <code>~/.config/systemd/user/</code>,
+      reloads systemd, enables it, and turns on user lingering so it starts at boot.</li>
+    <li>Leaves commented <code>dtoverlay</code> lines for the audio HAT (HiFiBerry DAC / pisound) to
+      uncomment for your build.</li>
+  </ul>
+
+  <div class="note">The audio DAC overlay and DSI screen wiring are the operator's hardware step; this
+  flow produces the repeatable <i>software</i> setup. See the full
+  <a href="bom.md">BOM</a> for the hardware per model.</div>
+</main>
+</body>
+</html>

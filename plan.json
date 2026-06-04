@@ -45,11 +45,11 @@
     }
   },
   "summary": {
-    "total_stories": 21,
-    "total_tests": 29,
-    "stories_completed": 21,
-    "tests_green": 29,
-    "last_updated": "2026-06-04T15:30:00Z"
+    "total_stories": 25,
+    "total_tests": 35,
+    "stories_completed": 25,
+    "tests_green": 35,
+    "last_updated": "2026-06-04T16:15:00Z"
   },
   "stories": [
     {
@@ -1315,6 +1315,249 @@
         }
       ],
       "green_test_at": "2026-06-04T15:30:00Z"
+    },
+    {
+      "id": "S22",
+      "title": "Raspberry Pi provisioning (self-install image assets)",
+      "user_story": "As an installer, I want `gigsynth -provision <model>` to write a systemd unit and an install script so a flashed Pi boots straight into the rig for that hardware model.",
+      "description": "New internal/provision package embeds (go:embed) a systemd user unit and an install.sh, and renders them per model (gs-49/gs-61/gs-desktop/pizero) with the right -mode and -sf2 launch flags. main.go gains -provision/-provision-out flags that write the files and exit. docs/products/provisioning.html documents the flow.",
+      "steps_to_reproduce": [
+        "Run gigsynth -provision gs-61 -provision-out ./out",
+        "Inspect out/gigsynth-kiosk.service (ExecStart launches -mode touch7)",
+        "Copy to the Pi and run install.sh",
+        "Reboot; the rig autostarts"
+      ],
+      "acceptance_criteria": [
+        "Each model renders a valid systemd unit with the correct ExecStart/-mode",
+        "install.sh is a bash script that enables the user service",
+        "Unknown model is rejected",
+        "-provision writes files and exits without starting audio"
+      ],
+      "components": [
+        "internal/provision/provision.go",
+        "internal/provision/assets/gigsynth-kiosk.service",
+        "internal/provision/assets/install.sh",
+        "main.go",
+        "docs/products/provisioning.html"
+      ],
+      "depends_on": [],
+      "status": "completed",
+      "started_at": "2026-06-04T16:15:00Z",
+      "completed_at": "2026-06-04T16:15:00Z",
+      "fix_solution": "Added internal/provision with go:embed'd unit + install script; RenderService/RenderInstall substitute model description, ExecStart (binary + -mode + -sf2) and install metadata; Install writes both to a dir. main.go handles -provision <model> by calling provision.Install and exiting before engine/UI start.",
+      "tests": [
+        {
+          "id": "S22-T01",
+          "name": "Per-model provisioning render + install",
+          "description": "Each model renders a unit whose ExecStart launches the binary in that model's UI mode; Install writes the unit + install.sh to disk; unknown models error.",
+          "how_we_test": "Go unit tests render every model and assert ExecStart/-mode/-sf2 content, that Install writes both files, and that an unknown model errors.",
+          "tools": [
+            "Go testing",
+            "testify",
+            "go:embed"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/provision/provision_test.go"
+          ],
+          "test_code": "func TestProvisionRendersPerModel(t *testing.T){ /* gs-49/gs-61/gs-desktop/pizero ExecStart + Install writes 2 files */ }\nfunc TestProvisionUnknownModel(t *testing.T){...}",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T16:15:00Z"
+    },
+    {
+      "id": "S23",
+      "title": "Onboard control-surface mapping (factory presets + Phaser/Flanger CC)",
+      "user_story": "As a GigSynth hardware owner, I want the onboard knobs and sliders pre-mapped so the control surface fully drives the app — including the new Phaser and Flanger — for the keyboard it controls.",
+      "description": "Extend midimap with Phaser/Flanger Action targets and factory presets for GS-49 (4+4), GS-61 (8+8) and GS-Desktop (4+4) that bind the surface to Volume/Pan + the four-effect chain. Controller.applyCCAction handles the new actions so mapped CCs drive SetPhaser/SetFlanger live.",
+      "steps_to_reproduce": [
+        "Bind a keyboard to the 'GigSynth GS-61' mapping in Settings",
+        "Move a mapped slider/knob",
+        "See the phaser/flanger (and chorus/delay/vol/pan) respond live"
+      ],
+      "acceptance_criteria": [
+        "GS-49/GS-61/GS-Desktop presets exist and are well-formed (Vol=CC7, Pan=CC10)",
+        "Every product surface reaches a phaser and a flanger parameter",
+        "GS-61 has the largest binding set",
+        "Mapped CCs drive SetPhaser/SetFlanger via applyCCAction"
+      ],
+      "components": [
+        "internal/midimap/midimap.go",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S19",
+        "S20",
+        "S10"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T16:15:00Z",
+      "completed_at": "2026-06-04T16:15:00Z",
+      "fix_solution": "Added PhaserRate/Depth/Feedback and FlangerRate/Depth/Feedback/Mix actions to midimap plus three GigSynth factory presets wiring the onboard surface to vol/pan + the full FX chain. Controller.applyCCAction gained cases that translate those CCs (0..127) into SetPhaser/SetFlanger calls (rate scaled to 0..5 Hz, others to percent).",
+      "tests": [
+        {
+          "id": "S23-T01",
+          "name": "Product presets cover full FX chain",
+          "description": "The GS-49/GS-61/GS-Desktop factory presets exist, keep Vol on CC7 and Pan on CC10, and each reaches a phaser and a flanger parameter; GS-61 has the most bindings.",
+          "how_we_test": "Go unit test iterates the product presets asserting CC7/CC10 and presence of phaser/flanger targets.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/midimap/presets_test.go"
+          ],
+          "test_code": "func TestProductPresetsCoverFullFXChain(t *testing.T){ /* GS-49/61/Desktop: Vol CC7, Pan CC10, phaser+flanger present */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T16:15:00Z"
+    },
+    {
+      "id": "S24",
+      "title": "Audio capture + WAV export",
+      "user_story": "As a gigging keyboardist, I want a recorded take's audio written to a real .wav file so I can keep or share it.",
+      "description": "Add a pure-Go 16-bit PCM mono WAV encoder. The Recorder retains captured samples (capped ~20 min to bound memory); Store.SaveWAV writes <id>.wav and stamps Recording.AudioPath; Controller.ExportRecordingWAV exposes it. NOTE: feeding live frames into CaptureAudio from FluidSynth's driver-owned audio thread (a C audio-driver2 callback) is the remaining hardware-bound piece tracked separately.",
+      "steps_to_reproduce": [
+        "Arm REC and play (audio frames captured via CaptureAudio)",
+        "Stop; the take retains its samples",
+        "Export the take; a .wav is written and AudioPath is set"
+      ],
+      "acceptance_criteria": [
+        "WriteWAV emits a well-formed 16-bit mono PCM WAV matching the sample rate",
+        "Recorder retains samples up to the cap; Stop returns them",
+        "Store.SaveWAV writes the file and records AudioPath",
+        "A take with no audio cannot be exported"
+      ],
+      "components": [
+        "internal/recording/wav.go",
+        "internal/recording/recording.go",
+        "internal/recording/store.go",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S21"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T16:15:00Z",
+      "completed_at": "2026-06-04T16:15:00Z",
+      "fix_solution": "Added recording.WriteWAV (RIFF/WAVE PCM16 mono, clamped). Recorder now appends RecordAudio frames into a capped sample buffer and returns them on Stop; Store.SaveWAV encodes them to <dir>/<id>.wav and sets AudioPath; Controller.ExportRecordingWAV delegates to the store. The live engine->CaptureAudio tap (driver2 callback) is documented as the remaining hardware step.",
+      "tests": [
+        {
+          "id": "S24-T01",
+          "name": "WAV header + data well-formed",
+          "description": "WriteWAV produces a 44-byte RIFF/WAVE header with PCM/mono/sample-rate/16-bit fields and one int16 per sample, full-scale clamped.",
+          "how_we_test": "Go unit test writes a known buffer and parses the header bytes + data length.",
+          "tools": [
+            "Go testing",
+            "testify",
+            "encoding/binary"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/recording/wav_test.go"
+          ],
+          "test_code": "func TestWriteWAVHeaderAndData(t *testing.T){ /* RIFF/WAVE/fmt /data, sr=48000, 16-bit, clamp +32767 */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        },
+        {
+          "id": "S24-T02",
+          "name": "Capture + export round-trip",
+          "description": "An armed recorder retains audio samples and the store exports them to a .wav, stamping AudioPath; an audio-less take cannot be exported.",
+          "how_we_test": "Go unit test records frames, stops, SaveWAVs to a temp dir, asserts the file exists and AudioPath is set, and that an empty take errors.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/recording/wav_test.go"
+          ],
+          "test_code": "func TestRecorderCaptureAndStoreExport(t *testing.T){ /* capture 4000 frames -> SaveWAV -> FileExists + AudioPath; empty take errors */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T16:15:00Z"
+    },
+    {
+      "id": "S25",
+      "title": "Phaser/Flanger on the touch7 and Pi Zero layouts",
+      "user_story": "As a Pi 5 (7-inch) or Pi Zero player, I want the Phaser and Flanger reachable on the small-screen layouts, not just the desktop, so the new effects are usable on the instruments.",
+      "description": "touch7 adds a Phaser + Flanger card showing all seven new parameters for the focused keyboard. The Pi Zero FX banking cycles the four encoders through chorus -> phaser -> flanger -> delay (first press from delay still lands on chorus, preserving the kiosk feature), and Encoder1 drives the highlighted effect.",
+      "steps_to_reproduce": [
+        "On touch7, focus a keyboard; see Phaser + Flanger values",
+        "On Pi Zero, press FX to bank to phaser then flanger",
+        "Turn encoder 1; the highlighted effect's rate changes"
+      ],
+      "acceptance_criteria": [
+        "touch7 shows Phaser (Rate/Depth/Feedback) and Flanger (Rate/Depth/Feedback/Mix)",
+        "Pi Zero ToggleFX cycles delay->chorus->phaser->flanger->delay",
+        "Pi Zero Encoder1 drives SetPhaser/SetFlanger when banked there",
+        "Existing pizero kiosk + touch7 focus tests stay green"
+      ],
+      "components": [
+        "internal/ui/touch7.go",
+        "internal/ui/pizero.go"
+      ],
+      "depends_on": [
+        "S19",
+        "S20",
+        "S15",
+        "S16"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T16:15:00Z",
+      "completed_at": "2026-06-04T16:15:00Z",
+      "fix_solution": "touch7 gained phaser/flanger labels populated in refresh() and a 'Phaser + Flanger' card. pizeroVM.fxGroup now cycles a 4-effect fxCycle (delay->chorus->phaser->flanger) so the first press from delay still highlights chorus; Encoder1 switches on the group and calls SetPhaser/SetFlanger as appropriate.",
+      "tests": [
+        {
+          "id": "S25-T01",
+          "name": "touch7 surfaces phaser/flanger",
+          "description": "The 7-inch layout shows the focused keyboard's phaser and flanger values.",
+          "how_we_test": "Headless Fyne test sets a scene with phaser/flanger values, builds touch7, focuses KB1, asserts the labels.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/smallscreen_fx_test.go"
+          ],
+          "test_code": "func TestTouch7ShowsPhaserFlanger(t *testing.T){ /* phRate 0.5 Hz, phDepth 60, flMix 55 */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        },
+        {
+          "id": "S25-T02",
+          "name": "Pi Zero banks all four effects",
+          "description": "ToggleFX cycles delay->chorus->phaser->flanger->delay and Encoder1 drives the highlighted effect.",
+          "how_we_test": "Headless Fyne test drives pizeroVM through the cycle and asserts PhaserOn/Rate and FlangerOn/Rate after Encoder1.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/smallscreen_fx_test.go"
+          ],
+          "test_code": "func TestPiZeroBanksThroughAllFourEffects(t *testing.T){ /* delay->chorus->phaser(enc1)->flanger(enc1)->delay */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T16:15:00Z"
     }
   ]
 }
