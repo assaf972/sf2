@@ -25,7 +25,7 @@ jobs:
 
       # Human-readable findings in the job log (vulns, misconfig, secrets).
       - name: Trivy scan (table)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scanners: vuln,misconfig,secret
@@ -35,7 +35,7 @@ jobs:
 
       # Machine-readable findings uploaded to GitHub code scanning.
       - name: Trivy scan (SARIF)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scanners: vuln,misconfig,secret
