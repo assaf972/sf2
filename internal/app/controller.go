@@ -478,6 +478,12 @@ func (c *Controller) DeleteAllRecordings() int { return c.recStore.DeleteAll() }
 // audio sink when armed; a no-op otherwise).
 func (c *Controller) CaptureAudio(buf []float32) { c.rec.RecordAudio(buf) }
 
+// ExportRecordingWAV writes a saved take's captured audio to <dir>/<id>.wav and
+// returns the path. Errors if the take has no audio or the id is unknown.
+func (c *Controller) ExportRecordingWAV(id, dir string) (string, error) {
+	return c.recStore.SaveWAV(id, dir)
+}
+
 // routeNote sends a note to every layer whose source and (for note-on) key
 // range match. Note-offs ignore the range/mute so notes can never get stuck.
 func (c *Controller) routeNote(on bool, device string, key, vel int) {
@@ -572,6 +578,20 @@ func (c *Controller) applyCCAction(idx int, a midimap.Action, val int, l Layer) 
 		c.SetDelay(idx, l.DelayOn, l.DelayTime, ccPercent(val), l.DelayMix)
 	case midimap.DelayMix:
 		c.SetDelay(idx, l.DelayOn, l.DelayTime, l.DelayFeedback, ccPercent(val))
+	case midimap.PhaserRate:
+		c.SetPhaser(idx, l.PhaserOn, float64(val)/127*5.0, l.PhaserDepth, l.PhaserFeedback)
+	case midimap.PhaserDepth:
+		c.SetPhaser(idx, l.PhaserOn, l.PhaserRate, ccPercent(val), l.PhaserFeedback)
+	case midimap.PhaserFeedback:
+		c.SetPhaser(idx, l.PhaserOn, l.PhaserRate, l.PhaserDepth, ccPercent(val))
+	case midimap.FlangerRate:
+		c.SetFlanger(idx, l.FlangerOn, float64(val)/127*5.0, l.FlangerDepth, l.FlangerFeedback, l.FlangerMix)
+	case midimap.FlangerDepth:
+		c.SetFlanger(idx, l.FlangerOn, l.FlangerRate, ccPercent(val), l.FlangerFeedback, l.FlangerMix)
+	case midimap.FlangerFeedback:
+		c.SetFlanger(idx, l.FlangerOn, l.FlangerRate, l.FlangerDepth, ccPercent(val), l.FlangerMix)
+	case midimap.FlangerMix:
+		c.SetFlanger(idx, l.FlangerOn, l.FlangerRate, l.FlangerDepth, l.FlangerFeedback, ccPercent(val))
 	case midimap.Sustain:
 		c.eng.CC(l.Channel, 64, val)
 	}

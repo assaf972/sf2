@@ -199,6 +199,12 @@
     <rect x="180" y="96" width="22" height="14" rx="2" fill="#161b23" stroke="#3a4452"/>
     <rect x="210" y="98" width="14" height="10" rx="5" fill="#161b23" stroke="#3a4452"/>
   </g>
+
+  <!-- Guitar / bass instrument input jack (rear) -->
+  <g>
+    <circle cx="248" cy="103" r="7" fill="#14181f" stroke="#2d3543" stroke-width="1.5"/>
+    <circle cx="248" cy="103" r="2.5" fill="#0b0e13"/>
+  </g>
   <rect x="900" y="96" width="60" height="16" rx="3" fill="#161b23" stroke="#3a4452"/>
   <text x="930" y="108" fill="#8b97a7" font-size="8" text-anchor="middle">Pi 5</text>
 
@@ -212,6 +218,7 @@
     <path d="M 131 96 L 131 76"/>
     <path d="M 161 96 L 161 64"/>
     <path d="M 191 96 L 191 500 L 360 500"/>
+    <path d="M 248 96 L 248 48"/>
   </g>
   <g fill="#8b97a7" font-size="11">
     <text x="1264" y="88" fill="#e6edf3">7″ touchscreen — app live</text>
@@ -222,5 +229,6 @@
     <text x="135" y="72">USB-C power</text>
     <text x="165" y="60">USB MIDI</text>
     <text x="364" y="504">stereo out + aux out + headphone (rear)</text>
+    <text x="254" y="44">GUITAR / BASS IN (¼″) — build your own amp/cab rig (NAM + IR)</text>
   </g>
 </svg>

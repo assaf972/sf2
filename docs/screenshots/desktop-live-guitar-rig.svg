@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11151c"/><stop offset="1" stop-color="#0b0e13"/>
+    </linearGradient>
+    <style>
+      .panel{fill:#1a1f29;stroke:#2b3340;stroke-width:1}
+      .panel2{fill:#232a36;stroke:#323b4a;stroke-width:1}
+      .txt{fill:#e6edf3}.muted{fill:#8b97a7}.accent{fill:#4cc2ff}
+      .lbl{fill:#8b97a7;font-size:12px}.big{fill:#e6edf3;font-size:20px;font-weight:600}
+      .h{fill:#cdd7e2;font-size:14px;font-weight:600}.num{fill:#4cc2ff;font-size:13px;font-weight:600}
+      .kv{fill:#e6edf3;font-size:15px;font-weight:700}.kl{fill:#8b97a7;font-size:11px}
+      .ghdr{fill:#cdd7e2;font-size:11px;font-weight:600;letter-spacing:.5px}
+      .fxname{fill:#e6edf3;font-size:16px;font-weight:700;letter-spacing:.5px}
+      .mono{font-family:monospace}
+    </style>
+  </defs>
+  <rect width="1280" height="860" fill="url(#bg)"/>
+
+  <!-- Title bar + tabs -->
+  <rect x="0" y="0" width="1280" height="36" fill="#0a0d12"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f56"/><circle cx="42" cy="18" r="6" fill="#ffbd2e"/><circle cx="62" cy="18" r="6" fill="#27c93f"/>
+  <text x="640" y="23" text-anchor="middle" class="muted" font-size="13">GigSynth — Guitar Rig</text>
+  <rect x="0" y="36" width="1280" height="44" fill="#141922"/>
+  <text x="60" y="63" text-anchor="middle" class="muted" font-size="14">Live</text>
+  <text x="150" y="63" text-anchor="middle" class="muted" font-size="14">Drumming</text>
+  <text x="268" y="63" text-anchor="middle" class="muted" font-size="14">Guitar Rig</text>
+  <rect x="356" y="48" width="160" height="22" rx="4" fill="#4cc2ff" opacity="0.16"/>
+  <text x="436" y="63" text-anchor="middle" class="accent" font-size="14" font-weight="600">Live Guitar Rig</text>
+  <text x="572" y="63" text-anchor="middle" class="muted" font-size="14">Settings</text>
+  <rect x="0" y="79" width="1280" height="1" fill="#2b3340"/>
+
+  <!-- Header: input meter + signal chain + active combo -->
+  <g transform="translate(24,96)">
+    <rect class="panel" x="0" y="0" width="1232" height="64" rx="10"/>
+    <rect x="0" y="0" width="1232" height="64" rx="10" fill="#202734"/>
+    <text x="20" y="26" class="lbl">¼″ GUITAR IN</text>
+    <rect x="20" y="34" width="180" height="14" rx="7" fill="#222a35"/>
+    <rect x="20" y="34" width="120" height="14" rx="7" fill="#27c93f"/>
+    <rect x="140" y="34" width="22" height="14" fill="#ffbd2e"/>
+    <text x="240" y="26" class="lbl">SIGNAL CHAIN</text>
+    <text x="240" y="50" class="accent" font-size="13" font-weight="600">In → Fuzz → OD → Dist → Mod → Amp → Cab IR → Out</text>
+    <text x="1212" y="26" text-anchor="end" class="lbl">ACTIVE COMBINATION</text>
+    <text x="1212" y="50" text-anchor="end" class="big" font-size="18">Lead</text>
+  </g>
+
+  <!-- ===== 4 EFFECT SLOTS ===== -->
+  <g transform="translate(24,176)">
+    <!-- FUZZ (On) -->
+    <g transform="translate(0,0)">
+      <rect class="panel" x="0" y="0" width="294" height="290" rx="12"/>
+      <rect x="0" y="0" width="294" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="294" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">FUZZ</text>
+      <text x="20" y="64" class="muted" font-size="11">SLOT 1 · thick gated saturation</text>
+      <rect x="200" y="14" width="76" height="22" rx="11" fill="#143040" stroke="#4cc2ff"/>
+      <circle cx="216" cy="25" r="4" fill="#4cc2ff"/><text x="248" y="29" text-anchor="middle" class="accent" font-size="11">On</text>
+      <g transform="translate(85,150)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="128 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">8.0</text><text y="56" text-anchor="middle" class="kl">DRIVE</text></g>
+      <g transform="translate(209,150)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="80 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">45</text><text y="56" text-anchor="middle" class="kl">TONE</text></g>
+      <g transform="translate(147,250)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="96 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">60</text><text y="56" text-anchor="middle" class="kl">LEVEL</text></g>
+    </g>
+    <!-- OVERDRIVE (On, focused) -->
+    <g transform="translate(310,0)">
+      <rect class="panel" x="0" y="0" width="294" height="290" rx="12" stroke="#4cc2ff" stroke-width="2"/>
+      <rect x="0" y="0" width="294" height="48" rx="12" fill="#1d3340"/><rect x="0" y="24" width="294" height="24" fill="#1d3340"/>
+      <text x="20" y="31" class="fxname">OVERDRIVE</text>
+      <text x="20" y="64" class="accent" font-size="11">SLOT 2 · FOCUSED · mapped to knobs</text>
+      <rect x="200" y="14" width="76" height="22" rx="11" fill="#143040" stroke="#4cc2ff"/>
+      <circle cx="216" cy="25" r="4" fill="#4cc2ff"/><text x="248" y="29" text-anchor="middle" class="accent" font-size="11">On</text>
+      <g transform="translate(85,150)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="104 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">6.5</text><text y="56" text-anchor="middle" class="kl">DRIVE</text></g>
+      <g transform="translate(209,150)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="120 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">65</text><text y="56" text-anchor="middle" class="kl">TONE</text></g>
+      <g transform="translate(147,250)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="112 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">70</text><text y="56" text-anchor="middle" class="kl">LEVEL</text></g>
+    </g>
+    <!-- DISTORTION (Off) -->
+    <g transform="translate(620,0)" opacity="0.5">
+      <rect class="panel" x="0" y="0" width="294" height="290" rx="12"/>
+      <rect x="0" y="0" width="294" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="294" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">DISTORTION</text>
+      <text x="20" y="64" class="muted" font-size="11">SLOT 3 · high-gain tight clip</text>
+      <rect x="200" y="14" width="76" height="22" rx="11" fill="#2d3543"/>
+      <circle cx="216" cy="25" r="4" fill="#5a6678"/><text x="248" y="29" text-anchor="middle" class="muted" font-size="11">Off</text>
+      <g transform="translate(85,150)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">7.0</text><text y="56" text-anchor="middle" class="kl">GAIN</text></g>
+      <g transform="translate(209,150)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">55</text><text y="56" text-anchor="middle" class="kl">TONE</text></g>
+      <g transform="translate(147,250)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">60</text><text y="56" text-anchor="middle" class="kl">LEVEL</text></g>
+    </g>
+    <!-- MODULATION (On) -->
+    <g transform="translate(930,0)">
+      <rect class="panel" x="0" y="0" width="294" height="290" rx="12"/>
+      <rect x="0" y="0" width="294" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="294" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">MODULATION</text>
+      <text x="20" y="64" class="muted" font-size="11">SLOT 4 · chorus / phaser / flanger</text>
+      <rect x="200" y="14" width="76" height="22" rx="11" fill="#143040" stroke="#4cc2ff"/>
+      <circle cx="216" cy="25" r="4" fill="#4cc2ff"/><text x="248" y="29" text-anchor="middle" class="accent" font-size="11">On</text>
+      <g transform="translate(85,150)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="56 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">0.8</text><text y="56" text-anchor="middle" class="kl">RATE Hz</text></g>
+      <g transform="translate(209,150)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="96 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">55</text><text y="56" text-anchor="middle" class="kl">DEPTH</text></g>
+      <g transform="translate(147,250)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="72 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv">35</text><text y="56" text-anchor="middle" class="kl">MIX</text></g>
+    </g>
+  </g>
+
+  <!-- ===== Amp / Cab · Hardware controls · Combinations ===== -->
+  <g transform="translate(24,480)">
+    <!-- AMP (NAM) -->
+    <g transform="translate(0,0)">
+      <rect class="panel" x="0" y="0" width="300" height="180" rx="12"/>
+      <text x="20" y="30" class="ghdr">AMP · NAM PROFILE</text>
+      <rect x="20" y="44" width="260" height="30" rx="6" fill="#143040" stroke="#4cc2ff"/>
+      <text x="34" y="64" class="accent" font-size="13">Tweed Deluxe .nam ▾</text>
+      <g transform="translate(80,128)"><circle r="30" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="141 47" transform="rotate(135)"/><circle r="30" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="90 188" transform="rotate(135)"/><circle r="19" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="13">7.0</text><text y="48" text-anchor="middle" class="kl">GAIN</text></g>
+      <g transform="translate(220,128)"><circle r="30" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="141 47" transform="rotate(135)"/><circle r="30" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="110 188" transform="rotate(135)"/><circle r="19" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="13">6.0</text><text y="48" text-anchor="middle" class="kl">MASTER</text></g>
+    </g>
+    <!-- CABINET IR -->
+    <g transform="translate(316,0)">
+      <rect class="panel" x="0" y="0" width="240" height="180" rx="12"/>
+      <text x="20" y="30" class="ghdr">CABINET IR</text>
+      <rect x="20" y="44" width="200" height="30" rx="6" fill="#143040" stroke="#4cc2ff"/>
+      <text x="34" y="64" class="accent" font-size="13">4×12 V30 .wav ▾</text>
+      <text x="20" y="104" class="lbl">IR LENGTH</text><text x="220" y="104" text-anchor="end" class="row" fill="#cdd7e2" font-size="13">1024 taps</text>
+      <text x="20" y="132" class="lbl">MIX</text>
+      <rect x="20" y="142" width="200" height="10" rx="5" fill="#222a35"/>
+      <rect x="20" y="142" width="200" height="10" rx="5" fill="#4cc2ff"/>
+      <text x="20" y="170" class="muted" font-size="11">FFTConvolver · zero-latency</text>
+    </g>
+    <!-- HARDWARE CONTROLS -->
+    <g transform="translate(572,0)">
+      <rect class="panel" x="0" y="0" width="380" height="180" rx="12"/>
+      <text x="20" y="30" class="ghdr">HARDWARE KNOBS / SLIDERS → OVERDRIVE</text>
+      <g transform="translate(60,108)"><circle r="30" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="141 47" transform="rotate(135)"/><circle r="30" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="104 188" transform="rotate(135)"/><circle r="19" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="13">6.5</text><text y="48" text-anchor="middle" class="kl">K1 DRIVE</text></g>
+      <g transform="translate(160,108)"><circle r="30" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="141 47" transform="rotate(135)"/><circle r="30" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="120 188" transform="rotate(135)"/><circle r="19" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="13">65</text><text y="48" text-anchor="middle" class="kl">K2 TONE</text></g>
+      <!-- sliders -->
+      <g transform="translate(250,40)"><rect x="-6" y="0" width="12" height="100" rx="6" fill="#222a35"/><rect x="-6" y="40" width="12" height="60" rx="6" fill="#4cc2ff"/><rect x="-14" y="36" width="28" height="10" rx="3" fill="#e6edf3"/><text y="116" text-anchor="middle" class="kl">S3 LEVEL</text></g>
+      <g transform="translate(330,40)"><rect x="-6" y="0" width="12" height="100" rx="6" fill="#222a35"/><rect x="-6" y="20" width="12" height="80" rx="6" fill="#4cc2ff"/><rect x="-14" y="16" width="28" height="10" rx="3" fill="#e6edf3"/><text y="116" text-anchor="middle" class="kl">S4 MIX</text></g>
+    </g>
+    <!-- COMBINATIONS -->
+    <g transform="translate(964,0)">
+      <rect class="panel" x="0" y="0" width="268" height="180" rx="12"/>
+      <text x="20" y="30" class="ghdr">COMBINATIONS</text>
+      <g font-size="13">
+        <g transform="translate(20,44)"><rect width="228" height="28" rx="7" class="panel2"/><text x="14" y="19" class="row" fill="#cdd7e2">Clean</text></g>
+        <g transform="translate(20,78)"><rect width="228" height="28" rx="7" class="panel2"/><text x="14" y="19" class="row" fill="#cdd7e2">Crunch</text></g>
+        <g transform="translate(20,112)"><rect width="228" height="28" rx="7" fill="#143040" stroke="#4cc2ff"/><text x="14" y="19" class="accent">Lead ✓</text></g>
+      </g>
+      <rect x="20" y="146" width="110" height="24" rx="6" fill="#143040" stroke="#4cc2ff"/><text x="75" y="162" text-anchor="middle" class="accent" font-size="12">Save…</text>
+      <rect x="138" y="146" width="110" height="24" rx="6" class="panel2"/><text x="193" y="162" text-anchor="middle" class="muted" font-size="12">Bass DI</text>
+    </g>
+  </g>
+
+  <!-- ===== MP3 player (pitch / remove guitar / loop) ===== -->
+  <g transform="translate(24,676)">
+    <rect class="panel" x="0" y="0" width="1232" height="160" rx="12"/>
+    <text x="20" y="30" class="ghdr">BACKING TRACK</text>
+    <text x="20" y="58" class="big" font-size="16">Blues Shuffle in A — 110 BPM</text>
+    <text x="20" y="80" class="muted" font-size="12">backing-tracks/blues-a-110.mp3</text>
+    <!-- transport -->
+    <g transform="translate(70,128)"><circle r="26" fill="#143040" stroke="#4cc2ff" stroke-width="2"/><polygon points="-8,-12 -8,12 14,0" fill="#4cc2ff"/></g>
+    <g transform="translate(140,128)"><circle r="22" fill="#232a36" stroke="#323b4a"/><rect x="-6" y="-7" width="12" height="14" rx="2" fill="#cdd7e2"/></g>
+    <g transform="translate(206,128)"><circle r="22" fill="#143040" stroke="#4cc2ff"/><path d="M -10 -4 a 9 9 0 1 1 -1 8" fill="none" stroke="#4cc2ff" stroke-width="2.5"/><polygon points="-12,3 -6,-3 -15,-5" fill="#4cc2ff"/></g>
+    <text x="70" y="96" text-anchor="middle" class="kl">PLAY</text><text x="140" y="96" text-anchor="middle" class="kl">STOP</text><text x="206" y="96" text-anchor="middle" class="accent" font-size="11">LOOP A–B</text>
+    <!-- position -->
+    <rect x="260" y="110" width="500" height="10" rx="5" fill="#222a35"/>
+    <rect x="260" y="110" width="200" height="10" rx="5" fill="#4cc2ff"/>
+    <rect x="360" y="106" width="80" height="18" rx="4" fill="#4cc2ff" opacity="0.18"/>
+    <circle cx="460" cy="115" r="8" fill="#e6edf3"/>
+    <text x="260" y="142" class="muted mono" font-size="12">01:04</text>
+    <text x="760" y="142" text-anchor="end" class="muted mono" font-size="12">03:20</text>
+    <text x="400" y="142" text-anchor="middle" class="accent" font-size="11">LOOP A–B armed</text>
+    <!-- PITCH stepper -->
+    <g transform="translate(820,40)">
+      <text x="0" y="22" class="lbl">PITCH</text>
+      <rect x="0" y="34" width="150" height="44" rx="8" class="panel2"/>
+      <circle cx="24" cy="56" r="14" fill="#143040" stroke="#4cc2ff"/><text x="24" y="61" text-anchor="middle" class="accent" font-size="16">−</text>
+      <text x="75" y="62" text-anchor="middle" class="big" font-size="18">−2 st</text>
+      <circle cx="126" cy="56" r="14" fill="#143040" stroke="#4cc2ff"/><text x="126" y="61" text-anchor="middle" class="accent" font-size="16">+</text>
+      <text x="0" y="102" class="muted" font-size="11">tempo preserved (WSOLA)</text>
+    </g>
+    <!-- REMOVE GUITAR toggle -->
+    <g transform="translate(1000,40)">
+      <text x="0" y="22" class="lbl">REMOVE GUITAR / VOCAL</text>
+      <rect x="0" y="34" width="86" height="44" rx="22" fill="#143040" stroke="#4cc2ff"/>
+      <circle cx="62" cy="56" r="16" fill="#4cc2ff"/>
+      <text x="0" y="102" class="accent" font-size="11">center channel cancelled</text>
+    </g>
+    <!-- TRACK VOLUME -->
+    <g transform="translate(1110,40)">
+      <text x="120" y="22" text-anchor="end" class="lbl">TRACK VOL</text>
+      <rect x="0" y="40" width="120" height="10" rx="5" fill="#222a35"/>
+      <rect x="0" y="40" width="92" height="10" rx="5" fill="#4cc2ff"/>
+      <text x="120" y="72" text-anchor="end" class="muted" font-size="11">play along, drop the original guitar</text>
+    </g>
+  </g>
+</svg>

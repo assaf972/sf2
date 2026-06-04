@@ -33,7 +33,8 @@ type Recording struct {
 	Events        []MIDIEvent
 	Frames        int
 	SampleRate    float64
-	AudioPath     string // set when audio is flushed to a .wav, empty otherwise
+	Samples       []float32 // captured mono audio (may be nil if capture was off)
+	AudioPath     string    // set when audio is flushed to a .wav, empty otherwise
 }
 
 // HasAudio reports whether the take captured any audio frames.
@@ -57,20 +58,27 @@ type Recorder struct {
 	clock      Clock
 	sampleRate float64
 
-	active  bool
-	name    string
-	startMs int64
-	events  []MIDIEvent
-	frames  int
+	active   bool
+	name     string
+	startMs  int64
+	events   []MIDIEvent
+	frames   int
+	samples  []float32
+	maxFrame int // cap on retained samples (0 = no capture)
 }
 
 // NewRecorder returns an idle recorder at the given sample rate. Pass clk=nil to
-// use the real wall clock.
+// use the real wall clock. Audio samples are retained for WAV export up to a
+// 20-minute cap (frames beyond that are counted but not kept, to bound memory).
 func NewRecorder(sampleRate float64, clk Clock) *Recorder {
 	if clk == nil {
 		clk = realClock{}
 	}
-	return &Recorder{clock: clk, sampleRate: sampleRate}
+	cap := 0
+	if sampleRate > 0 {
+		cap = int(sampleRate * 60 * 20) // ~20 minutes mono
+	}
+	return &Recorder{clock: clk, sampleRate: sampleRate, maxFrame: cap}
 }
 
 // IsRecording reports whether a take is currently armed.
@@ -92,6 +100,7 @@ func (r *Recorder) Start(name string) {
 	r.startMs = r.clock.NowMs()
 	r.events = r.events[:0]
 	r.frames = 0
+	r.samples = r.samples[:0]
 }
 
 // RecordMIDI appends an event to the in-progress take (no-op when not armed).
@@ -116,6 +125,14 @@ func (r *Recorder) RecordAudio(buf []float32) {
 		return
 	}
 	r.frames += len(buf)
+	if r.maxFrame > 0 && len(r.samples) < r.maxFrame {
+		room := r.maxFrame - len(r.samples)
+		if room >= len(buf) {
+			r.samples = append(r.samples, buf...)
+		} else {
+			r.samples = append(r.samples, buf[:room]...)
+		}
+	}
 }
 
 // ElapsedMs is how long the current take has been running (0 when idle).
@@ -149,6 +166,8 @@ func (r *Recorder) Stop() (Recording, bool) {
 	}
 	events := make([]MIDIEvent, len(r.events))
 	copy(events, r.events)
+	samples := make([]float32, len(r.samples))
+	copy(samples, r.samples)
 	return Recording{
 		Name:          r.name,
 		CreatedAtUnix: r.startMs / 1000,
@@ -156,6 +175,7 @@ func (r *Recorder) Stop() (Recording, bool) {
 		Events:        events,
 		Frames:        r.frames,
 		SampleRate:    r.sampleRate,
+		Samples:       samples,
 	}, true
 }
 

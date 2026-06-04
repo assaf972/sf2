@@ -1,0 +1,214 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11151c"/><stop offset="1" stop-color="#0b0e13"/>
+    </linearGradient>
+    <style>
+      .panel{fill:#1a1f29;stroke:#2b3340;stroke-width:1}
+      .panel2{fill:#232a36;stroke:#323b4a;stroke-width:1}
+      .txt{fill:#e6edf3}.muted{fill:#8b97a7}.accent{fill:#4cc2ff}
+      .lbl{fill:#8b97a7;font-size:12px}.big{fill:#e6edf3;font-size:20px;font-weight:600}
+      .h{fill:#cdd7e2;font-size:14px;font-weight:600}.num{fill:#4cc2ff;font-size:13px;font-weight:600}
+      .kv{fill:#e6edf3;font-size:10px;font-weight:700}.kl{fill:#8b97a7;font-size:9px}
+      .ghdr{fill:#cdd7e2;font-size:11px;font-weight:600;letter-spacing:.5px}
+      .fxname{fill:#e6edf3;font-size:16px;font-weight:700;letter-spacing:.5px}
+      .field{fill:#161b23;stroke:#323b4a;stroke-width:1}
+    </style>
+  </defs>
+  <rect width="1280" height="860" fill="url(#bg)"/>
+
+  <!-- Title bar + tabs -->
+  <rect x="0" y="0" width="1280" height="36" fill="#0a0d12"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f56"/><circle cx="42" cy="18" r="6" fill="#ffbd2e"/><circle cx="62" cy="18" r="6" fill="#27c93f"/>
+  <text x="640" y="23" text-anchor="middle" class="muted" font-size="13">GigSynth — FluidSynth Live Rig</text>
+  <rect x="0" y="36" width="1280" height="44" fill="#141922"/>
+  <text x="72" y="63" text-anchor="middle" class="muted" font-size="14">Live</text>
+  <text x="170" y="63" text-anchor="middle" class="muted" font-size="14">Songs</text>
+  <text x="288" y="63" text-anchor="middle" class="muted" font-size="14">Recordings</text>
+  <rect x="396" y="48" width="72" height="22" rx="4" fill="#4cc2ff" opacity="0.16"/>
+  <text x="432" y="63" text-anchor="middle" class="accent" font-size="14" font-weight="600">Rig</text>
+  <text x="540" y="63" text-anchor="middle" class="muted" font-size="14">Settings</text>
+  <rect x="0" y="79" width="1280" height="1" fill="#2b3340"/>
+
+  <!-- Header / context -->
+  <g transform="translate(24,96)">
+    <rect class="panel" x="0" y="0" width="1232" height="64" rx="10"/>
+    <rect x="0" y="0" width="1232" height="64" rx="10" fill="#202734"/>
+    <circle cx="26" cy="32" r="6" fill="#27c93f"/>
+    <text x="44" y="29" class="h" font-size="16">Guitar Rig — Instrument Input Chain</text>
+    <text x="44" y="50" class="muted" font-size="12">¼″ Instrument IN · Part 7 — Lead Crunch · 48 kHz · 96-sample buffer</text>
+    <text x="700" y="26" class="lbl">ACTIVE PART</text>
+    <text x="700" y="50" class="big" font-size="18">Lead Crunch</text>
+    <text x="1212" y="29" text-anchor="end" class="muted" font-size="12">SIGNAL CHAIN</text>
+    <text x="1212" y="50" text-anchor="end" class="accent" font-size="13" font-weight="600">IN → Gate → Amp → Cab IR → EQ → FX → Out</text>
+  </g>
+
+  <!-- ===== SIGNAL CHAIN MODULES ===== -->
+  <g transform="translate(24,176)">
+
+    <!-- INPUT -->
+    <g transform="translate(0,0)">
+      <rect class="panel" x="0" y="0" width="226" height="300" rx="12"/>
+      <rect x="0" y="0" width="226" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="226" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">INPUT</text>
+      <text x="20" y="74" class="muted" font-size="11">¼″ Instrument · TS jack</text>
+      <!-- Guitar / Bass toggle -->
+      <rect x="20" y="86" width="186" height="30" rx="15" fill="#161b23" stroke="#323b4a"/>
+      <rect x="22" y="88" width="92" height="26" rx="13" fill="#4cc2ff" opacity="0.18" stroke="#4cc2ff"/>
+      <text x="68" y="105" text-anchor="middle" class="accent" font-size="12" font-weight="700">Guitar</text>
+      <text x="160" y="105" text-anchor="middle" class="muted" font-size="12">Bass</text>
+      <!-- Input level meter (horizontal segmented) -->
+      <text x="20" y="142" class="lbl" font-size="10">INPUT LEVEL</text>
+      <g transform="translate(20,150)">
+        <rect x="0" y="0" width="186" height="14" rx="4" fill="#161b23" stroke="#323b4a"/>
+        <rect x="4" y="3" width="14" height="8" rx="2" fill="#27c93f"/>
+        <rect x="22" y="3" width="14" height="8" rx="2" fill="#27c93f"/>
+        <rect x="40" y="3" width="14" height="8" rx="2" fill="#27c93f"/>
+        <rect x="58" y="3" width="14" height="8" rx="2" fill="#27c93f"/>
+        <rect x="76" y="3" width="14" height="8" rx="2" fill="#27c93f"/>
+        <rect x="94" y="3" width="14" height="8" rx="2" fill="#27c93f"/>
+        <rect x="112" y="3" width="14" height="8" rx="2" fill="#ffbd2e"/>
+        <rect x="130" y="3" width="14" height="8" rx="2" fill="#ffbd2e"/>
+        <rect x="148" y="3" width="14" height="8" rx="2" fill="#2d3543"/>
+        <rect x="166" y="3" width="14" height="8" rx="2" fill="#2d3543"/>
+      </g>
+      <text x="20" y="180" class="muted" font-size="9">-12 dBFS peak</text>
+      <!-- knobs -->
+      <g transform="translate(71,240)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="80.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">+6</text><text y="56" text-anchor="middle" class="kl" font-size="11">IN GAIN dB</text></g>
+      <g transform="translate(167,240)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="40.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="13">-48</text><text y="56" text-anchor="middle" class="kl" font-size="11">GATE dB</text></g>
+    </g>
+
+    <!-- chain arrow -->
+    <path d="M 230 326 L 246 326" stroke="#4cc2ff" stroke-width="2"/><path d="M 246 326 l -6 -4 v 8 z" fill="#4cc2ff"/>
+
+    <!-- AMP -->
+    <g transform="translate(250,0)">
+      <rect class="panel" x="0" y="0" width="320" height="600" rx="12"/>
+      <rect x="0" y="0" width="320" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="320" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">AMP</text>
+      <rect x="226" y="14" width="76" height="22" rx="11" fill="#143040" stroke="#4cc2ff"/>
+      <circle cx="242" cy="25" r="4" fill="#4cc2ff"/><text x="274" y="29" text-anchor="middle" class="accent" font-size="11">On</text>
+      <text x="20" y="74" class="muted" font-size="11">Neural Amp Modeler · loaded model</text>
+      <!-- model dropdown field -->
+      <rect class="field" x="20" y="86" width="280" height="36" rx="8"/>
+      <text x="34" y="104" class="muted" font-size="9">NAM MODEL</text>
+      <text x="34" y="116" class="accent" font-size="13" font-weight="700">NAM: Tweed Deluxe</text>
+      <text x="286" y="110" text-anchor="end" class="muted" font-size="14">▾</text>
+      <text x="20" y="148" class="lbl">TONE STACK</text>
+      <line x1="20" y1="158" x2="300" y2="158" stroke="#2b3340"/>
+      <!-- knobs row 1 -->
+      <g transform="translate(85,240)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="104.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">6.8</text><text y="56" text-anchor="middle" class="kl" font-size="11">GAIN</text></g>
+      <g transform="translate(235,240)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="72.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">5.0</text><text y="56" text-anchor="middle" class="kl" font-size="11">BASS</text></g>
+      <!-- knobs row 2 -->
+      <g transform="translate(85,390)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="88.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">5.6</text><text y="56" text-anchor="middle" class="kl" font-size="11">MID</text></g>
+      <g transform="translate(235,390)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="96.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">6.2</text><text y="56" text-anchor="middle" class="kl" font-size="11">TREBLE</text></g>
+      <!-- master -->
+      <g transform="translate(160,520)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="84.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="15">5.3</text><text y="56" text-anchor="middle" class="kl" font-size="11">MASTER</text></g>
+    </g>
+
+    <!-- chain arrow -->
+    <path d="M 574 326 L 590 326" stroke="#4cc2ff" stroke-width="2"/><path d="M 590 326 l -6 -4 v 8 z" fill="#4cc2ff"/>
+
+    <!-- CABINET (IR) -->
+    <g transform="translate(594,0)">
+      <rect class="panel" x="0" y="0" width="226" height="300" rx="12"/>
+      <rect x="0" y="0" width="226" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="226" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">CABINET</text>
+      <rect x="150" y="14" width="62" height="22" rx="11" fill="#143040" stroke="#4cc2ff"/>
+      <circle cx="166" cy="25" r="4" fill="#4cc2ff"/><text x="190" y="29" text-anchor="middle" class="accent" font-size="11">IR</text>
+      <text x="20" y="74" class="muted" font-size="11">Impulse-response convolution</text>
+      <rect class="field" x="20" y="86" width="186" height="36" rx="8"/>
+      <text x="34" y="104" class="muted" font-size="9">IR FILE (.wav)</text>
+      <text x="34" y="116" class="accent" font-size="13" font-weight="700">IR: 4x12 V30</text>
+      <text x="192" y="110" text-anchor="end" class="muted" font-size="14">▾</text>
+      <!-- knobs -->
+      <g transform="translate(71,210)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="92.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="13">-3</text><text y="56" text-anchor="middle" class="kl" font-size="11">LEVEL dB</text></g>
+      <g transform="translate(167,210)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="44.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="13">80</text><text y="56" text-anchor="middle" class="kl" font-size="11">LOW-CUT Hz</text></g>
+    </g>
+
+    <!-- EQ (small card under cabinet) -->
+    <g transform="translate(594,320)">
+      <rect class="panel" x="0" y="0" width="226" height="280" rx="12"/>
+      <rect x="0" y="0" width="226" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="226" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">3-BAND EQ</text>
+      <text x="20" y="74" class="muted" font-size="11">Post-cabinet voicing</text>
+      <g transform="translate(45,150)"><circle r="30" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="141.4 47.1" transform="rotate(135)"/><circle r="30" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="80.1 188.5" transform="rotate(135)"/><circle r="19" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="12">+2</text><text y="50" text-anchor="middle" class="kl" font-size="10">LOW</text></g>
+      <g transform="translate(113,150)"><circle r="30" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="141.4 47.1" transform="rotate(135)"/><circle r="30" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="64.1 188.5" transform="rotate(135)"/><circle r="19" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="12">-1</text><text y="50" text-anchor="middle" class="kl" font-size="10">MID</text></g>
+      <g transform="translate(181,150)"><circle r="30" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="141.4 47.1" transform="rotate(135)"/><circle r="30" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="92.1 188.5" transform="rotate(135)"/><circle r="19" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="12">+3</text><text y="50" text-anchor="middle" class="kl" font-size="10">HIGH</text></g>
+      <text x="20" y="245" class="muted" font-size="9">Bass mode: DI blend 30% (parallel clean)</text>
+    </g>
+
+    <!-- chain arrow -->
+    <path d="M 824 326 L 840 326" stroke="#4cc2ff" stroke-width="2"/><path d="M 840 326 l -6 -4 v 8 z" fill="#4cc2ff"/>
+
+    <!-- PEDALS strip -->
+    <g transform="translate(844,0)">
+      <rect class="panel" x="0" y="0" width="226" height="600" rx="12"/>
+      <rect x="0" y="0" width="226" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="226" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">PEDALS</text>
+      <text x="20" y="74" class="muted" font-size="11">Post-amp FX · tap to toggle</text>
+      <line x1="20" y1="88" x2="206" y2="88" stroke="#2b3340"/>
+      <!-- Chorus On -->
+      <g transform="translate(20,108)">
+        <rect class="panel2" x="0" y="0" width="186" height="62" rx="10"/>
+        <text x="16" y="26" class="txt" font-size="14" font-weight="700">CHORUS</text>
+        <text x="16" y="46" class="muted" font-size="10">rate 0.8 · depth 55</text>
+        <rect x="120" y="18" width="54" height="26" rx="13" fill="#143040" stroke="#4cc2ff"/>
+        <circle cx="136" cy="31" r="4" fill="#4cc2ff"/><text x="156" y="35" text-anchor="middle" class="accent" font-size="11">On</text>
+      </g>
+      <!-- Delay On -->
+      <g transform="translate(20,180)">
+        <rect class="panel2" x="0" y="0" width="186" height="62" rx="10"/>
+        <text x="16" y="26" class="txt" font-size="14" font-weight="700">DELAY</text>
+        <text x="16" y="46" class="muted" font-size="10">320 ms · fb 35</text>
+        <rect x="120" y="18" width="54" height="26" rx="13" fill="#143040" stroke="#4cc2ff"/>
+        <circle cx="136" cy="31" r="4" fill="#4cc2ff"/><text x="156" y="35" text-anchor="middle" class="accent" font-size="11">On</text>
+      </g>
+      <!-- Phaser Off -->
+      <g transform="translate(20,252)" opacity="0.5">
+        <rect class="panel2" x="0" y="0" width="186" height="62" rx="10"/>
+        <text x="16" y="26" class="txt" font-size="14" font-weight="700">PHASER</text>
+        <text x="16" y="46" class="muted" font-size="10">rate 0.35 · depth 70</text>
+        <rect x="120" y="18" width="54" height="26" rx="13" fill="#2d3543"/>
+        <circle cx="136" cy="31" r="4" fill="#5a6678"/><text x="156" y="35" text-anchor="middle" class="muted" font-size="11">Off</text>
+      </g>
+      <!-- Flanger Off -->
+      <g transform="translate(20,324)" opacity="0.5">
+        <rect class="panel2" x="0" y="0" width="186" height="62" rx="10"/>
+        <text x="16" y="26" class="txt" font-size="14" font-weight="700">FLANGER</text>
+        <text x="16" y="46" class="muted" font-size="10">rate 0.2 · mix 50</text>
+        <rect x="120" y="18" width="54" height="26" rx="13" fill="#2d3543"/>
+        <circle cx="136" cy="31" r="4" fill="#5a6678"/><text x="156" y="35" text-anchor="middle" class="muted" font-size="11">Off</text>
+      </g>
+      <text x="20" y="420" class="lbl" font-size="10">PEDAL ORDER</text>
+      <text x="20" y="442" class="accent" font-size="12" font-weight="600">Chorus → Delay</text>
+      <text x="20" y="470" class="muted" font-size="10">Phaser &amp; Flanger bypassed</text>
+    </g>
+
+    <!-- chain arrow -->
+    <path d="M 1074 326 L 1090 326" stroke="#4cc2ff" stroke-width="2"/><path d="M 1090 326 l -6 -4 v 8 z" fill="#4cc2ff"/>
+
+    <!-- OUTPUT -->
+    <g transform="translate(1094,0)">
+      <rect class="panel" x="0" y="0" width="138" height="300" rx="12"/>
+      <rect x="0" y="0" width="138" height="48" rx="12" fill="#202734"/><rect x="0" y="24" width="138" height="24" fill="#202734"/>
+      <text x="20" y="31" class="fxname">OUT</text>
+      <text x="20" y="74" class="muted" font-size="11">To mixer / DI</text>
+      <!-- output meter -->
+      <text x="20" y="100" class="lbl" font-size="10">LEVEL</text>
+      <g transform="translate(20,108)">
+        <rect x="0" y="0" width="98" height="14" rx="4" fill="#161b23" stroke="#323b4a"/>
+        <rect x="4" y="3" width="10" height="8" rx="2" fill="#27c93f"/>
+        <rect x="17" y="3" width="10" height="8" rx="2" fill="#27c93f"/>
+        <rect x="30" y="3" width="10" height="8" rx="2" fill="#27c93f"/>
+        <rect x="43" y="3" width="10" height="8" rx="2" fill="#27c93f"/>
+        <rect x="56" y="3" width="10" height="8" rx="2" fill="#ffbd2e"/>
+        <rect x="69" y="3" width="10" height="8" rx="2" fill="#2d3543"/>
+        <rect x="82" y="3" width="10" height="8" rx="2" fill="#2d3543"/>
+      </g>
+      <text x="20" y="142" class="muted" font-size="9">-6 dBFS</text>
+      <g transform="translate(69,220)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="6" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="6" stroke-linecap="round" stroke-dasharray="96.1 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="2" text-anchor="middle" class="kv" font-size="13">-2</text><text y="56" text-anchor="middle" class="kl" font-size="11">OUTPUT dB</text></g>
+    </g>
+
+  </g>
+</svg>

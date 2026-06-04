@@ -97,6 +97,20 @@
     <text x="185" y="606" fill="#8b97a7" font-size="11" text-anchor="middle">3.5mm headphone</text>
   </g>
 
+  <!-- Guitar / bass instrument input path -->
+  <g>
+    <rect x="60" y="440" width="250" height="80" rx="10" fill="url(#box)" stroke="#323b4a"/>
+    <text x="185" y="468" fill="#e6edf3" font-size="14" font-weight="600" text-anchor="middle">Guitar / Bass In</text>
+    <text x="185" y="488" fill="#8b97a7" font-size="11" text-anchor="middle">¼″ instrument jack</text>
+    <text x="185" y="506" fill="#4cc2ff" font-size="11" text-anchor="middle">build your own rig (NAM + IR)</text>
+  </g>
+  <g>
+    <rect x="340" y="448" width="80" height="64" rx="10" fill="url(#box)" stroke="#323b4a"/>
+    <text x="380" y="476" fill="#e6edf3" font-size="12" font-weight="600" text-anchor="middle">ADC</text>
+    <text x="380" y="494" fill="#8b97a7" font-size="9" text-anchor="middle">instrument</text>
+    <text x="380" y="506" fill="#8b97a7" font-size="9" text-anchor="middle">in</text>
+  </g>
+
   <!-- CONNECTORS -->
   <g stroke="#4cc2ff" stroke-width="1.6" fill="none">
     <!-- pi <-> DSI (bidirectional-ish, up) -->
@@ -115,6 +129,10 @@
     <path d="M 310 350 L 428 350" marker-end="url(#arrow)"/>
     <!-- audio dac -> output jacks (down left) -->
     <path d="M 780 180 L 360 180 L 320 540" marker-end="url(#arrow)"/>
+    <!-- guitar in -> adc -->
+    <path d="M 310 480 L 338 480" marker-end="url(#arrow)"/>
+    <!-- adc -> pi (instrument audio in) -->
+    <path d="M 420 480 L 480 480 L 480 412" marker-end="url(#arrow)"/>
   </g>
 
   <!-- connector labels -->
@@ -127,6 +145,7 @@
     <text x="262" y="280">5V rail</text>
     <text x="330" y="342">GPIO/USB</text>
     <text x="500" y="172">analog audio → jacks</text>
+    <text x="486" y="446">I2S audio in</text>
   </g>
 
   <text x="40" y="660" fill="#8b97a7" font-size="11">All control elements are pre-mapped to GigSynth app parameters (volume, cutoff, layer mix, part select).</text>

@@ -158,8 +158,8 @@
   </figure>
 
   <h2 id="software">New in the software <span class="new">v0+</span></h2>
-  <p>The instruments ship with three new app capabilities (all built test-first; see
-  <a href="#plan">plan changes</a>):</p>
+  <p>The instruments gain several new app capabilities (all built test-first; see
+  <a href="#plan">plan changes</a>) — new effects, recording, a drum module and a live guitar rig:</p>
 
   <h3>Two new effects — Phaser &amp; Flanger</h3>
   <figure>
@@ -175,6 +175,25 @@
     <figcaption>A new <b>Recordings</b> view: arm <b>REC</b> on the Live view to capture all MIDI and
     audio, then replay, loop, or delete takes here. Recording is one tap from the gig screen
     (<img src="screenshots/live-recording-toggle.svg" alt="" style="height:18px;vertical-align:middle;width:auto;display:inline;border:0;padding:0;margin:0 2px"/> on the Live top bar).</figcaption>
+  </figure>
+
+  <h3>Drum module — play a drums.sf2 from any e-kit <span class="new">new</span></h3>
+  <figure>
+    <img src="screenshots/desktop-drumming.svg" alt="Drumming view: kit summary, MIDI mapping table, MP3 player"/>
+    <figcaption>The new <b>Drumming</b> view turns every GigSynth product into a high-end electronic-drum
+    sound module: a multi-velocity <code>drums.sf2</code> on MIDI channel 10, factory trigger maps for
+    <b>Yamaha, Roland, Alesis, Millenium and Donner</b> kits, a kit summary, the live mapping table and an
+    MP3 backing player. Drummers plug a USB-MIDI kit straight into the GS-Desktop module.</figcaption>
+  </figure>
+
+  <h3>Live Guitar Rig — the ¼″ input becomes a pedalboard <span class="new">new</span></h3>
+  <figure>
+    <img src="screenshots/desktop-live-guitar-rig.svg" alt="Live Guitar Rig: four pedal slots, amp, cab, hardware knobs, combinations, MP3 player"/>
+    <figcaption>The <b>Live Guitar Rig</b> uses the onboard ¼″ instrument input for recording and tracking:
+    four effect slots (<b>Fuzz · Overdrive · Distortion · Modulation</b>) on the four hardware knobs/sliders,
+    a <b>NAM</b> amp capture + cabinet <b>IR</b>, storable combinations, and a pro MP3 player with loop,
+    pitch shift and <b>remove-guitar/vocal</b>. Audio stack and licensing:
+    <a href="guitar-audio-stack.md">guitar-audio-stack.md</a>.</figcaption>
   </figure>
 
   <h2 id="bom">BOM &amp; pricing <span style="font-size:13px;color:var(--amber)">(est.)</span></h2>
@@ -196,9 +215,8 @@
   ≈ $85 · 5″ DSI ≈ $50 · HiFiBerry DAC2 ≈ $45 · pisound ≈ $120. All offline estimates.</div>
 
   <h2 id="plan">Changes needed on top of the current plan</h2>
-  <p>Relative to the shipped <code>plan.json</code> (18 stories / 25 tests, all green), the product
-  line adds the following — the software stories are <b>already implemented and green</b>; the
-  hardware stories are proposed:</p>
+  <p>Relative to the original shipped <code>plan.json</code> (18 stories / 25 tests), the product line
+  added seven stories — <b>all implemented and green</b>:</p>
   <table>
     <tr><th>Story</th><th>Scope</th><th>Status</th></tr>
     <tr><td><b>S19 — Per-keyboard Phaser</b></td>
@@ -209,19 +227,24 @@
         <td><span class="new">DONE · green</span></td></tr>
     <tr><td><b>S21 — MIDI + audio recording</b></td>
         <td>New <code>internal/recording</code> package (Recorder/Store/Player), Live REC toggle, and a
-        Recordings view; controller taps the MIDI path and audio sink.</td>
+        Recordings view; controller taps the MIDI path.</td>
         <td><span class="new">DONE · green</span></td></tr>
-    <tr><td>S22 — Pi build &amp; provisioning image (proposed)</td>
-        <td>A flashed microSD image: kiosk autostart, the GigSynth binary, default <code>.sf2</code>,
-        DAC/pisound overlays, per-model control-surface mapping presets.</td><td>proposed</td></tr>
-    <tr><td>S23 — Onboard control-surface mapping (proposed)</td>
-        <td>Per-model factory map for the 4/8 knobs + 4/8 sliders to layer mix + FX, plus a calibration
-        screen. Builds on the existing <code>internal/midimap</code> presets.</td><td>proposed</td></tr>
-    <tr><td>S24 — Audio capture tap at the engine (proposed)</td>
-        <td>Stream the mixed render buffer into <code>Controller.CaptureAudio</code> and flush takes to
-        WAV on disk (the recording metadata/timeline path already exists in S21).</td><td>proposed</td></tr>
+    <tr><td><b>S22 — Pi provisioning</b></td>
+        <td>Embedded systemd unit + install script rendered per model via <code>gigsynth -provision</code>;
+        see <a href="products/provisioning.html">provisioning</a>.</td><td><span class="new">DONE · green</span></td></tr>
+    <tr><td><b>S23 — Onboard control-surface mapping</b></td>
+        <td>Factory <code>midimap</code> presets (GS-49/GS-61/GS-Desktop) binding the knobs/sliders to
+        mix + the full four-effect chain, incl. Phaser/Flanger CCs.</td><td><span class="new">DONE · green</span></td></tr>
+    <tr><td><b>S24 — Audio capture + WAV export</b></td>
+        <td>Pure-Go PCM16 WAV encoder; takes retain samples and export to <code>.wav</code>. The live
+        engine→<code>CaptureAudio</code> driver tap is the one remaining hardware-bound step.</td>
+        <td><span class="new">DONE · green</span></td></tr>
+    <tr><td><b>S25 — Phaser/Flanger on small screens</b></td>
+        <td>The 7″ (touch7) and Pi Zero layouts now surface/bank the Phaser and Flanger, not just the
+        desktop.</td><td><span class="new">DONE · green</span></td></tr>
   </table>
-  <p>Summary after the implemented work: <b>21 stories / 29 tests, all green</b>.</p>
+  <p>Summary after the implemented work: <b>25 stories / 35 tests, all green</b>. The only deferred
+  item is the live audio-driver callback feeding <code>CaptureAudio</code> on real hardware (S24).</p>
 
   <footer>
     GigSynth hardware brochure · mockup renders are hand-authored SVG · all prices are 2026 offline

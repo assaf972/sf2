@@ -1,0 +1,23 @@
+# golangci-lint config. The lint job in CI is informational (non-blocking):
+# new Go toolchains often outpace linter releases, and this repo keeps some
+# deliberately hand-aligned source. Keep the linter useful, not noisy.
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - misspell
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  exclude-rules:
+    # Test files commonly ignore returned errors deliberately.
+    - path: _test\.go
+      linters: [errcheck]

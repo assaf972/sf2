@@ -45,11 +45,11 @@
     }
   },
   "summary": {
-    "total_stories": 21,
-    "total_tests": 29,
-    "stories_completed": 21,
-    "tests_green": 29,
-    "last_updated": "2026-06-04T15:30:00Z"
+    "total_stories": 40,
+    "total_tests": 62,
+    "stories_completed": 25,
+    "tests_green": 35,
+    "last_updated": "2026-06-04T19:30:00Z"
   },
   "stories": [
     {
@@ -1315,6 +1315,1251 @@
         }
       ],
       "green_test_at": "2026-06-04T15:30:00Z"
+    },
+    {
+      "id": "S22",
+      "title": "Raspberry Pi provisioning (self-install image assets)",
+      "user_story": "As an installer, I want `gigsynth -provision <model>` to write a systemd unit and an install script so a flashed Pi boots straight into the rig for that hardware model.",
+      "description": "New internal/provision package embeds (go:embed) a systemd user unit and an install.sh, and renders them per model (gs-49/gs-61/gs-desktop/pizero) with the right -mode and -sf2 launch flags. main.go gains -provision/-provision-out flags that write the files and exit. docs/products/provisioning.html documents the flow.",
+      "steps_to_reproduce": [
+        "Run gigsynth -provision gs-61 -provision-out ./out",
+        "Inspect out/gigsynth-kiosk.service (ExecStart launches -mode touch7)",
+        "Copy to the Pi and run install.sh",
+        "Reboot; the rig autostarts"
+      ],
+      "acceptance_criteria": [
+        "Each model renders a valid systemd unit with the correct ExecStart/-mode",
+        "install.sh is a bash script that enables the user service",
+        "Unknown model is rejected",
+        "-provision writes files and exits without starting audio"
+      ],
+      "components": [
+        "internal/provision/provision.go",
+        "internal/provision/assets/gigsynth-kiosk.service",
+        "internal/provision/assets/install.sh",
+        "main.go",
+        "docs/products/provisioning.html"
+      ],
+      "depends_on": [],
+      "status": "completed",
+      "started_at": "2026-06-04T16:15:00Z",
+      "completed_at": "2026-06-04T16:15:00Z",
+      "fix_solution": "Added internal/provision with go:embed'd unit + install script; RenderService/RenderInstall substitute model description, ExecStart (binary + -mode + -sf2) and install metadata; Install writes both to a dir. main.go handles -provision <model> by calling provision.Install and exiting before engine/UI start.",
+      "tests": [
+        {
+          "id": "S22-T01",
+          "name": "Per-model provisioning render + install",
+          "description": "Each model renders a unit whose ExecStart launches the binary in that model's UI mode; Install writes the unit + install.sh to disk; unknown models error.",
+          "how_we_test": "Go unit tests render every model and assert ExecStart/-mode/-sf2 content, that Install writes both files, and that an unknown model errors.",
+          "tools": [
+            "Go testing",
+            "testify",
+            "go:embed"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/provision/provision_test.go"
+          ],
+          "test_code": "func TestProvisionRendersPerModel(t *testing.T){ /* gs-49/gs-61/gs-desktop/pizero ExecStart + Install writes 2 files */ }\nfunc TestProvisionUnknownModel(t *testing.T){...}",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T16:15:00Z"
+    },
+    {
+      "id": "S23",
+      "title": "Onboard control-surface mapping (factory presets + Phaser/Flanger CC)",
+      "user_story": "As a GigSynth hardware owner, I want the onboard knobs and sliders pre-mapped so the control surface fully drives the app — including the new Phaser and Flanger — for the keyboard it controls.",
+      "description": "Extend midimap with Phaser/Flanger Action targets and factory presets for GS-49 (4+4), GS-61 (8+8) and GS-Desktop (4+4) that bind the surface to Volume/Pan + the four-effect chain. Controller.applyCCAction handles the new actions so mapped CCs drive SetPhaser/SetFlanger live.",
+      "steps_to_reproduce": [
+        "Bind a keyboard to the 'GigSynth GS-61' mapping in Settings",
+        "Move a mapped slider/knob",
+        "See the phaser/flanger (and chorus/delay/vol/pan) respond live"
+      ],
+      "acceptance_criteria": [
+        "GS-49/GS-61/GS-Desktop presets exist and are well-formed (Vol=CC7, Pan=CC10)",
+        "Every product surface reaches a phaser and a flanger parameter",
+        "GS-61 has the largest binding set",
+        "Mapped CCs drive SetPhaser/SetFlanger via applyCCAction"
+      ],
+      "components": [
+        "internal/midimap/midimap.go",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S19",
+        "S20",
+        "S10"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T16:15:00Z",
+      "completed_at": "2026-06-04T16:15:00Z",
+      "fix_solution": "Added PhaserRate/Depth/Feedback and FlangerRate/Depth/Feedback/Mix actions to midimap plus three GigSynth factory presets wiring the onboard surface to vol/pan + the full FX chain. Controller.applyCCAction gained cases that translate those CCs (0..127) into SetPhaser/SetFlanger calls (rate scaled to 0..5 Hz, others to percent).",
+      "tests": [
+        {
+          "id": "S23-T01",
+          "name": "Product presets cover full FX chain",
+          "description": "The GS-49/GS-61/GS-Desktop factory presets exist, keep Vol on CC7 and Pan on CC10, and each reaches a phaser and a flanger parameter; GS-61 has the most bindings.",
+          "how_we_test": "Go unit test iterates the product presets asserting CC7/CC10 and presence of phaser/flanger targets.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/midimap/presets_test.go"
+          ],
+          "test_code": "func TestProductPresetsCoverFullFXChain(t *testing.T){ /* GS-49/61/Desktop: Vol CC7, Pan CC10, phaser+flanger present */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T16:15:00Z"
+    },
+    {
+      "id": "S24",
+      "title": "Audio capture + WAV export",
+      "user_story": "As a gigging keyboardist, I want a recorded take's audio written to a real .wav file so I can keep or share it.",
+      "description": "Add a pure-Go 16-bit PCM mono WAV encoder. The Recorder retains captured samples (capped ~20 min to bound memory); Store.SaveWAV writes <id>.wav and stamps Recording.AudioPath; Controller.ExportRecordingWAV exposes it. NOTE: feeding live frames into CaptureAudio from FluidSynth's driver-owned audio thread (a C audio-driver2 callback) is the remaining hardware-bound piece tracked separately.",
+      "steps_to_reproduce": [
+        "Arm REC and play (audio frames captured via CaptureAudio)",
+        "Stop; the take retains its samples",
+        "Export the take; a .wav is written and AudioPath is set"
+      ],
+      "acceptance_criteria": [
+        "WriteWAV emits a well-formed 16-bit mono PCM WAV matching the sample rate",
+        "Recorder retains samples up to the cap; Stop returns them",
+        "Store.SaveWAV writes the file and records AudioPath",
+        "A take with no audio cannot be exported"
+      ],
+      "components": [
+        "internal/recording/wav.go",
+        "internal/recording/recording.go",
+        "internal/recording/store.go",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S21"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T16:15:00Z",
+      "completed_at": "2026-06-04T16:15:00Z",
+      "fix_solution": "Added recording.WriteWAV (RIFF/WAVE PCM16 mono, clamped). Recorder now appends RecordAudio frames into a capped sample buffer and returns them on Stop; Store.SaveWAV encodes them to <dir>/<id>.wav and sets AudioPath; Controller.ExportRecordingWAV delegates to the store. The live engine->CaptureAudio tap (driver2 callback) is documented as the remaining hardware step.",
+      "tests": [
+        {
+          "id": "S24-T01",
+          "name": "WAV header + data well-formed",
+          "description": "WriteWAV produces a 44-byte RIFF/WAVE header with PCM/mono/sample-rate/16-bit fields and one int16 per sample, full-scale clamped.",
+          "how_we_test": "Go unit test writes a known buffer and parses the header bytes + data length.",
+          "tools": [
+            "Go testing",
+            "testify",
+            "encoding/binary"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/recording/wav_test.go"
+          ],
+          "test_code": "func TestWriteWAVHeaderAndData(t *testing.T){ /* RIFF/WAVE/fmt /data, sr=48000, 16-bit, clamp +32767 */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        },
+        {
+          "id": "S24-T02",
+          "name": "Capture + export round-trip",
+          "description": "An armed recorder retains audio samples and the store exports them to a .wav, stamping AudioPath; an audio-less take cannot be exported.",
+          "how_we_test": "Go unit test records frames, stops, SaveWAVs to a temp dir, asserts the file exists and AudioPath is set, and that an empty take errors.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/recording/wav_test.go"
+          ],
+          "test_code": "func TestRecorderCaptureAndStoreExport(t *testing.T){ /* capture 4000 frames -> SaveWAV -> FileExists + AudioPath; empty take errors */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T16:15:00Z"
+    },
+    {
+      "id": "S25",
+      "title": "Phaser/Flanger on the touch7 and Pi Zero layouts",
+      "user_story": "As a Pi 5 (7-inch) or Pi Zero player, I want the Phaser and Flanger reachable on the small-screen layouts, not just the desktop, so the new effects are usable on the instruments.",
+      "description": "touch7 adds a Phaser + Flanger card showing all seven new parameters for the focused keyboard. The Pi Zero FX banking cycles the four encoders through chorus -> phaser -> flanger -> delay (first press from delay still lands on chorus, preserving the kiosk feature), and Encoder1 drives the highlighted effect.",
+      "steps_to_reproduce": [
+        "On touch7, focus a keyboard; see Phaser + Flanger values",
+        "On Pi Zero, press FX to bank to phaser then flanger",
+        "Turn encoder 1; the highlighted effect's rate changes"
+      ],
+      "acceptance_criteria": [
+        "touch7 shows Phaser (Rate/Depth/Feedback) and Flanger (Rate/Depth/Feedback/Mix)",
+        "Pi Zero ToggleFX cycles delay->chorus->phaser->flanger->delay",
+        "Pi Zero Encoder1 drives SetPhaser/SetFlanger when banked there",
+        "Existing pizero kiosk + touch7 focus tests stay green"
+      ],
+      "components": [
+        "internal/ui/touch7.go",
+        "internal/ui/pizero.go"
+      ],
+      "depends_on": [
+        "S19",
+        "S20",
+        "S15",
+        "S16"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T16:15:00Z",
+      "completed_at": "2026-06-04T16:15:00Z",
+      "fix_solution": "touch7 gained phaser/flanger labels populated in refresh() and a 'Phaser + Flanger' card. pizeroVM.fxGroup now cycles a 4-effect fxCycle (delay->chorus->phaser->flanger) so the first press from delay still highlights chorus; Encoder1 switches on the group and calls SetPhaser/SetFlanger as appropriate.",
+      "tests": [
+        {
+          "id": "S25-T01",
+          "name": "touch7 surfaces phaser/flanger",
+          "description": "The 7-inch layout shows the focused keyboard's phaser and flanger values.",
+          "how_we_test": "Headless Fyne test sets a scene with phaser/flanger values, builds touch7, focuses KB1, asserts the labels.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/smallscreen_fx_test.go"
+          ],
+          "test_code": "func TestTouch7ShowsPhaserFlanger(t *testing.T){ /* phRate 0.5 Hz, phDepth 60, flMix 55 */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        },
+        {
+          "id": "S25-T02",
+          "name": "Pi Zero banks all four effects",
+          "description": "ToggleFX cycles delay->chorus->phaser->flanger->delay and Encoder1 drives the highlighted effect.",
+          "how_we_test": "Headless Fyne test drives pizeroVM through the cycle and asserts PhaserOn/Rate and FlangerOn/Rate after Encoder1.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/smallscreen_fx_test.go"
+          ],
+          "test_code": "func TestPiZeroBanksThroughAllFourEffects(t *testing.T){ /* delay->chorus->phaser(enc1)->flanger(enc1)->delay */ }",
+          "status": "passing",
+          "green_at": "2026-06-04T16:15:00Z",
+          "last_run_at": "2026-06-04T16:15:00Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T16:15:00Z"
+    },
+    {
+      "id": "S26",
+      "title": "Instrument audio input (Guitar/Bass in)",
+      "user_story": "As a guitarist/bassist, I want to plug into the GigSynth ¼″ instrument input so the device can process my signal in real time.",
+      "description": "Capture mono audio from the ¼″ instrument jack through the ADC into the engine input buffer (mirror of the S24 audio path, inbound). Add an input stage: input gain, a noise gate, and an RMS/peak input level meter. The live ADC tap is hardware-bound (driver2 callback on a real DAC/HAT); the gain/gate DSP and meter math are pure-Go and unit-tested.",
+      "steps_to_reproduce": [
+        "Plug a guitar into the ¼″ input",
+        "Open the Rig view; see the input meter respond",
+        "Set input gain and noise-gate threshold; quiet hum is gated out"
+      ],
+      "acceptance_criteria": [
+        "Mono instrument input is read into a Go input buffer (engine boundary)",
+        "Input gain scales the signal; noise gate silences below threshold, passes above",
+        "Input level meter reports RMS + peak",
+        "Live ADC capture documented as the hardware-bound step (like S24's output tap)"
+      ],
+      "components": [
+        "internal/engine/engine.go",
+        "internal/guitar/input.go (new)",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S01",
+        "S24"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S26-T01",
+          "name": "Noise gate + input gain",
+          "description": "Below the gate threshold the output is silenced; above it passes; input gain scales linearly.",
+          "how_we_test": "Go unit tests feed known buffers through the input stage and assert gating + gain.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/input_test.go"
+          ],
+          "test_code": "// planned: gate(threshold) silences low-level noise, passes signal; gain scales by factor",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S26-T02",
+          "name": "Input level meter (RMS/peak)",
+          "description": "The meter computes correct RMS and peak for a known block (e.g. full-scale sine).",
+          "how_we_test": "Go unit test asserts RMS≈0.707 and peak≈1.0 for a unit sine block.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/input_test.go"
+          ],
+          "test_code": "// planned: Meter(sine) -> rms ~0.707, peak ~1.0",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S27",
+      "title": "Cabinet impulse-response (IR) convolution",
+      "user_story": "As a guitarist, I want to load a cabinet impulse response so my tone has a real speaker-cabinet character.",
+      "description": "Load a cabinet IR from a .wav file and convolve the signal with it (real-time-safe partitioned or block convolution). Recommended backend: FFTConvolver (MIT) + KissFFT (BSD) via cgo — avoid the GPL zita-convolver/FFTW. The .wav IR is parsed in pure Go (go-audio/wav). Implements the fx.Node interface so it slots into the rig chain; bypasses to dry when disabled. See docs/guitar-audio-stack.md.",
+      "steps_to_reproduce": [
+        "Pick a cabinet IR (e.g. 4x12 V30) in the Rig view",
+        "Hear the cabinet colour applied",
+        "Disable the cab; signal is dry"
+      ],
+      "acceptance_criteria": [
+        "Loads a mono .wav IR and reports its length",
+        "Convolution of an impulse equals the IR samples (delta response)",
+        "Real-time-safe: no allocation in Process; bypass is identity",
+        "Implements fx.Node"
+      ],
+      "components": [
+        "internal/guitar/ir.go (new)",
+        "internal/recording/wav.go (reader)",
+        "internal/fx/fx.go"
+      ],
+      "depends_on": [
+        "S26",
+        "S12"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S27-T01",
+          "name": "IR convolution delta response",
+          "description": "Convolving a unit impulse with a loaded IR yields the IR samples back, in order.",
+          "how_we_test": "Go unit test loads a small known IR, processes an impulse, asserts the output equals the IR.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/ir_test.go"
+          ],
+          "test_code": "// planned: impulse * IR == IR samples; bypass identity; no-alloc Process",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S27-T02",
+          "name": "IR .wav loader",
+          "description": "A 16-bit PCM mono WAV IR is parsed into float samples with the right length and sample rate.",
+          "how_we_test": "Go unit test writes a WAV (via recording.WriteWAV) and reads it back into an IR.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/ir_test.go"
+          ],
+          "test_code": "// planned: ReadWAV roundtrip -> sample count + rate match",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S28",
+      "title": "Neural amp model (NAM) loader + inference",
+      "user_story": "As a guitarist, I want to load open-source Neural Amp Modeler (.nam) amp captures so the device sounds like real amps.",
+      "description": "Parse a Neural Amp Modeler '.nam' model file (JSON: architecture, config, weights) and run its inference (WaveNet/LSTM) over each audio block. Recommended backend: NeuralAudio (MIT) via its C API behind a cgo shim — it is the fastest NAM engine, loads NAM WaveNet+LSTM + RTNeural models, and is proven real-time on a Pi 4/5. A tiny pure-Go reference covers fixtures in tests. Implemented as an fx.Node; passes the dry signal when no model is loaded. See docs/guitar-audio-stack.md.",
+      "steps_to_reproduce": [
+        "Select a NAM amp (e.g. Tweed Deluxe) in the Rig view",
+        "Play; hear the amp model",
+        "Clear the model; signal passes dry"
+      ],
+      "acceptance_criteria": [
+        "Parses a .nam JSON (architecture + metadata) and reports model name/type",
+        "A tiny known model produces deterministic output for a known input",
+        "No model loaded => dry passthrough",
+        "Implements fx.Node"
+      ],
+      "components": [
+        "internal/guitar/nam.go (new)",
+        "internal/fx/fx.go"
+      ],
+      "depends_on": [
+        "S26",
+        "S12"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S28-T01",
+          "name": "NAM model parse + metadata",
+          "description": "A .nam JSON is parsed into architecture/config/weights with the expected fields.",
+          "how_we_test": "Go unit test loads a minimal fixture .nam and asserts parsed metadata.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/nam_test.go"
+          ],
+          "test_code": "// planned: ParseNAM(fixture) -> arch, name, sampleRate",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S28-T02",
+          "name": "Inference deterministic + dry passthrough",
+          "description": "A tiny model yields a deterministic block; with no model the node is identity.",
+          "how_we_test": "Go unit test runs inference on a fixed input and asserts a stable result + bypass identity.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/nam_test.go"
+          ],
+          "test_code": "// planned: tiny model deterministic; no model => dry",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S29",
+      "title": "Guitar/Bass rig chain + factory presets",
+      "user_story": "As a player, I want a full rig (input -> amp -> cab -> EQ -> effects) with ready-made presets for guitar and bass.",
+      "description": "Assemble the rig chain: Input gain/gate -> Amp (NAM) -> Cabinet IR -> 3-band EQ -> the existing per-keyboard FX (Chorus/Delay/Phaser/Flanger) -> output. Bass mode blends a clean DI with the amp. Ship factory rig presets (Clean, Crunch, Lead, Bass DI) referencing bundled NAM models + IRs.",
+      "steps_to_reproduce": [
+        "Load the 'Crunch' guitar preset",
+        "Play through amp+cab+pedals",
+        "Switch to 'Bass DI'; DI blend engages"
+      ],
+      "acceptance_criteria": [
+        "Rig processes a buffer through every enabled node in order",
+        "Disabling a node bypasses just that stage",
+        "Bass mode blends DI with the amp path",
+        "Factory presets set the expected amp/cab/EQ/FX params"
+      ],
+      "components": [
+        "internal/guitar/rig.go (new)",
+        "internal/guitar/presets.go (new)",
+        "internal/fx/fx.go",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S26",
+        "S27",
+        "S28",
+        "S13",
+        "S14",
+        "S19",
+        "S20"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S29-T01",
+          "name": "Rig chain ordering + bypass",
+          "description": "The rig runs input->amp->cab->EQ->FX in order; a disabled stage is skipped; the chain stays stable/bounded.",
+          "how_we_test": "Go unit test wires fakes/identity nodes and asserts call order + bypass.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/rig_test.go"
+          ],
+          "test_code": "// planned: ordered Process; disabled stage skipped; bounded output",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S29-T02",
+          "name": "Factory presets apply",
+          "description": "Applying each factory preset sets the documented amp/cab/EQ/FX parameters and bass-mode flag.",
+          "how_we_test": "Go unit test applies presets and asserts the resulting rig params.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/guitar/presets_test.go"
+          ],
+          "test_code": "// planned: Clean/Crunch/Lead/BassDI -> expected params",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S30",
+      "title": "Rig UI on all screens (desktop, 7-inch, Pi Zero)",
+      "user_story": "As a player on any GigSynth screen, I want to dial my rig — pick amp, cab and pedals and watch input level — sized for that display.",
+      "description": "Add a desktop 'Rig' view (new top-level tab) with the input meter, amp (NAM) picker, cabinet (IR) picker, 3-band EQ, pedalboard and output. A 7-inch focus layout with finger-sized amp knobs. A Pi Zero rig page banking the four encoders across Gain/Gate/Amp/Level with amp/cab list rows. UI flow mockups already drafted in docs/screenshots/{desktop,touch7,pizero}-rig.svg.",
+      "steps_to_reproduce": [
+        "Open the Rig tab on desktop; pick amp + cab",
+        "On the 7-inch screen, dial the amp knobs",
+        "On Pi Zero, bank the encoders and scroll the amp/cab rows"
+      ],
+      "acceptance_criteria": [
+        "Desktop shell has a Rig tab that builds the rig view",
+        "Amp/cab pickers + input meter render and reflect rig state",
+        "Pi Zero rig page banks 4 encoders across rig params",
+        "7-inch layout shows finger-sized amp controls"
+      ],
+      "components": [
+        "internal/ui/rig.go (new)",
+        "internal/ui/shell.go",
+        "internal/ui/touch7.go",
+        "internal/ui/pizero.go"
+      ],
+      "depends_on": [
+        "S29",
+        "S03",
+        "S15",
+        "S16"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S30-T01",
+          "name": "Desktop Rig view + tab",
+          "description": "The shell exposes a Rig tab and the rig view builds with amp/cab pickers and the input meter.",
+          "how_we_test": "Headless Fyne test asserts the Rig tab exists and the view's widgets are present.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/rig_test.go"
+          ],
+          "test_code": "// planned: shell tabs include Rig; rig view builds",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S30-T02",
+          "name": "Pi Zero rig encoder banking",
+          "description": "The Pi Zero rig page banks the four encoders across Gain/Gate/Amp/Level and drives the rig.",
+          "how_we_test": "Headless Fyne test drives the rig VM through the encoder banks and asserts param changes.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/rig_test.go"
+          ],
+          "test_code": "// planned: encoder banks Gain/Gate/Amp/Level",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S31",
+      "title": "Rig persistence + per-product instrument-input mapping",
+      "user_story": "As a player, I want my rig saved per Part and the onboard controls wired to it, so a part recall restores my whole guitar/bass sound.",
+      "description": "Persist the rig (amp model path, IR path, input gain, gate, EQ, bass-mode, pedal states) per Part in SQLite (new part_channels columns or a part_rig table). Add rig CC targets to midimap so the onboard knobs/sliders drive rig params, and extend the GS-49/GS-61/GS-Desktop factory presets. Add provisioning notes for the ADC/instrument-input overlay.",
+      "steps_to_reproduce": [
+        "Build a rig and Save Part",
+        "Recall the part later; the rig (amp/cab/EQ/pedals) returns",
+        "Move an onboard knob mapped to amp gain; the rig responds"
+      ],
+      "acceptance_criteria": [
+        "Rig state round-trips through the SQLite part",
+        "midimap rig actions resolve and drive rig params",
+        "Product presets include instrument-input controls",
+        "Provisioning documents the ADC/instrument-in overlay"
+      ],
+      "components": [
+        "internal/db/db.go",
+        "internal/db/crud.go",
+        "internal/app/library.go",
+        "internal/midimap/midimap.go",
+        "internal/provision/assets/install.sh"
+      ],
+      "depends_on": [
+        "S29",
+        "S02",
+        "S23",
+        "S22"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S31-T01",
+          "name": "Rig round-trips through the Part DB",
+          "description": "A saved rig (amp/IR paths, gain, gate, EQ, bass-mode, pedals) reloads identically with its Part.",
+          "how_we_test": "Go unit test saves a part with a rig and asserts equality after reload from an in-memory SQLite db.",
+          "tools": [
+            "Go testing",
+            "testify",
+            "modernc.org/sqlite"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/db/rig_persistence_test.go"
+          ],
+          "test_code": "// planned: SetPartChannel(rig) -> GetPart -> rig equal",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S32",
+      "title": "Drum-trigger MIDI mapping presets (e-drum kits)",
+      "user_story": "As a drummer, I want my electronic kit's pads to trigger the right voices in drums.sf2 so I can use GigSynth as a high-end drum-sample module.",
+      "description": "Add internal/drummap: a General-MIDI percussion baseline plus per-manufacturer default note maps for Yamaha (DTX), Roland (TD/V-Drums), Alesis (Nitro/Command/Crimson/Strike), Millenium (MPS) and Donner (DED). Roland/Alesis/Millenium/Donner share a GM/Roland-style preset; Yamaha needs its own (swapped crash/ride zones, MIDI-DIN vs USB columns). Each preset maps an incoming note -> a canonical SF2 percussion key, with fold/alias rules so out-of-range notes (Roland HH edge 26/22, Yamaha 78/79/83, Alesis splash 21 / half-open 23) never produce silence. Mirrors the keyboard CC mapping presets from S10. See docs/drum-midi-mapping.md.",
+      "steps_to_reproduce": [
+        "Pick a drum-mapping preset (e.g. Roland TD) in Settings/Drumming",
+        "Hit each pad on the kit",
+        "Confirm kick/snare/hi-hat/toms/cymbals trigger the matching SF2 voice"
+      ],
+      "acceptance_criteria": [
+        "GM percussion baseline (notes 35-81) is encoded",
+        "Per-manufacturer presets resolve every documented pad/zone to a canonical SF2 key",
+        "Fold/alias rules map out-of-range notes onto an audible voice (no silent pad)",
+        "Yamaha preset selects the DIN vs USB column"
+      ],
+      "components": [
+        "internal/drummap/drummap.go (new)",
+        "internal/drummap/presets.go (new)",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S09",
+        "S10"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S32-T01",
+          "name": "Manufacturer presets resolve note to SF2 voice",
+          "description": "Each manufacturer preset maps the documented pad notes to the expected canonical SF2 percussion key.",
+          "how_we_test": "Table-driven Go unit test asserts Resolve(preset, note) for kick/snare/hi-hat/toms/crash/ride across Roland/Yamaha/Alesis/Millenium/Donner.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/drummap/drummap_test.go"
+          ],
+          "test_code": "// planned: Resolve(Roland,49)->Crash1 ; Resolve(Yamaha,59)->Crash bow ; GM baseline 36->Kick",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S32-T02",
+          "name": "Fold/alias rules keep out-of-range notes audible",
+          "description": "Out-of-range pad notes are folded onto an audible SF2 voice instead of producing silence.",
+          "how_we_test": "Go unit test asserts Roland 26->46, 22->42; Yamaha 78/79->46/42, 83->46; Alesis 21->46, 23->46.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/drummap/drummap_test.go"
+          ],
+          "test_code": "// planned: fold(26)->46, fold(22)->42, fold(21)->46 ; never returns no-voice",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S33",
+      "title": "Drum kit model (drums.sf2, channel 10, velocity layers)",
+      "user_story": "As a drummer, I want GigSynth to load a multi-velocity drums.sf2 on the drum channel and expose a summary of the kit so I know which pieces are available.",
+      "description": "Add an app-level DrumKit that loads drums.sf2, selects the percussion bank on the drum channel (channel 10 / index 9), and routes drum triggers through the active drummap preset to velocity-sensitive NoteOns. Build a KitSummary (kit name, mapped pieces, count of velocity layers per voice) for the Drumming UI. Velocity passes through unchanged so multi-velocity samples articulate.",
+      "steps_to_reproduce": [
+        "Load drums.sf2 and select a kit",
+        "Open the Drumming view; read the kit summary",
+        "Play soft then hard on a pad; hear the velocity layer change"
+      ],
+      "acceptance_criteria": [
+        "drums.sf2 loads and the percussion bank is selected on the drum channel",
+        "An incoming trigger routes through the active preset to NoteOn on the drum channel at the incoming velocity",
+        "KitSummary lists mapped pieces and per-voice velocity-layer counts",
+        "No drum mapping loaded => trigger is ignored (no stuck/garbage note)"
+      ],
+      "components": [
+        "internal/app/drumkit.go (new)",
+        "internal/engine/synth.go",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S01",
+        "S32"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S33-T01",
+          "name": "Kit loads + builds summary",
+          "description": "Loading drums.sf2 selects the percussion bank and produces a KitSummary with mapped pieces.",
+          "how_we_test": "Go unit test with FakeEngine asserts LoadSoundFont + SelectProgram on the drum channel and a non-empty KitSummary.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/app/drumkit_test.go"
+          ],
+          "test_code": "// planned: LoadKit(drums.sf2) -> SelectProgram ch9 ; Summary().Pieces non-empty",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S33-T02",
+          "name": "Velocity-sensitive trigger on drum channel",
+          "description": "A pad trigger produces exactly one NoteOn on the drum channel at the incoming velocity.",
+          "how_we_test": "Go unit test fires Trigger(note,vel) and asserts FakeEngine records NoteOn ch=9 at the mapped key and same velocity.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/app/drumkit_test.go"
+          ],
+          "test_code": "// planned: Trigger(38,40) -> NoteOn ch=9 key=38 vel=40 ; Trigger(38,120) vel=120",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S34",
+      "title": "Drumming view (kit summary + mapping table + MP3 player)",
+      "user_story": "As a drummer, I want a Drumming screen showing the selected kit, its MIDI mapping, and an MP3 player with start/stop/loop so I can practise and play to backing tracks.",
+      "description": "Add a desktop 'Drumming' tab: a kit summary panel (kit name, mapped pieces, velocity layers), a scrollable MIDI mapping table (pad/zone -> incoming note -> SF2 voice for the active manufacturer preset, with a preset selector), and an MP3 backing-track transport modelled on the Sampler/Recordings player (start/stop/loop, position). Mockups: docs/screenshots/desktop-drumming.svg (+ touch7/pizero variants).",
+      "steps_to_reproduce": [
+        "Open the Drumming tab",
+        "Pick a kit and a manufacturer mapping preset; the table updates",
+        "Load an MP3 and press Start/Loop; play along"
+      ],
+      "acceptance_criteria": [
+        "Shell exposes a Drumming tab that builds the view",
+        "Kit summary + mapping table render and reflect the active preset",
+        "Changing the manufacturer preset updates the mapping table",
+        "MP3 transport Start/Stop/Loop is wired to the player"
+      ],
+      "components": [
+        "internal/ui/drumming.go (new)",
+        "internal/ui/shell.go"
+      ],
+      "depends_on": [
+        "S33",
+        "S11",
+        "S03"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S34-T01",
+          "name": "Drumming tab + summary/mapping render",
+          "description": "The shell has a Drumming tab; the view shows the kit summary and a mapping table that follows the selected preset.",
+          "how_we_test": "Headless Fyne test asserts the Drumming tab exists, the summary widget is present, and switching presets changes the table rows.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/drumming_test.go"
+          ],
+          "test_code": "// planned: tabs include Drumming; preset switch updates mapping table",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S34-T02",
+          "name": "MP3 transport start/stop/loop",
+          "description": "The Drumming MP3 transport buttons drive the player (start/stop) and toggle loop.",
+          "how_we_test": "Headless Fyne test taps Start/Stop/Loop against a fake player and asserts the player calls + loop flag.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/drumming_test.go"
+          ],
+          "test_code": "// planned: tap Start->play, Stop->stop, Loop->toggles loop flag",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S35",
+      "title": "Real-time duplex audio I/O for instrument input (malgo)",
+      "user_story": "As an engineer, I want a low-latency duplex audio backend so the guitar input can be captured and the processed rig played back without GC-induced dropouts.",
+      "description": "Add internal/audioio: a duplex audio backend over malgo (miniaudio, MIT) covering CoreAudio/ALSA/WASAPI, with an optional JACK backend for best latency on the Pi. The audio callback runs on a native thread and calls only pre-allocated, no-alloc block processors (the cgo Process functions) — keeping Go's GC out of the audio path. The buffer/ring plumbing and block-copy math are pure-Go and unit-tested; the live device open is the hardware-bound step (like S24's output tap). See docs/guitar-audio-stack.md.",
+      "steps_to_reproduce": [
+        "Open the duplex backend at 48 kHz / small period",
+        "Speak/strum into the input; the processed output plays back",
+        "Run under load; no xruns at the default period"
+      ],
+      "acceptance_criteria": [
+        "Duplex callback delivers input + output blocks of the configured size",
+        "Block plumbing performs zero allocation in the steady state (benchmark asserts allocs/op == 0)",
+        "Ring/queue is lossless and order-preserving for known blocks",
+        "Live device open documented as the hardware-bound step"
+      ],
+      "components": [
+        "internal/audioio/io.go (new)",
+        "internal/audioio/ring.go (new)",
+        "internal/engine/engine.go"
+      ],
+      "depends_on": [
+        "S26"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S35-T01",
+          "name": "No-alloc, lossless block plumbing",
+          "description": "The ring/queue round-trips known blocks losslessly and the steady-state path allocates nothing.",
+          "how_we_test": "Go unit test asserts block round-trip equality; a benchmark with testing.AllocsPerRun asserts 0 allocs in the process step.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/audioio/ring_test.go"
+          ],
+          "test_code": "// planned: push/pop blocks equal; AllocsPerRun(process)==0",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S36",
+      "title": "Drive pedals: Fuzz, Overdrive, Distortion",
+      "user_story": "As a guitarist, I want fuzz, overdrive and distortion pedals so I can shape my gain before the amp.",
+      "description": "Add three drive nodes (Fuzz, Overdrive, Distortion) as fx.Node implementations with Drive/Tone/Level controls. The waveshaping curves are derived from FAUST-generated C (vendored, permissive) for the real-time build, with a pure-Go reference shaper for tests. Each is real-time-safe (no allocation in Process) and bypasses to dry when off. These populate the Live Guitar Rig's four effect slots alongside a modulation node. See docs/guitar-audio-stack.md.",
+      "steps_to_reproduce": [
+        "Insert an Overdrive before the amp",
+        "Raise Drive; hear progressively harder saturation",
+        "Bypass; signal is dry"
+      ],
+      "acceptance_criteria": [
+        "Fuzz/Overdrive/Distortion each implement fx.Node",
+        "Output saturation increases monotonically with Drive; output stays bounded (no NaN/clip-to-infinity)",
+        "Tone and Level controls scale the signal as documented",
+        "Bypass is identity; Process performs no allocation"
+      ],
+      "components": [
+        "internal/fx/drive.go (new)",
+        "internal/fx/fx.go",
+        "internal/guitar/rig.go"
+      ],
+      "depends_on": [
+        "S12",
+        "S29"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S36-T01",
+          "name": "Drive saturates monotonically + bounded",
+          "description": "Higher Drive yields more saturation; output magnitude stays bounded; bypass is identity.",
+          "how_we_test": "Go unit test feeds a ramp/sine through each drive at increasing Drive and asserts monotonic harmonic growth and |out|<=1.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/fx/drive_test.go"
+          ],
+          "test_code": "// planned: drive up -> more clipping; |out|<=1; bypass==dry",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S36-T02",
+          "name": "Drive nodes are real-time-safe fx.Node",
+          "description": "Each drive implements fx.Node and allocates nothing in Process.",
+          "how_we_test": "Compile-time fx.Node assertion + AllocsPerRun(Process)==0 benchmark.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/fx/drive_test.go"
+          ],
+          "test_code": "// planned: var _ fx.Node = (*Overdrive)(nil); AllocsPerRun(Process)==0",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S37",
+      "title": "Pro MP3 player: pitch shift + remove-guitar/vocal",
+      "user_story": "As a guitarist tracking to backing songs, I want the MP3 player to pitch-shift and to remove the guitar/vocal center channel so I can practise over the rest of the mix.",
+      "description": "Extend the MP3 player with two block-DSP options: a time-domain pitch shift (resample + overlap-add / WSOLA) in semitones, and a center-channel canceller ('remove guitar/vocal') using a mid/side subtraction that attenuates content panned to center. Both are pure-Go, real-time-safe, and unit-testable; they sit on the playback path and are toggled from the transport.",
+      "steps_to_reproduce": [
+        "Load a stereo MP3 and press Start",
+        "Shift pitch +2 semitones; the track plays a tone higher at the same tempo",
+        "Enable 'Remove guitar'; centered content drops in level"
+      ],
+      "acceptance_criteria": [
+        "Pitch shift of N semitones moves detected pitch by ~N within tolerance, tempo unchanged",
+        "Center-channel removal attenuates correlated (center) content while preserving sides",
+        "Both effects are bypassable and real-time-safe (no allocation in the steady state)",
+        "Transport exposes pitch and remove-guitar controls"
+      ],
+      "components": [
+        "internal/mp3/player.go",
+        "internal/mp3/dsp.go (new)"
+      ],
+      "depends_on": [
+        "S11"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S37-T01",
+          "name": "Pitch shift moves pitch by N semitones",
+          "description": "Shifting a known sine by N semitones changes its detected frequency by ~2^(N/12) within tolerance.",
+          "how_we_test": "Go unit test pitch-shifts a generated sine and checks the dominant frequency (zero-crossing/FFT) ratio.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/mp3/dsp_test.go"
+          ],
+          "test_code": "// planned: shift(sine440, +12) -> ~880Hz within tolerance",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S37-T02",
+          "name": "Center-channel removal attenuates center",
+          "description": "A signal panned to center is strongly attenuated while a hard-panned signal is preserved.",
+          "how_we_test": "Go unit test builds L=R (center) + a side-only component and asserts center RMS drops while side RMS is kept.",
+          "tools": [
+            "Go testing",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/mp3/dsp_test.go"
+          ],
+          "test_code": "// planned: removeCenter(L==R) -> near-silence; side component preserved",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S38",
+      "title": "Live Guitar Rig view (4 effect slots + combos + MP3 player)",
+      "user_story": "As a guitarist, I want a Live Guitar Rig screen with four effect slots (fuzz, overdrive, distortion, modulation), four knobs/sliders, stored effect combinations, and an MP3 player with start/stop/loop/pitch/remove-guitar.",
+      "description": "Add a performance-focused 'Live Guitar Rig' tab built on the rig chain (S29) and drive pedals (S36): four effect slots (Fuzz / Overdrive / Distortion / Modulation), each with On + parameters; four hardware-mappable knobs/sliders that bind to the focused slot's parameters; named effect-combination presets that store/recall the four slots + amp/cab; and the pro MP3 transport (start/stop/loop + pitch + remove-guitar from S37). Mockup: docs/screenshots/desktop-live-guitar-rig.svg (+ touch7/pizero variants).",
+      "steps_to_reproduce": [
+        "Open the Live Guitar Rig tab",
+        "Enable Overdrive + Modulation, dial the four knobs",
+        "Save the combination 'Lead'; recall it later",
+        "Load a backing MP3, enable Remove guitar, set pitch, press Loop"
+      ],
+      "acceptance_criteria": [
+        "Four effect slots (Fuzz/Overdrive/Distortion/Modulation) render and toggle on/off",
+        "The four knobs/sliders bind to and drive the focused slot's parameters",
+        "Effect combinations store and recall all four slots (+ amp/cab) round-trip",
+        "MP3 transport exposes start/stop/loop + pitch + remove-guitar wired to the player"
+      ],
+      "components": [
+        "internal/ui/liveguitar.go (new)",
+        "internal/ui/shell.go",
+        "internal/guitar/rig.go",
+        "internal/app/library.go"
+      ],
+      "depends_on": [
+        "S30",
+        "S36",
+        "S37",
+        "S29"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S38-T01",
+          "name": "Four slots + knob bindings drive the rig",
+          "description": "The four effect slots render; the four knobs/sliders change the focused slot's params on the rig.",
+          "how_we_test": "Headless Fyne test toggles each slot and moves the knobs, asserting the rig node params update.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/liveguitar_test.go"
+          ],
+          "test_code": "// planned: slot toggles enable nodes; knob move -> rig param change",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S38-T02",
+          "name": "Combination recall + MP3 pitch/remove-guitar",
+          "description": "Saving then recalling a combination restores the four slots + amp/cab; the MP3 transport wires pitch and remove-guitar.",
+          "how_we_test": "Headless Fyne test stores a combo, mutates the rig, recalls it and asserts equality; taps pitch/remove-guitar and asserts player flags.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/liveguitar_test.go"
+          ],
+          "test_code": "// planned: save('Lead') -> recall restores slots; remove-guitar/pitch set player flags",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S39",
+      "title": "Skeuomorphic custom widget kit + dark theme",
+      "user_story": "As a player, I want the UI to look like the hardware-panel mockups (knobs, meters, LEDs, channel strips) instead of stock widgets.",
+      "description": "Build internal/ui/widgets: custom Fyne widgets (Knob, Slider, VUMeter, LEDToggle, ChannelStrip, Panel), each a BaseWidget + WidgetRenderer drawing with canvas.Arc/Circle/Rectangle/Text and gradients to match the SVG mockups, plus a dark fyne.Theme. This addresses the 'UI looks nothing like the mockup' issue by replacing stock widgets with skinned ones (decision: stay on Fyne, do not migrate frameworks). See docs/guitar-audio-stack.md (UI appendix).",
+      "steps_to_reproduce": [
+        "Place a widgets.Knob bound to a value",
+        "Drag / scroll the knob; the arc and readout track the value and OnChanged fires",
+        "Apply the dark theme; panels/LEDs/meters match the mockup palette"
+      ],
+      "acceptance_criteria": [
+        "Knob renders a value arc proportional to its 0..1 position with a centered readout",
+        "Drag and scroll change the value and fire OnChanged (clamped to range)",
+        "VUMeter renders level segments; LEDToggle renders on/off states",
+        "A dark theme applies the mockup palette across the app"
+      ],
+      "components": [
+        "internal/ui/widgets/knob.go (new)",
+        "internal/ui/widgets/vumeter.go (new)",
+        "internal/ui/widgets/led.go (new)",
+        "internal/ui/widgets/panel.go (new)",
+        "internal/ui/theme.go (new)"
+      ],
+      "depends_on": [
+        "S03"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S39-T01",
+          "name": "Knob arc + interaction",
+          "description": "The knob's value arc is proportional to its value and drag/scroll updates the value via OnChanged.",
+          "how_we_test": "Headless Fyne test sets values and asserts the arc objects; simulates drag/scroll and asserts OnChanged value (clamped).",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/widgets/knob_test.go"
+          ],
+          "test_code": "// planned: SetValue(0.5)->arc half; drag up -> OnChanged increases; clamp 0..1",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        },
+        {
+          "id": "S39-T02",
+          "name": "Theme + VUMeter/LEDToggle states",
+          "description": "The dark theme reports the mockup palette and the meter/LED widgets render their states.",
+          "how_we_test": "Headless Fyne test asserts theme colors and that VUMeter/LEDToggle build the expected canvas objects for given states.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/widgets/widgets_test.go"
+          ],
+          "test_code": "// planned: theme.Color(bg)==panel; VUMeter(0.8) lit segments; LEDToggle(on) accent",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
+    },
+    {
+      "id": "S40",
+      "title": "Re-skin screens with the custom widget kit",
+      "user_story": "As a player, I want the Live, FX rack, Rig, Drumming and Live Guitar Rig screens rebuilt with the custom widgets so the running app matches the mockups on every layout.",
+      "description": "Port the existing screens from stock widgets to the widgets kit (S39): mixer channel strips, the FX rack knobs, the rig amp/cab controls, the Drumming and Live Guitar Rig panels, across desktop, touch7 and pizero layouts. Behaviour is unchanged; only the rendering is replaced, so existing view tests keep passing and new tests assert the custom widgets are used.",
+      "steps_to_reproduce": [
+        "Open the Live and FX rack views; controls are skinned knobs/strips/meters",
+        "Open Rig / Drumming / Live Guitar Rig; same skinned widgets",
+        "Resize to touch7 and pizero; the skin holds"
+      ],
+      "acceptance_criteria": [
+        "Mixer strips and FX rack use widgets.Knob/Slider/VUMeter/ChannelStrip",
+        "Rig, Drumming and Live Guitar Rig use the widget kit",
+        "Existing view tests still pass (behaviour unchanged)",
+        "All three layouts (desktop/touch7/pizero) render with the skin"
+      ],
+      "components": [
+        "internal/ui/live.go",
+        "internal/ui/rig.go",
+        "internal/ui/drumming.go",
+        "internal/ui/liveguitar.go",
+        "internal/ui/touch7.go",
+        "internal/ui/pizero.go"
+      ],
+      "depends_on": [
+        "S39",
+        "S04",
+        "S30",
+        "S34",
+        "S38"
+      ],
+      "status": "not_started",
+      "started_at": "",
+      "completed_at": "",
+      "fix_solution": "",
+      "tests": [
+        {
+          "id": "S40-T01",
+          "name": "Screens use the custom widget kit",
+          "description": "The mixer/FX rack views build with widgets.Knob/VUMeter/ChannelStrip and existing behaviour is preserved.",
+          "how_we_test": "Headless Fyne test walks the view tree and asserts the custom widget types are present; re-runs existing interaction assertions.",
+          "tools": [
+            "fyne.io/fyne/v2/test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/reskin_test.go"
+          ],
+          "test_code": "// planned: tree contains *widgets.Knob/*widgets.ChannelStrip; existing assertions still pass",
+          "status": "planned",
+          "green_at": "",
+          "last_run_at": ""
+        }
+      ],
+      "green_test_at": ""
     }
   ]
 }

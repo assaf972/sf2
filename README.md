@@ -1,9 +1,21 @@
 # GigSynth
 
+[![CI](https://github.com/assaf972/sf2/actions/workflows/ci.yml/badge.svg)](https://github.com/assaf972/sf2/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/assaf972/sf2/actions/workflows/codeql.yml/badge.svg)](https://github.com/assaf972/sf2/actions/workflows/codeql.yml)
+[![Trivy](https://github.com/assaf972/sf2/actions/workflows/trivy.yml/badge.svg)](https://github.com/assaf972/sf2/actions/workflows/trivy.yml)
+
 A cross-platform **FluidSynth wrapper with a unified mixer UI** for gigging
 keyboard players. Load one SoundFont (`.sf2`/`.sf3`), layer or split up to **4
 sounds**, drive them from up to **3 MIDI keyboards**, and recall per-song
 **scenes** — on Windows, macOS, Linux, and Raspberry Pi.
+
+The same engine also powers two more instruments (planned, designed in
+[plan.json](plan.json)): a **Drumming** module that plays a multi-velocity
+`drums.sf2` from any electronic kit (Yamaha / Roland / Alesis / Millenium /
+Donner trigger maps — see [docs/drum-midi-mapping.md](docs/drum-midi-mapping.md)),
+and a **Live Guitar Rig** that uses the ¼″ instrument input with **NAM** amp
+captures, cabinet **IR** convolution and a four-slot pedalboard for recording and
+tracking — see [docs/guitar-audio-stack.md](docs/guitar-audio-stack.md).
 
 ## Stack & why
 
@@ -17,11 +29,23 @@ sounds**, drive them from up to **3 MIDI keyboards**, and recall per-song
 ```
 main.go
 └── internal/
-    ├── engine/   cgo wrapper around libfluidsynth (audio + voices)
-    ├── midiio/   MIDI device manager (per-keyboard events)
-    ├── app/      domain model: Layers, Scenes, routing, persistence
-    └── ui/       Fyne mixer, device panel, on-screen test keyboard
+    ├── engine/    cgo wrapper around libfluidsynth (audio + voices)
+    ├── midiio/    MIDI device manager (per-keyboard events)
+    ├── midimap/   manufacturer MIDI CC maps (keyboards)
+    ├── drummap/   drum-trigger note maps (e-drum kits)        [planned]
+    ├── guitar/    instrument input, NAM amp, cab IR, rig chain [planned]
+    ├── audioio/   low-latency duplex I/O (malgo)               [planned]
+    ├── fx/        per-keyboard + drive/mod effects
+    ├── app/       domain model: Layers, Scenes, DrumKit, routing, persistence
+    └── ui/        Fyne mixer, Drumming, Live Guitar Rig, custom widget kit
 ```
+
+The new audio DSP (NAM via NeuralAudio, IR via FFTConvolver, drive/reverb via
+FAUST, duplex I/O via malgo) is **all permissively licensed** — rationale and
+the Raspberry-Pi feasibility check are in
+[docs/guitar-audio-stack.md](docs/guitar-audio-stack.md). That doc also records
+the **UI decision**: stay on Fyne and build a custom skeuomorphic widget kit
+(knobs, meters, LEDs, channel strips) rather than migrate frameworks.
 
 A **Layer** = one mixer channel (a SoundFont preset + volume/pan/mute + routing).
 A **Scene** = a recallable set of 4 layers; this is the "preset" you pick per song.
@@ -47,6 +71,12 @@ and the BOM in [docs/products/bom.md](docs/products/bom.md).
   own On switch and knobs, stored in (and recalled with) every Part.
 - **Recording** — a red **REC** toggle on the Live view captures all MIDI + audio; manage,
   replay, loop and delete takes in the **Recordings** view.
+- **Drumming** *(planned)* — a **Drumming** view plays a multi-velocity `drums.sf2` on MIDI
+  channel 10 from any e-kit, with factory trigger maps (Yamaha/Roland/Alesis/Millenium/Donner),
+  a kit summary, the live mapping table, and an MP3 backing player.
+- **Live Guitar Rig** *(planned)* — four effect slots (Fuzz/Overdrive/Distortion/Modulation)
+  on the four hardware knobs, a **NAM** amp + cabinet **IR**, storable combinations, and an MP3
+  player with loop, pitch shift and **remove-guitar/vocal**.
 - **PANIC** — kills all stuck notes and re-applies the mixer.
 - **Master** — global output gain.
 

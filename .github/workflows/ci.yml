@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref to save free Actions minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # cgo system libraries GigSynth links against (FluidSynth, rtmidi, ALSA, GL/X11 for Fyne).
+  CGO_DEPS: libfluidsynth-dev librtmidi-dev libasound2-dev libgl1-mesa-dev xorg-dev pkg-config
+
+jobs:
+  test:
+    name: Build & test (coverage)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cgo system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y $CGO_DEPS
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test with race detector + coverage
+        run: |
+          go test -race -covermode=atomic -coverpkg=./... -coverprofile=coverage.out ./...
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          if [ -f coverage.out ]; then
+            go tool cover -html=coverage.out -o coverage.html
+            TOTAL=$(go tool cover -func=coverage.out | awk '/^total:/ {print $3}')
+            {
+              echo "### Test coverage: ${TOTAL:-n/a}"
+              echo ""
+              echo '```'
+              go tool cover -func=coverage.out | tail -n 20
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            coverage.out
+            coverage.html
+          if-no-files-found: ignore
+
+  lint:
+    name: golangci-lint (informational)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cgo system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y $CGO_DEPS
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      # Step-level continue-on-error keeps the check green while still surfacing
+      # findings: golangci-lint releases lag new Go toolchains and may refuse to
+      # run on a bleeding-edge target — that must not block merges.
+      - uses: golangci/golangci-lint-action@v6
+        continue-on-error: true
+        with:
+          version: latest
+          args: --timeout=5m
+
+  govulncheck:
+    name: govulncheck (informational)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cgo system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y $CGO_DEPS
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      # Reports known vulnerabilities without gating merges (a transitive CVE
+      # shouldn't block unrelated PRs); findings appear in the job log.
+      - name: Run govulncheck
+        continue-on-error: true
+        run: |
+          go run golang.org/x/vuln/cmd/govulncheck@latest ./...

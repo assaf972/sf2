@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 800 480" font-family="'DejaVu Sans', 'Segoe UI', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11151c"/><stop offset="1" stop-color="#0b0e13"/>
+    </linearGradient>
+    <style>
+      .txt{fill:#e6edf3}.muted{fill:#8b97a7}.accent{fill:#4cc2ff}
+      .panel{fill:#1a1f29;stroke:#2b3340;stroke-width:1}
+      .panel2{fill:#232a36;stroke:#323b4a;stroke-width:1}
+      .field{fill:#161b23;stroke:#323b4a;stroke-width:1}
+      .lbl{fill:#8b97a7;font-size:11px;letter-spacing:.5px}
+      .kv{fill:#e6edf3;font-size:18px;font-weight:700}.kl{fill:#9aa6b6;font-size:12px}
+      .fxname{fill:#e6edf3;font-size:15px;font-weight:700}
+    </style>
+  </defs>
+  <rect width="800" height="480" fill="url(#bg)"/>
+
+  <!-- Top bar -->
+  <rect x="0" y="0" width="800" height="52" fill="#141922"/>
+  <text x="20" y="33" class="accent" font-size="18" font-weight="700">LIVE GUITAR RIG</text>
+  <text x="300" y="26" class="lbl" font-size="10">¼″ IN</text>
+  <g transform="translate(300,30)">
+    <rect x="0" y="0" width="220" height="14" rx="5" fill="#161b23" stroke="#323b4a"/>
+    <rect x="3" y="2" width="150" height="10" rx="2" fill="#27c93f"/>
+    <rect x="156" y="2" width="30" height="10" rx="2" fill="#ffbd2e"/>
+  </g>
+  <text x="784" y="33" text-anchor="end" class="accent" font-size="15" font-weight="700">COMBO · Lead</text>
+
+  <!-- 4 effect slots as big tap pedals -->
+  <g transform="translate(20,64)">
+    <rect x="0" y="0" width="186" height="120" rx="12" fill="#143040" stroke="#4cc2ff"/>
+    <text x="16" y="28" class="fxname">FUZZ</text><circle cx="166" cy="22" r="7" fill="#4cc2ff"/>
+    <g transform="translate(58,76)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="7" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="7" stroke-linecap="round" stroke-dasharray="128 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="4" text-anchor="middle" class="kv">8.0</text><text y="54" text-anchor="middle" class="kl">DRIVE</text></g>
+    <text x="128" y="80" class="kl">TONE 45</text><text x="128" y="100" class="kl">LVL 60</text>
+
+    <g transform="translate(196,0)">
+      <rect x="0" y="0" width="186" height="120" rx="12" fill="#0e1b24" stroke="#4cc2ff" stroke-width="3"/>
+      <text x="16" y="28" class="fxname">OVERDRIVE</text><circle cx="166" cy="22" r="7" fill="#4cc2ff"/>
+      <g transform="translate(58,76)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="7" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="7" stroke-linecap="round" stroke-dasharray="104 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="4" text-anchor="middle" class="kv">6.5</text><text y="54" text-anchor="middle" class="kl">DRIVE</text></g>
+      <text x="128" y="80" class="accent" font-size="11">TONE 65</text><text x="128" y="100" class="accent" font-size="11">LVL 70</text>
+    </g>
+    <g transform="translate(392,0)" opacity="0.5">
+      <rect x="0" y="0" width="186" height="120" rx="12" class="panel"/>
+      <text x="16" y="28" class="fxname">DISTORTION</text><circle cx="166" cy="22" r="7" fill="#5a6678"/>
+      <g transform="translate(58,76)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="7" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="4" text-anchor="middle" class="kv">7.0</text><text y="54" text-anchor="middle" class="kl">GAIN</text></g>
+      <text x="128" y="80" class="kl">TONE 55</text><text x="128" y="100" class="kl">LVL 60</text>
+    </g>
+    <g transform="translate(588,0)">
+      <rect x="0" y="0" width="172" height="120" rx="12" fill="#143040" stroke="#4cc2ff"/>
+      <text x="16" y="28" class="fxname">MODULATION</text><circle cx="152" cy="22" r="7" fill="#4cc2ff"/>
+      <g transform="translate(54,76)"><circle r="34" fill="none" stroke="#2d3543" stroke-width="7" stroke-linecap="round" stroke-dasharray="160.2 53.4" transform="rotate(135)"/><circle r="34" fill="none" stroke="#4cc2ff" stroke-width="7" stroke-linecap="round" stroke-dasharray="56 213.6" transform="rotate(135)"/><circle r="22" fill="#232a36"/><text y="4" text-anchor="middle" class="kv">0.8</text><text y="54" text-anchor="middle" class="kl">RATE</text></g>
+      <text x="120" y="80" class="kl">DEPTH 55</text><text x="120" y="100" class="kl">MIX 35</text>
+    </g>
+  </g>
+
+  <!-- amp / cab big tap targets -->
+  <g transform="translate(20,196)">
+    <rect class="field" x="0" y="0" width="372" height="56" rx="10"/>
+    <text x="16" y="22" class="lbl" font-size="10">AMP — NAM MODEL</text>
+    <text x="16" y="46" class="accent" font-size="20" font-weight="700">Tweed Deluxe .nam</text>
+    <text x="356" y="38" text-anchor="end" class="muted" font-size="20">▾</text>
+  </g>
+  <g transform="translate(408,196)">
+    <rect class="field" x="0" y="0" width="372" height="56" rx="10"/>
+    <text x="16" y="22" class="lbl" font-size="10">CAB — IR (.wav)</text>
+    <text x="16" y="46" class="accent" font-size="20" font-weight="700">4x12 V30</text>
+    <text x="356" y="38" text-anchor="end" class="muted" font-size="20">▾</text>
+  </g>
+
+  <!-- combinations -->
+  <g transform="translate(20,266)">
+    <text x="0" y="14" class="lbl">COMBINATIONS</text>
+    <rect x="0" y="22" width="120" height="40" rx="10" class="panel2"/><text x="60" y="47" text-anchor="middle" class="txt" font-size="14">Clean</text>
+    <rect x="130" y="22" width="120" height="40" rx="10" class="panel2"/><text x="190" y="47" text-anchor="middle" class="txt" font-size="14">Crunch</text>
+    <rect x="260" y="22" width="120" height="40" rx="10" fill="#143040" stroke="#4cc2ff"/><text x="320" y="47" text-anchor="middle" class="accent" font-size="14" font-weight="700">Lead ✓</text>
+    <rect x="390" y="22" width="120" height="40" rx="10" class="panel2"/><text x="450" y="47" text-anchor="middle" class="txt" font-size="14">Bass DI</text>
+    <rect x="640" y="22" width="120" height="40" rx="10" fill="#143040" stroke="#4cc2ff"/><text x="700" y="47" text-anchor="middle" class="accent" font-size="14">Save…</text>
+  </g>
+
+  <!-- MP3 transport with pitch + remove guitar -->
+  <g transform="translate(20,344)">
+    <rect class="panel" x="0" y="0" width="760" height="118" rx="12"/>
+    <text x="20" y="28" class="lbl">BACKING TRACK — Blues Shuffle in A · 110 BPM</text>
+    <g transform="translate(50,76)"><circle r="26" fill="#143040" stroke="#4cc2ff" stroke-width="2"/><polygon points="-9,-13 -9,13 15,0" fill="#4cc2ff"/></g>
+    <g transform="translate(116,76)"><circle r="22" class="panel2"/><rect x="-7" y="-8" width="14" height="16" rx="2" fill="#cdd7e2"/></g>
+    <g transform="translate(180,76)"><circle r="22" fill="#143040" stroke="#4cc2ff"/><path d="M -10 -4 a 9 9 0 1 1 -1 8" fill="none" stroke="#4cc2ff" stroke-width="2.5"/></g>
+    <text x="50" y="46" text-anchor="middle" class="kl">PLAY</text><text x="116" y="46" text-anchor="middle" class="kl">STOP</text><text x="180" y="46" text-anchor="middle" class="accent" font-size="11">LOOP</text>
+    <rect x="226" y="64" width="220" height="12" rx="6" fill="#222a35"/><rect x="226" y="64" width="90" height="12" rx="6" fill="#4cc2ff"/>
+    <text x="226" y="98" class="muted" font-size="11">01:04 / 03:20</text>
+    <!-- pitch -->
+    <rect x="470" y="40" width="130" height="56" rx="10" class="panel2"/>
+    <text x="484" y="60" class="lbl" font-size="10">PITCH</text>
+    <circle cx="500" cy="80" r="13" fill="#143040" stroke="#4cc2ff"/><text x="500" y="85" text-anchor="middle" class="accent" font-size="15">−</text>
+    <text x="535" y="86" text-anchor="middle" class="kv">−2</text>
+    <circle cx="582" cy="80" r="13" fill="#143040" stroke="#4cc2ff"/><text x="582" y="85" text-anchor="middle" class="accent" font-size="15">+</text>
+    <!-- remove guitar -->
+    <rect x="616" y="40" width="128" height="56" rx="10" fill="#143040" stroke="#4cc2ff"/>
+    <text x="632" y="60" class="lbl" font-size="10">REMOVE GUITAR</text>
+    <rect x="632" y="68" width="60" height="20" rx="10" fill="#0e1b24" stroke="#4cc2ff"/><circle cx="682" cy="78" r="8" fill="#4cc2ff"/>
+    <text x="704" y="83" class="accent" font-size="11">ON</text>
+  </g>
+</svg>
