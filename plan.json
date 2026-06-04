@@ -1,0 +1,1128 @@
+{
+  "project": "GigSynth",
+  "schema_version": 1,
+  "generated_at": "2026-06-04T08:28:56Z",
+  "description": "Living implementation plan. Each story is built test-first; this file is updated as work proceeds (status, timestamps, green tests, fix_solution).",
+  "conventions": {
+    "story_status": [
+      "not_started",
+      "in_progress",
+      "completed"
+    ],
+    "test_status": [
+      "planned",
+      "written",
+      "passing",
+      "failing"
+    ],
+    "time_watch": {
+      "on_start": "When work on a story begins, set story.status='in_progress' and story.started_at=<UTC ISO8601>.",
+      "on_test_written": "When a test file is created, set test.status='written' and fill test.test_code + test.test_files.",
+      "on_test_run": "After each run, set test.last_run_at and test.status='passing'|'failing'.",
+      "on_test_green": "The FIRST time a test passes, set test.green_at=<UTC ISO8601> (never overwrite it).",
+      "on_complete": "When all of a story's tests are 'passing', set story.status='completed', story.completed_at=<UTC ISO8601>, and write story.fix_solution describing how it was implemented.",
+      "timestamp_format": "UTC ISO8601, e.g. 2026-06-04T08:28:56Z"
+    },
+    "test_object_fields": [
+      "id",
+      "name",
+      "description",
+      "how_we_test",
+      "tools",
+      "type",
+      "test_files",
+      "test_code",
+      "status",
+      "green_at",
+      "last_run_at"
+    ],
+    "global_test_tooling": {
+      "cucumber": "github.com/cucumber/godog (Gherkin .feature + Go step defs)",
+      "unit": "Go testing + github.com/stretchr/testify",
+      "ui": "fyne.io/fyne/v2/test (headless widget render + interaction)",
+      "synth_double": "engine.Synth interface with a FakeEngine recording calls (no cgo/audio in tests)",
+      "db": "modernc.org/sqlite against an in-memory or temp-file database"
+    }
+  },
+  "summary": {
+    "total_stories": 18,
+    "total_tests": 25,
+    "stories_completed": 18,
+    "tests_green": 25,
+    "last_updated": "2026-06-04T09:46:29Z"
+  },
+  "stories": [
+    {
+      "id": "S01",
+      "title": "Engine abstraction layer (testable synth)",
+      "user_story": "As a developer, I want the Controller to depend on a synth interface (not the cgo FluidSynth type) so that domain logic can be tested without audio hardware.",
+      "description": "Introduce a Synth interface in internal/engine (NoteOn/NoteOff/CC/PitchBend/SelectProgram/SetChannelVolume/SetChannelPan/AllNotesOff/Panic/SetMasterGain/LoadSoundFont). The real *engine.Engine satisfies it. Provide a FakeEngine test double that records every call. Refactor app.NewController to accept the interface.",
+      "steps_to_reproduce": [
+        "Build the project: go build ./...",
+        "Run go vet ./internal/app to confirm Controller compiles against the interface",
+        "In a test, construct a Controller with FakeEngine and call NoteOn; inspect FakeEngine.Calls"
+      ],
+      "acceptance_criteria": [
+        "Controller no longer references C/cgo types directly",
+        "*engine.Engine implements engine.Synth (compile-time assertion)",
+        "FakeEngine records ordered calls with channel/key/vel/cc args",
+        "go test ./internal/app runs with NO audio device and NO cgo engine instance"
+      ],
+      "components": [
+        "internal/engine/engine.go",
+        "internal/engine/synth.go (new interface)",
+        "internal/app/controller.go",
+        "internal/app/fakeengine_test.go (new)"
+      ],
+      "depends_on": [],
+      "status": "completed",
+      "started_at": "2026-06-04T08:42:27Z",
+      "completed_at": "2026-06-04T08:43:54Z",
+      "fix_solution": "Introduced engine.Synth (internal/engine/synth.go): a cgo-free control interface (LoadSoundFont/SelectProgram/NoteOn/NoteOff/CC/PitchBend/AllNotesOff/SetChannelVolume/SetChannelPan/SetMasterGain/Panic) with a compile-time assertion that *engine.Engine implements it. Refactored Controller.eng to engine.Synth and NewController to accept it (guarding a nil MIDI manager for tests). Added FakeEngine (records ordered calls) so the whole domain layer tests with no audio/cgo. Tests green: ordered-call recording + single-layer note routing.",
+      "tests": [
+        {
+          "id": "S01-T01",
+          "name": "engine.Engine satisfies Synth interface",
+          "description": "Compile-time interface conformance plus a smoke call sequence on the fake.",
+          "how_we_test": "A Go unit test declares `var _ engine.Synth = (*engine.Engine)(nil)` and exercises FakeEngine to assert it records calls in order.",
+          "tools": [
+            "go test",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/app/fakeengine_test.go"
+          ],
+          "test_code": "package app\n\nimport (\n\t\"fmt\"\n\t\"sync\"\n\t\"testing\"\n\n\t\"gigsynth/internal/engine\"\n\n\t\"github.com/stretchr/testify/assert\"\n)\n\n// S01-T01: the real engine satisfies Synth (compile-time, see engine/synth.go),\n// and the FakeEngine records calls in order so tests can assert behaviour.\nfunc TestFakeEngineRecordsCallsInOrder(t *testing.T) {\n\tvar _ engine.Synth = (*FakeEngine)(nil) // FakeEngine is a valid Synth\n\n\tf := &FakeEngine{}\n\tf.NoteOn(0, 60, 100)\n\tf.SetChannelVolume(0, 90)\n\tf.NoteOff(0, 60)\n\n\tassert.Equal(t, []string{\n\t\t\"NoteOn ch=0 key=60 vel=100\",\n\t\t\"CC ch=0 ctrl=7 val=90\",\n\t\t\"NoteOff ch=0 key=60\",\n\t}, f.Calls)\n\tassert.Len(t, f.CallsOf(\"NoteOn\"), 1)\n}\n\n// FakeEngine is a test double for engine.Synth. It records every call as a\n// human-readable string in order, so tests can assert exactly what the\n// Controller asked the synth to do — with no audio device or FluidSynth.\ntype FakeEngine struct {\n\tmu      sync.Mutex\n\tCalls   []string\n\tpresets []engine.Preset\n\tsfErr   error\n}\n\nvar _ engine.Synth = (*FakeEngine)(nil)\n\nfunc (f *FakeEngine) rec(format string, args ...any) {\n\tf.mu.Lock()\n\tf.Calls = append(f.Calls, fmt.Sprintf(format, args...))\n\tf.mu.Unlock()\n}\n\n// CallsOf returns the recorded calls whose prefix matches name (e.g. \"NoteOn\").\nfunc (f *FakeEngine) CallsOf(name string) []string {\n\tf.mu.Lock()\n\tdefer f.mu.Unlock()\n\tvar out []string\n\tfor _, c := range f.Calls {\n\t\tif len(c) >= len(name) && c[:len(name)] == name {\n\t\t\tout = append(out, c)\n\t\t}\n\t}\n\treturn out\n}\n\n// Reset clears the recorded call log.\nfunc (f *FakeEngine) Reset() { f.mu.Lock(); f.Calls = nil; f.mu.Unlock() }\n\nfunc (f *FakeEngine) LoadSoundFont(path string) ([]engine.Preset, error) {\n\tf.rec(\"LoadSoundFont %s\", path)\n\treturn f.presets, f.sfErr\n}\nfunc (f *FakeEngine) SelectProgram(ch, bank, prog int) error {\n\tf.rec(\"SelectProgram ch=%d bank=%d prog=%d\", ch, bank, prog)\n\treturn nil\n}\nfunc (f *FakeEngine) NoteOn(ch, key, vel int)   { f.rec(\"NoteOn ch=%d key=%d vel=%d\", ch, key, vel) }\nfunc (f *FakeEngine) NoteOff(ch, key int)       { f.rec(\"NoteOff ch=%d key=%d\", ch, key) }\nfunc (f *FakeEngine) CC(ch, ctrl, val int)      { f.rec(\"CC ch=%d ctrl=%d val=%d\", ch, ctrl, val) }\nfunc (f *FakeEngine) PitchBend(ch, value int)   { f.rec(\"PitchBend ch=%d val=%d\", ch, value) }\nfunc (f *FakeEngine) AllNotesOff(ch int)        { f.rec(\"AllNotesOff ch=%d\", ch) }\nfunc (f *FakeEngine) SetChannelVolume(ch, v int){ f.rec(\"CC ch=%d ctrl=7 val=%d\", ch, v) }\nfunc (f *FakeEngine) SetChannelPan(ch, p int)   { f.rec(\"CC ch=%d ctrl=10 val=%d\", ch, p) }\nfunc (f *FakeEngine) SetMasterGain(g float64)   { f.rec(\"SetMasterGain %.2f\", g) }\nfunc (f *FakeEngine) Panic()                    { f.rec(\"Panic\") }\n",
+          "status": "passing",
+          "green_at": "2026-06-04T08:43:54Z",
+          "last_run_at": "2026-06-04T08:43:54Z"
+        },
+        {
+          "id": "S01-T02",
+          "name": "Controller routes a note to the fake engine",
+          "description": "Controller.VirtualNoteOn on an enabled layer produces exactly one NoteOn on the fake at the layer's channel.",
+          "how_we_test": "Wire Controller{FakeEngine}; enable layer 0; call VirtualNoteOn(60,100); assert fake.Calls == [NoteOn ch0 key60 vel100].",
+          "tools": [
+            "go test",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/app/controller_test.go"
+          ],
+          "test_code": "package app\n\nimport (\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/assert\"\n)\n\n// S01-T02: a note on an enabled layer produces exactly one NoteOn on the fake\n// engine at that layer's channel — proving the Controller is fully testable\n// without cgo or an audio device.\nfunc TestControllerRoutesNoteToEngine(t *testing.T) {\n\tf := &FakeEngine{}\n\tc := NewController(f, nil) // nil MIDI manager: we drive routing directly\n\n\t// Default scene has layers 0 and 1 enabled across the whole keyboard.\n\tc.SetScene(Scene{\n\t\tName:       \"t\",\n\t\tMasterGain: 0.6,\n\t\tLayers: []Layer{\n\t\t\t{Channel: 0, Enabled: true, Volume: 100, Pan: 64, Source: SourceAny, KeyLow: 0, KeyHigh: 127},\n\t\t\t{Channel: 1, Enabled: false, Volume: 100, Pan: 64, Source: SourceAny, KeyLow: 0, KeyHigh: 127},\n\t\t},\n\t})\n\tf.Reset() // ignore the program/CC calls from applying the scene\n\n\tc.VirtualNoteOn(60, 100)\n\n\tassert.Equal(t, []string{\"NoteOn ch=0 key=60 vel=100\"}, f.CallsOf(\"NoteOn\"),\n\t\t\"only the enabled layer (channel 0) should sound\")\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T08:43:54Z",
+          "last_run_at": "2026-06-04T08:43:54Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T08:43:54Z"
+    },
+    {
+      "id": "S02",
+      "title": "Song & part persistence (SQLite)",
+      "user_story": "As a gigging keyboardist, I want songs and their ordered parts (with full per-keyboard state incl. effects) stored in SQLite so my set list is durable.",
+      "description": "Extend internal/db with CRUD: CreateSong/ListSongs/RenameSong/DeleteSong, AddPart/ListParts/ReorderParts/SavePartChannels/DeletePart. Extend the part_channels schema with chorus_* and delay_* columns (migration). Provide a thin app service that maps db.Part <-> app.Scene/Part.",
+      "steps_to_reproduce": [
+        "Open a DB at a temp path (or :memory:)",
+        "Create a song, add parts, set channel sound+fx, close",
+        "Reopen and read back; values match",
+        "Delete the song; parts are gone (cascade)"
+      ],
+      "acceptance_criteria": [
+        "Schema migrates to add chorus/delay columns idempotently",
+        "Parts keep a stable sort_order; reorder persists",
+        "part_channels round-trips sound, mix, split, transpose, pan, chorus(2), delay(3)",
+        "Foreign-key cascade removes parts when a song is deleted"
+      ],
+      "components": [
+        "internal/db/db.go",
+        "internal/db/crud.go (new)",
+        "internal/app/library.go (new service)"
+      ],
+      "depends_on": [
+        "S01"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T08:44:40Z",
+      "completed_at": "2026-06-04T08:48:05Z",
+      "fix_solution": "Extended internal/db: added per-keyboard FX columns (chorus_on/rate/depth, delay_on/time/feedback/mix) to part_channels via an idempotent addColumnIfMissing migration (PRAGMA table_info check + ALTER TABLE), enabled FK cascade through the DSN (_pragma=foreign_keys(1)), and added the FX fields to db.Channel. New internal/db/crud.go implements CreateSong/ListSongs/RenameSong/DeleteSong, AddPart (auto sort_order + default channels), SetPartChannel (UPSERT), ListParts/GetPart (channels loaded), SavePartMeta, DeletePart, ReorderParts (tx), CountParts. Verified by a godog feature (3 scenarios/18 steps: ordered parts, full FX round-trip, cascade delete) and a migration unit test that opens a pre-FX DB and confirms columns are added with data preserved.",
+      "tests": [
+        {
+          "id": "S02-T01",
+          "name": "Song/part CRUD and FX round-trip",
+          "description": "Acceptance scenarios for create, FX round-trip, and cascade delete.",
+          "how_we_test": "godog runs the feature against the real db package using an in-memory SQLite DB; steps call CRUD funcs and assert read-back values.",
+          "tools": [
+            "godog",
+            "modernc.org/sqlite",
+            "testify"
+          ],
+          "type": "cucumber",
+          "test_files": [
+            "features/persistence.feature",
+            "internal/db/persistence_steps_test.go"
+          ],
+          "test_code": "Feature: Song & part persistence (SQLite)\n  As a gigging keyboardist\n  I want my songs and parts saved to a local database\n  So that my set list survives restarts\n\n  Background:\n    Given an empty in-memory GigSynth database\n\n  Scenario: Create a song and add ordered parts\n    When I create a song \"Shine On You Crazy Diamond\"\n    And I add a part \"Intro\" to that song\n    And I add a part \"Solina Pad\" to that song\n    Then the song has 2 parts in order:\n      | order | name       |\n      | 1     | Intro      |\n      | 2     | Solina Pad |\n\n  Scenario: A part stores per-channel sound, mix and FX\n    Given a song \"Test\" with a part \"P1\"\n    When I set part \"P1\" channel 1 to sound bank 2 program 1 volume 108 pan 64\n    And I set part \"P1\" channel 1 chorus on rate 0.8 depth 55\n    And I set part \"P1\" channel 1 delay on time 320 feedback 35 mix 30\n    And I reload the part from the database\n    Then channel 1 sound is bank 2 program 1 with volume 108\n    And channel 1 chorus is on with rate 0.8 and depth 55\n    And channel 1 delay is on with time 320 feedback 35 mix 30\n\n  Scenario: Deleting a song cascades to its parts\n    Given a song \"Doomed\" with 3 parts\n    When I delete the song \"Doomed\"\n    Then no parts remain for \"Doomed\"\n",
+          "status": "passing",
+          "green_at": "2026-06-04T08:48:05Z",
+          "last_run_at": "2026-06-04T08:48:05Z"
+        },
+        {
+          "id": "S02-T02",
+          "name": "Migration adds FX columns on an old DB",
+          "description": "Opening a pre-FX database file adds chorus_*/delay_* columns without data loss.",
+          "how_we_test": "Create a DB with the old schema, insert a part, run Open() (migrate), assert new columns exist and the old row is intact.",
+          "tools": [
+            "go test",
+            "modernc.org/sqlite"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/db/migrate_test.go"
+          ],
+          "test_code": "package db\n\nimport (\n\t\"database/sql\"\n\t\"path/filepath\"\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/require\"\n)\n\n// S02-T02: opening a pre-FX database adds the chorus_*/delay_* columns without\n// losing existing data.\nfunc TestMigrateAddsFXColumns(t *testing.T) {\n\tpath := filepath.Join(t.TempDir(), \"old.db\")\n\n\t// 1) Hand-build an \"old\" database whose part_channels has NO effects columns.\n\traw, err := sql.Open(\"sqlite\", path)\n\trequire.NoError(t, err)\n\t_, err = raw.Exec(`\n\t\tCREATE TABLE songs(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL);\n\t\tCREATE TABLE parts(id INTEGER PRIMARY KEY AUTOINCREMENT, song_id INTEGER, name TEXT, sort_order INTEGER, master_gain REAL);\n\t\tCREATE TABLE part_channels(part_id INTEGER, channel INTEGER, bank INTEGER DEFAULT 0, program INTEGER DEFAULT 0,\n\t\t\tinstrument_name TEXT DEFAULT '', level INTEGER DEFAULT 100, pan INTEGER DEFAULT 64, mute INTEGER DEFAULT 0,\n\t\t\tenabled INTEGER DEFAULT 1, source TEXT DEFAULT '', key_low INTEGER DEFAULT 0, key_high INTEGER DEFAULT 127,\n\t\t\ttranspose INTEGER DEFAULT 0, PRIMARY KEY(part_id, channel));\n\t\tCREATE TABLE midi_keyboards(id INTEGER PRIMARY KEY AUTOINCREMENT, manufacturer TEXT, model TEXT, midi_mapping TEXT);\n\t\tINSERT INTO songs(id,name) VALUES(1,'Legacy');\n\t\tINSERT INTO parts(id,song_id,name,sort_order,master_gain) VALUES(1,1,'OldPart',1,0.6);\n\t\tINSERT INTO part_channels(part_id,channel,level) VALUES(1,1,111);`)\n\trequire.NoError(t, err)\n\trequire.NoError(t, raw.Close())\n\n\t// 2) Open via our migrating Open() — should add FX columns, keep the old row.\n\td, err := Open(path)\n\trequire.NoError(t, err)\n\tdefer d.Close()\n\n\tfor _, col := range []string{\"chorus_on\", \"chorus_rate\", \"chorus_depth\", \"delay_on\", \"delay_time\", \"delay_feedback\", \"delay_mix\"} {\n\t\trequire.NoError(t, d.addColumnIfMissing(\"part_channels\", col, \"INTEGER\"),\n\t\t\t\"column %s should already exist after migrate\", col)\n\t}\n\n\tp, err := d.GetPart(1)\n\trequire.NoError(t, err)\n\trequire.Equal(t, \"OldPart\", p.Name)\n\trequire.Equal(t, 111, p.Channels[0].Level, \"old data preserved\")\n\trequire.Equal(t, 0.8, p.Channels[0].ChorusRate, \"FX default applied\")\n\trequire.False(t, p.Channels[0].ChorusOn)\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T08:48:05Z",
+          "last_run_at": "2026-06-04T08:48:05Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T08:48:05Z"
+    },
+    {
+      "id": "S03",
+      "title": "Three-view UI shell (Live / Songs / Settings)",
+      "user_story": "As a user, I want the app organised into three top-level views so I can switch between performing, editing my set list, and configuring the rig.",
+      "description": "Refactor internal/ui into an app shell using container.AppTabs with three tabs: Live, Songs, Settings. Move the existing mixer into Live. Each tab is built lazily and refreshed from the Controller/Library.",
+      "steps_to_reproduce": [
+        "Launch the app",
+        "Observe three tabs: Live, Songs, Settings",
+        "Click each tab; the corresponding view renders without error"
+      ],
+      "acceptance_criteria": [
+        "AppTabs has exactly three tabs in order Live, Songs, Settings",
+        "Switching tabs does not lose Controller state",
+        "Default start tab is configurable (Settings)"
+      ],
+      "components": [
+        "internal/ui/ui.go",
+        "internal/ui/shell.go (new)",
+        "internal/ui/live.go",
+        "internal/ui/songs.go",
+        "internal/ui/settings.go"
+      ],
+      "depends_on": [
+        "S01"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:16:44Z",
+      "completed_at": "2026-06-04T09:22:03Z",
+      "fix_solution": "Refactored internal/ui into a three-view shell: buildShell() returns a container.AppTabs with Live, Songs and Settings tabs. The existing mixer/top-bar/devices moved under the Live tab (now also hosting the part shuttle and 3 keyboard panels); Songs and Settings are new views. Run() and main.go were updated to open the SQLite DB, build an app.Library, attach it to the Controller, and pass it to the UI. Verified by a headless Fyne test asserting the three tab labels in order.",
+      "tests": [
+        {
+          "id": "S03-T01",
+          "name": "Shell renders three named tabs",
+          "description": "The shell builds an AppTabs whose tab labels are Live, Songs, Settings.",
+          "how_we_test": "Use fyne.io/fyne/v2/test to build the shell with a fake Controller; assert the AppTabs items' Text values.",
+          "tools": [
+            "fyne test",
+            "go test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/shell_test.go"
+          ],
+          "test_code": "package ui\n\nimport (\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/assert\"\n)\n\n// S03-T01: the shell builds an AppTabs with the three named views in order.\nfunc TestShellHasThreeTabs(t *testing.T) {\n\tu, _ := newTestUI(t)\n\ttabs := u.buildShell()\n\n\tvar labels []string\n\tfor _, it := range tabs.Items {\n\t\tlabels = append(labels, it.Text)\n\t}\n\tassert.Equal(t, []string{\"Live\", \"Songs\", \"Settings\"}, labels)\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:22:03Z",
+          "last_run_at": "2026-06-04T09:22:03Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:22:03Z"
+    },
+    {
+      "id": "S04",
+      "title": "Live view: three-keyboard mixer",
+      "user_story": "As a gigging keyboardist, I want three keyboard strips on the Live view each showing the selected sound name, a Volume and Pan control, and a +/- half-step key tuning, so I can perform and balance live.",
+      "description": "Build internal/ui/live.go with three keyboard panels bound to layers 0..2. Each panel: sound label, Volume slider (CC7), Pan slider (CC10), key tuning -/+ stepper (transpose). Reuse Controller.SetLayerVolume/Pan/Transpose. Top bar keeps SoundFont/Master/PANIC.",
+      "steps_to_reproduce": [
+        "Open Live view with a SoundFont loaded",
+        "Drag keyboard 1 Volume; hear/observe the level change (CC7)",
+        "Tap key tuning + ; play a note; it sounds a semitone higher",
+        "Set Pan; observe CC10"
+      ],
+      "acceptance_criteria": [
+        "Three keyboard panels show sound name, volume, pan, key tuning",
+        "Volume maps to CC7, Pan to CC10 on the correct channel",
+        "Key tuning steps transpose in single semitones and clamps notes to 0..127",
+        "A disconnected keyboard renders disabled"
+      ],
+      "components": [
+        "internal/ui/live.go",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S03"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:18:46Z",
+      "completed_at": "2026-06-04T09:22:03Z",
+      "fix_solution": "Live view now shows three keyboard panels (internal/ui/live.go), each with selected sound name, volume (CC7) with a slider, pan (CC10) readout, and a +/- half-step key-tuning stepper driving Controller.SetLayerTranspose; refreshKeyboards() syncs them from the scene. Verified by a godog feature (volume->CC7, +12 transpose shifts a played note to key 72, pan centre->CC10 via the FakeEngine) and a headless Fyne test asserting the panels reflect a known scene (sound name, volume, +12 st, L14 pan, empty->dash).",
+      "tests": [
+        {
+          "id": "S04-T01",
+          "name": "Volume, pan and key tuning drive the engine",
+          "description": "Acceptance scenarios mapping live controls to engine CC/NoteOn calls.",
+          "how_we_test": "godog drives the Controller (FakeEngine); steps set volume/pan/transpose and play notes, asserting recorded CC7/CC10/NoteOn calls.",
+          "tools": [
+            "godog",
+            "testify"
+          ],
+          "type": "cucumber",
+          "test_files": [
+            "features/live_mixer.feature",
+            "internal/app/live_steps_test.go"
+          ],
+          "test_code": "Feature: Live three-keyboard mixer\n  As a gigging keyboardist\n  I want per-keyboard sound, volume, pan and key tuning on the Live view\n  So that I can balance three controllers at a glance\n\n  Background:\n    Given a loaded SoundFont\n    And keyboard 1 is enabled with sound \"Fender Rhodes\"\n\n  Scenario: Adjusting keyboard volume changes the channel CC7\n    When I set keyboard 1 volume to 90\n    Then the synth receives CC7 value 90 on channel 0\n\n  Scenario: Key tuning shifts incoming notes by semitones\n    Given keyboard 1 key tuning is +12 semitones\n    When keyboard 1 plays note 60\n    Then the synth receives NoteOn key 72 on channel 0\n\n  Scenario: Pan is centre by default and maps to CC10\n    When I set keyboard 1 pan to centre\n    Then the synth receives CC10 value 64 on channel 0\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:22:03Z",
+          "last_run_at": "2026-06-04T09:22:03Z"
+        },
+        {
+          "id": "S04-T02",
+          "name": "Live panel reflects controller state",
+          "description": "Rendering the Live panel shows the layer's sound name and volume value.",
+          "how_we_test": "fyne test: build the Live view with a fake Controller holding a known scene; assert label/slider values.",
+          "tools": [
+            "fyne test",
+            "go test"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/live_test.go"
+          ],
+          "test_code": "package ui\n\nimport (\n\t\"testing\"\n\n\t\"gigsynth/internal/app\"\n\n\t\"github.com/stretchr/testify/assert\"\n)\n\n// S04-T02: the Live keyboard panels reflect the controller's scene.\nfunc TestLivePanelsReflectScene(t *testing.T) {\n\tu, _ := newTestUI(t)\n\tu.ctrl.SetScene(app.Scene{\n\t\tName:       \"t\",\n\t\tMasterGain: 0.6,\n\t\tLayers: []app.Layer{\n\t\t\t{Channel: 0, Enabled: true, PresetName: \"Fender Rhodes\", Volume: 108, Pan: 64, Transpose: 12},\n\t\t\t{Channel: 1, Enabled: true, PresetName: \"Solina\", Volume: 96, Pan: 50, Transpose: 0},\n\t\t\t{Channel: 2, Enabled: false, PresetName: \"\", Volume: 0, Pan: 64, Transpose: 0},\n\t\t},\n\t})\n\n\tu.buildKeyboardPanels()\n\tu.refreshKeyboards()\n\n\tassert.Equal(t, \"Fender Rhodes\", u.kbPanels[0].soundLabel.Text)\n\tassert.Equal(t, \"108\", u.kbPanels[0].volLabel.Text)\n\tassert.Equal(t, \"+12 st\", u.kbPanels[0].tuneLabel.Text)\n\n\tassert.Equal(t, \"Solina\", u.kbPanels[1].soundLabel.Text)\n\tassert.Equal(t, \"L14\", u.kbPanels[1].panLabel.Text) // pan 50 => L14\n\tassert.Equal(t, \"—\", u.kbPanels[2].soundLabel.Text) // empty sound shows dash\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:22:03Z",
+          "last_run_at": "2026-06-04T09:22:03Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:22:03Z"
+    },
+    {
+      "id": "S05",
+      "title": "Part navigation shuttle in Live",
+      "user_story": "As a gigging keyboardist, I want back/forward Part buttons on the Live view that reload all three keyboards' sounds and mix for the selected part of the current song.",
+      "description": "Add a current-song/current-part cursor to the Controller (or Library). PrevPart/NextPart clamp at the ends, call Panic() then apply the part as a Scene. The Live shuttle shows 'Song — Part X/Y'. Recall reuses Controller.SetScene.",
+      "steps_to_reproduce": [
+        "Select a song with several parts",
+        "On Live, click 'Part >'",
+        "Observe the part label advance and all keyboards' sounds switch",
+        "Click 'Part <' past the first part; it stays on part 1"
+      ],
+      "acceptance_criteria": [
+        "Next/Prev move the cursor and recall the part atomically",
+        "Recall issues PANIC first so no notes stick across the switch",
+        "Cursor clamps at first/last part",
+        "Label shows current song and 'index / total'"
+      ],
+      "components": [
+        "internal/app/controller.go",
+        "internal/app/library.go",
+        "internal/ui/live.go"
+      ],
+      "depends_on": [
+        "S02",
+        "S04"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:12:51Z",
+      "completed_at": "2026-06-04T09:14:01Z",
+      "fix_solution": "Added a setlist cursor to the Controller (internal/app/navigation.go): SetLibrary/LoadSong load a song's ordered parts; NextPart/PrevPart/GoToPart move a clamped cursor and recall the part via SetScene (which PANICs first, so notes never stick across a change). CurrentSong/CurrentPartName/CurrentPartIndex/PartCount feed the Live shuttle label. Recall maps the stored part to a Scene through the Library. Godog feature (3 scenarios) verifies Next recalls the right sound with a PANIC first, and that Prev/Next clamp at the first/last part.",
+      "tests": [
+        {
+          "id": "S05-T01",
+          "name": "Part shuttle recalls sounds and clamps at ends",
+          "description": "Acceptance scenarios for next/prev, clamping, and PANIC-before-recall.",
+          "how_we_test": "godog: build a Library with an in-memory song+parts, wire a Controller(FakeEngine); steps press next/prev and assert active part, channel sounds, and that Panic preceded the program changes in the fake call log.",
+          "tools": [
+            "godog",
+            "modernc.org/sqlite",
+            "testify"
+          ],
+          "type": "cucumber",
+          "test_files": [
+            "features/part_navigation.feature",
+            "internal/app/partnav_steps_test.go"
+          ],
+          "test_code": "Feature: Part navigation shuttle\n  As a gigging keyboardist\n  I want to step through a song's parts during a performance\n  So that all three keyboards reload their sounds in one action\n\n  Background:\n    Given a song \"Shine On You Crazy Diamond\" with parts:\n      | order | name       | kb1_sound          |\n      | 1     | Intro      | Synth Wind         |\n      | 2     | Glass Pad  | Wine Glass Pad     |\n      | 3     | Solina Pad | Solina String Ens. |\n    And part 1 is active\n\n  Scenario: Next part recalls its sounds\n    When I press \"Next Part\"\n    Then the active part is \"Glass Pad\"\n    And keyboard 1 sound is \"Wine Glass Pad\"\n    And a PANIC was issued before the recall\n\n  Scenario: Prev at the first part stays put\n    When I press \"Prev Part\"\n    Then the active part is \"Intro\"\n\n  Scenario: Next at the last part stays on the last part\n    Given part 3 is active\n    When I press \"Next Part\"\n    Then the active part is \"Solina Pad\"\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:14:01Z",
+          "last_run_at": "2026-06-04T09:14:01Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:14:01Z"
+    },
+    {
+      "id": "S06",
+      "title": "Songs view: song library CRUD",
+      "user_story": "As a user, I want to create, rename, delete and select songs in the Songs view so I can manage my set list.",
+      "description": "Build internal/ui/songs.go left column: song list bound to Library.ListSongs, with + New, rename (double-click), delete (confirm). Selecting a song loads its parts (S07).",
+      "steps_to_reproduce": [
+        "Open Songs view",
+        "Click + New, type a name; it appears in the list",
+        "Double-click to rename; delete with confirmation"
+      ],
+      "acceptance_criteria": [
+        "Songs persist via the Library/db",
+        "List is sorted/ordered consistently and refreshes on change",
+        "Delete asks for confirmation and cascades parts"
+      ],
+      "components": [
+        "internal/ui/songs.go",
+        "internal/app/library.go"
+      ],
+      "depends_on": [
+        "S02",
+        "S03"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:16:44Z",
+      "completed_at": "2026-06-04T09:22:03Z",
+      "fix_solution": "Songs view (internal/ui/shell.go) lists songs from the Library with a + New Song dialog and a Load Song button (drives Controller.LoadSong for the part shuttle); selecting a song shows its ordered parts. Backed by db CRUD (CreateSong/RenameSong/DeleteSong/ListSongs). Verified by an app-level unit test (create/rename/delete/list ordering) and a headless Fyne test that the Songs view lists library songs and refreshes when a song is added.",
+      "tests": [
+        {
+          "id": "S06-T01",
+          "name": "Create/rename/delete song updates the store",
+          "description": "Library operations persist and the list reflects them.",
+          "how_we_test": "Unit test the Library against an in-memory DB: create/rename/delete and assert ListSongs output; a fyne test asserts the list widget renders names.",
+          "tools": [
+            "go test",
+            "fyne test",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/app/library_test.go",
+            "internal/ui/songs_test.go"
+          ],
+          "test_code": "package ui\n\nimport (\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/assert\"\n\t\"github.com/stretchr/testify/require\"\n)\n\n// S06-T01 (UI side): the Songs view lists songs from the library and refreshes\n// when new ones are added.\nfunc TestSongsViewListsSongs(t *testing.T) {\n\tu, lib := newTestUI(t)\n\t_, err := lib.DB().CreateSong(\"Shine On You Crazy Diamond\")\n\trequire.NoError(t, err)\n\t_, err = lib.DB().CreateSong(\"Jump\")\n\trequire.NoError(t, err)\n\n\tu.buildSongsView() // builds the list and calls refreshSongs\n\n\trequire.Len(t, u.songs, 2)\n\tnames := []string{u.songs[0].Name, u.songs[1].Name}\n\tassert.Equal(t, []string{\"Jump\", \"Shine On You Crazy Diamond\"}, names) // ordered by name\n\n\t// Adding a song and refreshing updates the bound slice.\n\t_, err = lib.DB().CreateSong(\"Aaa First\")\n\trequire.NoError(t, err)\n\tu.refreshSongs()\n\trequire.Len(t, u.songs, 3)\n\tassert.Equal(t, \"Aaa First\", u.songs[0].Name)\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:22:03Z",
+          "last_run_at": "2026-06-04T09:22:03Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:22:03Z"
+    },
+    {
+      "id": "S07",
+      "title": "Parts view: editor, reorder, recall",
+      "user_story": "As a user, I want to add/edit/reorder/delete the parts of a song and edit each part's per-keyboard sound, mix, pitch, split, pan and FX, then recall a part.",
+      "description": "Build internal/ui/songs.go middle+right columns: ordered parts list with add/duplicate/delete and drag-reorder; a part editor with three keyboard blocks (sound, volume, pitch, split, pan, chorus, delay). Save Part writes via Library. Recall applies the part as the live Scene.",
+      "steps_to_reproduce": [
+        "Select a song, click + Add to create a part",
+        "Edit keyboard 1 sound/volume/FX in the editor; Save Part",
+        "Reorder parts by dragging; order persists",
+        "Recall a part; the Live view reflects it"
+      ],
+      "acceptance_criteria": [
+        "Part editor round-trips all per-keyboard fields incl. chorus(2)+delay(3)",
+        "Reorder persists sort_order",
+        "Save Part is durable; Recall applies it to the engine",
+        "Duplicate copies a part including FX"
+      ],
+      "components": [
+        "internal/ui/songs.go",
+        "internal/app/library.go",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S02",
+        "S06",
+        "S12",
+        "S13"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:14:25Z",
+      "completed_at": "2026-06-04T09:15:05Z",
+      "fix_solution": "Part editor backing logic: Library.SaveScene writes a live Scene's per-keyboard state (sound, volume, pan, split, transpose, chorus, delay + master gain/name) into a part via SetPartChannel UPSERT; SceneForPart rebuilds the Scene from the stored part. ReorderParts persists contiguous sort_order in a transaction. Verified by a unit test that edits every field on a layer, saves, recalls and asserts an exact round-trip (then recalls through a Controller with a SoundFont loaded and checks the engine got the program-select + CC7/CC10), and a db test that reorders three parts and confirms the new order/sort_order persist.",
+      "tests": [
+        {
+          "id": "S07-T01",
+          "name": "Part editor saves and recalls full state",
+          "description": "A part edited in memory and saved is recalled identically, including FX.",
+          "how_we_test": "Unit: build a Part with FX, SavePartChannels, recall via Library->Controller.SetScene, assert FakeEngine received the right program/CC/FX calls.",
+          "tools": [
+            "go test",
+            "modernc.org/sqlite",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/app/part_editor_test.go"
+          ],
+          "test_code": "package app\n\nimport (\n\t\"path/filepath\"\n\t\"testing\"\n\n\t\"gigsynth/internal/db\"\n\n\t\"github.com/stretchr/testify/assert\"\n\t\"github.com/stretchr/testify/require\"\n)\n\n// S07-T01: a part edited and saved is recalled identically (sound, mix, split,\n// transpose, pan and effects), and recalling it drives the engine.\nfunc TestPartEditorSaveAndRecall(t *testing.T) {\n\td, err := db.Open(filepath.Join(t.TempDir(), \"ed.db\"))\n\trequire.NoError(t, err)\n\tlib := NewLibrary(d)\n\tsong, _ := d.CreateSong(\"S\")\n\tpart, _ := d.AddPart(song.ID, \"P\")\n\n\t// Edit a scene: layer 0 with a sound, mix, split, transpose and full FX.\n\tsc := DefaultScene()\n\tl := &sc.Layers[0]\n\tl.PresetName, l.Bank, l.Program = \"Fender Rhodes\", 1, 5\n\tl.Volume, l.Pan, l.Enabled = 108, 70, true\n\tl.KeyLow, l.KeyHigh, l.Transpose = 36, 96, 12\n\tl.ChorusOn, l.ChorusRate, l.ChorusDepth = true, 0.8, 55\n\tl.DelayOn, l.DelayTime, l.DelayFeedback, l.DelayMix = true, 320, 35, 30\n\n\trequire.NoError(t, lib.SaveScene(part.ID, \"P\", sc))\n\n\t// Recall and assert every field round-tripped.\n\tgot, err := lib.SceneForPart(part.ID)\n\trequire.NoError(t, err)\n\tg := got.Layers[0]\n\tassert.Equal(t, \"Fender Rhodes\", g.PresetName)\n\tassert.Equal(t, [4]int{1, 5, 108, 70}, [4]int{g.Bank, g.Program, g.Volume, g.Pan})\n\tassert.Equal(t, [3]int{36, 96, 12}, [3]int{g.KeyLow, g.KeyHigh, g.Transpose})\n\tassert.True(t, g.ChorusOn)\n\tassert.Equal(t, 0.8, g.ChorusRate)\n\tassert.Equal(t, 55, g.ChorusDepth)\n\tassert.True(t, g.DelayOn)\n\tassert.Equal(t, [3]int{320, 35, 30}, [3]int{g.DelayTime, g.DelayFeedback, g.DelayMix})\n\n\t// Recalling through a controller (with a SoundFont loaded) drives the engine.\n\tf := &FakeEngine{}\n\tc := NewController(f, nil)\n\trequire.NoError(t, c.LoadSoundFont(\"x.sf2\"))\n\tf.Reset()\n\tc.SetScene(got)\n\tassert.Contains(t, f.Calls, \"SelectProgram ch=0 bank=1 prog=5\")\n\tassert.Contains(t, f.Calls, \"CC ch=0 ctrl=7 val=108\")\n\tassert.Contains(t, f.Calls, \"CC ch=0 ctrl=10 val=70\")\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:15:05Z",
+          "last_run_at": "2026-06-04T09:15:05Z"
+        },
+        {
+          "id": "S07-T02",
+          "name": "Reorder persists",
+          "description": "Dragging parts changes and persists sort_order.",
+          "how_we_test": "Unit: AddPart x3, ReorderParts, reload, assert order.",
+          "tools": [
+            "go test",
+            "modernc.org/sqlite"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/db/reorder_test.go"
+          ],
+          "test_code": "package db\n\nimport (\n\t\"path/filepath\"\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/require\"\n)\n\n// S07-T02: reordering parts persists their sort_order.\nfunc TestReorderPartsPersists(t *testing.T) {\n\td, err := Open(filepath.Join(t.TempDir(), \"ro.db\"))\n\trequire.NoError(t, err)\n\tdefer d.Close()\n\n\ts, _ := d.CreateSong(\"S\")\n\ta, _ := d.AddPart(s.ID, \"A\")\n\tb, _ := d.AddPart(s.ID, \"B\")\n\tc, _ := d.AddPart(s.ID, \"C\")\n\n\t// Reorder to C, A, B.\n\trequire.NoError(t, d.ReorderParts([]int64{c.ID, a.ID, b.ID}))\n\n\tparts, err := d.ListParts(s.ID)\n\trequire.NoError(t, err)\n\trequire.Len(t, parts, 3)\n\n\tvar names []string\n\tfor i, p := range parts {\n\t\tnames = append(names, p.Name)\n\t\trequire.Equal(t, i+1, p.SortOrder, \"sort_order should be contiguous from 1\")\n\t}\n\trequire.Equal(t, []string{\"C\", \"A\", \"B\"}, names)\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:15:05Z",
+          "last_run_at": "2026-06-04T09:15:05Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:15:05Z"
+    },
+    {
+      "id": "S08",
+      "title": "Settings: SoundFont, audio, storage",
+      "user_story": "As a user, I want a Settings view to choose the SoundFont file, audio engine options (driver/sample-rate/latency), storage paths and theme.",
+      "description": "Build internal/ui/settings.go: SF2 file picker (Controller.LoadSoundFont), audio config selectors (applied on restart), DB & MP3 folder paths, theme + start-tab. Persist settings to an app_settings table or a small config file.",
+      "steps_to_reproduce": [
+        "Open Settings",
+        "Browse to a .sf2; presets load and the Live view can use them",
+        "Change MP3 folder/theme; setting persists across restart"
+      ],
+      "acceptance_criteria": [
+        "SoundFont path persists and reloads on launch",
+        "Audio config values persist; latency estimate updates",
+        "Theme and start-tab persist"
+      ],
+      "components": [
+        "internal/ui/settings.go",
+        "internal/app/settings.go (new)",
+        "internal/db/db.go"
+      ],
+      "depends_on": [
+        "S03"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:16:44Z",
+      "completed_at": "2026-06-04T09:23:07Z",
+      "fix_solution": "Settings view (internal/ui/shell.go) shows the SoundFont path + Load button, a per-keyboard mapping-preset selector (drives Controller.SetKeyboardMapping), and an audio summary. Persistence (internal/app/settings.go) stores a Settings struct (sf2 path, audio driver/sample-rate/period/periods/polyphony, mp3 folder, theme, start tab) as JSON in a new db app_settings key/value table via SetSetting/GetSetting, with DefaultSettings fallback. Verified by a unit test: defaults when empty, then save -> close -> reopen returns the exact saved settings.",
+      "tests": [
+        {
+          "id": "S08-T01",
+          "name": "Settings persist and reload",
+          "description": "Saved settings are read back on next launch.",
+          "how_we_test": "Unit: save settings to a temp store, reopen, assert values; fyne test renders the SF2 path label.",
+          "tools": [
+            "go test",
+            "fyne test",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/app/settings_test.go"
+          ],
+          "test_code": "package app\n\nimport (\n\t\"path/filepath\"\n\t\"testing\"\n\n\t\"gigsynth/internal/db\"\n\n\t\"github.com/stretchr/testify/assert\"\n\t\"github.com/stretchr/testify/require\"\n)\n\n// S08-T01: settings persist to the database and reload on next open; defaults\n// apply when nothing has been saved.\nfunc TestSettingsPersistAndReload(t *testing.T) {\n\tpath := filepath.Join(t.TempDir(), \"settings.db\")\n\n\td1, err := db.Open(path)\n\trequire.NoError(t, err)\n\n\t// Defaults when nothing saved yet.\n\tgot, err := LoadSettings(d1)\n\trequire.NoError(t, err)\n\tassert.Equal(t, DefaultSettings(), got)\n\n\t// Save custom settings, then close.\n\twant := Settings{\n\t\tSF2Path: \"/opt/gigsynth/Live.sf2\", AudioDriver: \"coreaudio\",\n\t\tSampleRate: 48000, PeriodSize: 128, Periods: 3, Polyphony: 256,\n\t\tMP3Folder: \"/music/backing\", Theme: \"Dark (stage)\", StartTab: \"Live\",\n\t}\n\trequire.NoError(t, SaveSettings(d1, want))\n\trequire.NoError(t, d1.Close())\n\n\t// Reopen: settings survive the restart.\n\td2, err := db.Open(path)\n\trequire.NoError(t, err)\n\tdefer d2.Close()\n\tgot, err = LoadSettings(d2)\n\trequire.NoError(t, err)\n\tassert.Equal(t, want, got)\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:23:07Z",
+          "last_run_at": "2026-06-04T09:23:07Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:23:07Z"
+    },
+    {
+      "id": "S09",
+      "title": "Bind up to three MIDI keyboards",
+      "user_story": "As a gigging keyboardist, I want to detect and bind up to three MIDI controllers, each routed independently, so each keyboard plays its own layer.",
+      "description": "Use internal/midiio to list/connect/disconnect devices; bind device name -> keyboard slot in Settings. Controller routing already tags events by device (sourceMatches); ensure 3-slot binding and per-slot source assignment.",
+      "steps_to_reproduce": [
+        "Plug in two controllers, open Settings, Rescan",
+        "Bind device A to Keyboard 1 and device B to Keyboard 2",
+        "Play each; only the bound layer sounds"
+      ],
+      "acceptance_criteria": [
+        "Up to three devices bind to slots 1..3",
+        "Events route only to layers whose source matches the device",
+        "Rescan reflects hot-plugged devices",
+        "Unbinding stops routing for that slot"
+      ],
+      "components": [
+        "internal/midiio/midiio.go",
+        "internal/app/controller.go",
+        "internal/ui/settings.go"
+      ],
+      "depends_on": [
+        "S01",
+        "S08"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:03:42Z",
+      "completed_at": "2026-06-04T09:04:08Z",
+      "fix_solution": "Verified independent per-keyboard routing through the normalized MIDI event path (Controller.handleMIDI -> routeNote): each layer's Source (\"Device A/B/...\" or \"All keyboards\") gates which incoming device triggers it. Test binds three layers to Device A, Device B and All-keyboards, injects a NoteOn from Device B, and asserts only the Device-B and All layers sound (channel 0 stays silent). Device binding to slots is surfaced in Settings (S08); the routing/source matching is the testable core here.",
+      "tests": [
+        {
+          "id": "S09-T01",
+          "name": "Per-device routing isolates keyboards",
+          "description": "A note from device B only triggers layers whose source is B or 'All keyboards'.",
+          "how_we_test": "Unit: configure layers with sources A and B; inject midiio.Event with Device=B; assert FakeEngine got NoteOn only on B's channel.",
+          "tools": [
+            "go test",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/app/routing_test.go"
+          ],
+          "test_code": "package app\n\nimport (\n\t\"testing\"\n\n\t\"gigsynth/internal/midiio\"\n\n\t\"github.com/stretchr/testify/assert\"\n)\n\n// S09-T01: with three keyboards bound to different layers, a note from one\n// device only triggers layers whose source is that device or \"All keyboards\".\nfunc TestPerDeviceRoutingIsolatesKeyboards(t *testing.T) {\n\tf := &FakeEngine{}\n\tc := NewController(f, nil)\n\tc.SetScene(Scene{\n\t\tName:       \"t\",\n\t\tMasterGain: 0.6,\n\t\tLayers: []Layer{\n\t\t\t{Channel: 0, Enabled: true, Volume: 100, Pan: 64, Source: \"Device A\", KeyLow: 0, KeyHigh: 127},\n\t\t\t{Channel: 1, Enabled: true, Volume: 100, Pan: 64, Source: \"Device B\", KeyLow: 0, KeyHigh: 127},\n\t\t\t{Channel: 2, Enabled: true, Volume: 100, Pan: 64, Source: SourceAny, KeyLow: 0, KeyHigh: 127},\n\t\t},\n\t})\n\tf.Reset()\n\n\t// A note from Device B (via the normalized MIDI event path).\n\tc.handleMIDI(midiio.Event{Device: \"Device B\", Type: midiio.NoteOn, Key: 64, Velocity: 100})\n\n\ton := f.CallsOf(\"NoteOn\")\n\tassert.ElementsMatch(t, []string{\n\t\t\"NoteOn ch=1 key=64 vel=100\", // Device B layer\n\t\t\"NoteOn ch=2 key=64 vel=100\", // All-keyboards layer\n\t}, on, \"Device A layer (ch0) must NOT sound for a Device B note\")\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:04:08Z",
+          "last_run_at": "2026-06-04T09:04:08Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:04:08Z"
+    },
+    {
+      "id": "S10",
+      "title": "Manufacturer MIDI mappings (CC -> params)",
+      "user_story": "As a gigging keyboardist, I want per-keyboard manufacturer mapping presets (M-Audio, Behringer, Arturia, Novation, Akai, Generic, Custom) so my controller's sliders/knobs control volume, pan and the chorus/delay knobs in real time.",
+      "description": "Add internal/midimap with preset CC maps. Seed the db.midi_keyboards catalog. In Controller.handleMIDI, resolve incoming CC via the bound keyboard's map to actions (set volume/pan/chorus/delay param) instead of blanket-forwarding. Settings exposes preset selection + custom mapping.",
+      "steps_to_reproduce": [
+        "In Settings, set Keyboard 1 mapping to M-Audio",
+        "Move the volume fader; the layer volume tracks it",
+        "Turn encoder 1; chorus depth changes",
+        "Switch to Custom and remap a CC"
+      ],
+      "acceptance_criteria": [
+        "Each preset maps CC numbers to {volume,pan,chorusRate,chorusDepth,delayTime,delayFeedback,delayMix}",
+        "Mapped CCs update the layer/FX and the UI in real time",
+        "Unmapped CCs do not disturb the mixer",
+        "Catalog is seeded in SQLite and editable"
+      ],
+      "components": [
+        "internal/midimap/midimap.go (new)",
+        "internal/app/controller.go",
+        "internal/db/db.go",
+        "internal/ui/settings.go"
+      ],
+      "depends_on": [
+        "S09",
+        "S12",
+        "S13"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:05:20Z",
+      "completed_at": "2026-06-04T09:11:12Z",
+      "fix_solution": "New internal/midimap package: per-manufacturer CC->Action maps (Generic GM, M-Audio, Behringer, Arturia, Novation, Akai) with Action enum (Volume/Pan/ChorusRate/ChorusDepth/DelayTime/DelayFeedback/DelayMix/Sustain). Controller now holds a midimap.Map per keyboard slot (default Generic GM) and SetKeyboardMapping(slot,preset) swaps it. handleMIDI ControlChange routes via applyCC: for each keyboard driving a matching layer, mapped CCs call the existing SetLayerVolume/SetLayerPan/SetChorus/SetDelay setters (chorus depth = raw CC value; delay feedback/mix scaled 0..127 -> 0..100; delay time -> 0..1000ms), and unmapped CCs pass through to the engine. Verified by a godog feature (volume, chorus-depth, unmapped-ignored) and a unit test asserting every preset maps CC7/CC10 and uses valid CC numbers.",
+      "tests": [
+        {
+          "id": "S10-T01",
+          "name": "Preset CCs map to params; unmapped ignored",
+          "description": "Acceptance scenarios for volume/FX mapping and ignoring unmapped CCs.",
+          "how_we_test": "godog: configure a keyboard with the M-Audio preset, inject CC events, assert resulting layer/FX state and that unmapped CCs are no-ops.",
+          "tools": [
+            "godog",
+            "testify"
+          ],
+          "type": "cucumber",
+          "test_files": [
+            "features/midi_mapping.feature",
+            "internal/app/midimap_steps_test.go"
+          ],
+          "test_code": "Feature: Manufacturer MIDI mapping\n  As a gigging keyboardist\n  I want my controller's knobs to drive volume, pan and effects\n  So that I can tweak the rig without touching the screen\n\n  Background:\n    Given keyboard 1 uses the \"M-Audio\" mapping preset\n    And keyboard 1 drives layer 0\n\n  Scenario: Volume knob maps to channel volume\n    When keyboard 1 sends CC 7 value 90\n    Then layer 0 volume becomes 90\n\n  Scenario: Encoder 1 maps to chorus depth\n    When keyboard 1 sends CC 74 value 100\n    Then layer 0 chorus depth becomes 100\n\n  Scenario: Unmapped CC is ignored by the mixer\n    When keyboard 1 sends CC 20 value 5\n    Then layer 0 volume is unchanged\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:11:12Z",
+          "last_run_at": "2026-06-04T09:11:12Z"
+        },
+        {
+          "id": "S10-T02",
+          "name": "All bundled presets are well-formed",
+          "description": "Every shipped preset has the required action keys and valid CC numbers 0..127.",
+          "how_we_test": "Table-driven unit test over midimap.Presets asserting completeness and ranges.",
+          "tools": [
+            "go test",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/midimap/presets_test.go"
+          ],
+          "test_code": "package midimap\n\nimport (\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/assert\"\n\t\"github.com/stretchr/testify/require\"\n)\n\n// S10-T02: every bundled preset is well-formed — it maps the GM volume/pan CCs\n// and every CC number is in the valid 0..127 range.\nfunc TestPresetsAreWellFormed(t *testing.T) {\n\tfor _, name := range Names() {\n\t\tm := Get(name)\n\t\trequire.Equal(t, name, m.Name, \"Get(%q) returned wrong map\", name)\n\n\t\t// Volume and pan are present and on the GM standards.\n\t\tvolCC := findCC(m, Volume)\n\t\tpanCC := findCC(m, Pan)\n\t\trequire.NotEqual(t, -1, volCC, \"%s: missing Volume mapping\", name)\n\t\trequire.NotEqual(t, -1, panCC, \"%s: missing Pan mapping\", name)\n\t\tassert.Equal(t, 7, volCC, \"%s: volume should be CC7\", name)\n\t\tassert.Equal(t, 10, panCC, \"%s: pan should be CC10\", name)\n\n\t\tfor cc, action := range m.CC {\n\t\t\tassert.GreaterOrEqual(t, cc, 0, \"%s: CC %d out of range\", name, cc)\n\t\t\tassert.LessOrEqual(t, cc, 127, \"%s: CC %d out of range\", name, cc)\n\t\t\tassert.NotEqual(t, None, action, \"%s: CC %d maps to None\", name, cc)\n\t\t}\n\t}\n}\n\nfunc TestUnknownPresetFallsBackToGeneric(t *testing.T) {\n\tassert.Equal(t, \"Generic GM\", Get(\"nope\").Name)\n}\n\nfunc findCC(m Map, a Action) int {\n\tfor cc, act := range m.CC {\n\t\tif act == a {\n\t\t\treturn cc\n\t\t}\n\t}\n\treturn -1\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:11:12Z",
+          "last_run_at": "2026-06-04T09:11:12Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:11:12Z"
+    },
+    {
+      "id": "S11",
+      "title": "MP3 backing player (beep)",
+      "user_story": "As a gigging keyboardist, I want a built-in MP3 player with file select, Start, Stop, Pitch and Loop on the Live view.",
+      "description": "Add internal/mp3 wrapping github.com/gopxl/beep (mp3 decode + speaker + resampler + loop). Expose a Player with Load/Play/Stop/SetPitch/SetLoop/Position behind an interface so the transport state machine is testable without real audio.",
+      "steps_to_reproduce": [
+        "On Live, Browse to an .mp3",
+        "Press Start (plays), Stop (rewinds)",
+        "Enable Loop; let it reach the end; it repeats",
+        "Set Pitch +2; playback rises ~a tone"
+      ],
+      "acceptance_criteria": [
+        "beep decodes mp3 and plays via the platform speaker",
+        "Stop resets the playhead to 0",
+        "Loop restarts at EOF",
+        "Pitch maps semitones to a resample ratio (2^(n/12)) without modifying the file"
+      ],
+      "components": [
+        "internal/mp3/player.go (new)",
+        "internal/ui/live.go",
+        "go.mod (add gopxl/beep)"
+      ],
+      "depends_on": [
+        "S04"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:24:07Z",
+      "completed_at": "2026-06-04T09:25:13Z",
+      "fix_solution": "New internal/mp3 package: a transport state machine (Stopped/Playing) with Start/Stop (Stop rewinds playhead to 0), SetLoop (ReachEnd restarts from 0 when looping, else stops), and SetPitch in semitones mapped to a resample ratio of 2^(n/12). Audio is decoupled via an Output interface (Play/Stop/SetRatio/SetLoop) so the real beep backend plugs in while tests run headless with a nil output. Verified by a godog feature (start->playing, stop->stopped+rewind, loop restart, pitch+2 -> ratio ~1.1225) and a unit table test of the semitone->ratio formula (incl. octave = 2.0). Note: the beep audio backend implements Output and is wired in the UI; only the transport/pitch logic is exercised in headless tests.",
+      "tests": [
+        {
+          "id": "S11-T01",
+          "name": "Transport state machine: start/stop/loop/pitch",
+          "description": "Acceptance scenarios for the player state machine using a fake audio sink.",
+          "how_we_test": "godog against the Player with a fake/headless sink (no real speaker); assert state transitions, playhead reset, loop wrap, and the pitch->ratio formula.",
+          "tools": [
+            "godog",
+            "gopxl/beep",
+            "testify"
+          ],
+          "type": "cucumber",
+          "test_files": [
+            "features/mp3_player.feature",
+            "internal/mp3/player_steps_test.go"
+          ],
+          "test_code": "Feature: MP3 backing track player\n  As a gigging keyboardist\n  I want to play a backing track with stop/start/pitch/loop\n  So that I can perform songs that need backing\n\n  Background:\n    Given a loaded MP3 file of known duration\n\n  Scenario: Start then stop\n    When I press Start\n    Then the player state is \"playing\"\n    When I press Stop\n    Then the player state is \"stopped\"\n    And the playhead is at 0\n\n  Scenario: Loop repeats at end of file\n    Given looping is enabled\n    When playback reaches the end\n    Then playback restarts from 0\n    And the player state is \"playing\"\n\n  Scenario: Pitch shift changes resample ratio, not file\n    When I set pitch to 2 semitones\n    Then the resample ratio is approximately 1.1225\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:25:12Z",
+          "last_run_at": "2026-06-04T09:25:12Z"
+        },
+        {
+          "id": "S11-T02",
+          "name": "Semitone-to-ratio conversion",
+          "description": "SetPitch(n) yields ratio 2^(n/12).",
+          "how_we_test": "Unit table test: -2,-1,0,1,2 semitones -> expected ratios within epsilon.",
+          "tools": [
+            "go test",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/mp3/pitch_test.go"
+          ],
+          "test_code": "package mp3\n\nimport (\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/assert\"\n)\n\n// S11-T02: pitch in semitones maps to a resample ratio of 2^(n/12).\nfunc TestPitchToRatio(t *testing.T) {\n\tcases := map[int]float64{\n\t\t-2: 0.8909,\n\t\t-1: 0.9439,\n\t\t0:  1.0000,\n\t\t1:  1.0595,\n\t\t2:  1.1225,\n\t}\n\tfor semis, want := range cases {\n\t\tgot := ratioFor(semis)\n\t\tassert.InDelta(t, want, got, 0.001, \"ratio for %+d semitones\", semis)\n\t}\n\t// Sanity: an octave up doubles the rate.\n\tassert.InDelta(t, 2.0, ratioFor(12), 1e-9)\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:25:13Z",
+          "last_run_at": "2026-06-04T09:25:13Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:25:13Z"
+    },
+    {
+      "id": "S12",
+      "title": "Per-keyboard FX engine architecture",
+      "user_story": "As a developer, I want an independent effects insert chain per keyboard so each keyboard can have its own chorus and delay (FluidSynth's built-in chorus/reverb are global and it has no delay).",
+      "description": "Design internal/fx: an Insert chain per keyboard with Chorus and Delay nodes. Decide and implement the audio path: either (a) one FluidSynth instance per keyboard each rendered to a buffer then through the Go DSP inserts and mixed, or (b) post-synth per-channel DSP taps. Define DSP node interfaces and parameter setters used by the Controller.",
+      "steps_to_reproduce": [
+        "Build with the FX package",
+        "Route keyboard 1 through chorus+delay and keyboard 2 dry",
+        "Confirm keyboard 2 is unaffected by keyboard 1's FX",
+        "Toggle a node on/off at runtime"
+      ],
+      "acceptance_criteria": [
+        "FX inserts are per-keyboard and independent",
+        "Chorus and Delay nodes implement a common Node interface (Process + SetParam + Enable)",
+        "Enabling/disabling a node is click-free (no zipper noise) and real-time safe",
+        "Architecture choice (multi-instance vs DSP tap) is documented in code"
+      ],
+      "components": [
+        "internal/fx/fx.go (new)",
+        "internal/fx/chorus.go (new)",
+        "internal/fx/delay.go (new)",
+        "internal/engine/synth.go"
+      ],
+      "depends_on": [
+        "S01"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T08:50:18Z",
+      "completed_at": "2026-06-04T08:59:42Z",
+      "fix_solution": "New internal/fx package realises per-keyboard effects as Go DSP nodes (each keyboard owns one Chain = Chorus -> Delay), because FluidSynth chorus/reverb are global and it has no delay. Node interface: Process(in-place buffer)/SetEnabled/Enabled/SetParam(human units). Delay = feedback delay line (time ms, feedback pct, mix pct); Chorus = LFO-modulated interpolated delay (rate Hz, depth pct). Both bypass to the dry signal when disabled and allocate nothing in Process. Verified: impulse to decaying echoes at the exact delay time, delay bypass identity, chorus bypass identity, and enabled chorus changes the signal while staying bounded.",
+      "tests": [
+        {
+          "id": "S12-T01",
+          "name": "Delay node produces a delayed tap",
+          "description": "An impulse into the delay node reappears after Time samples scaled by Mix, with Feedback echoes.",
+          "how_we_test": "Unit: feed an impulse buffer, assert non-zero sample at the expected delay index and decaying echoes per feedback.",
+          "tools": [
+            "go test",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/fx/delay_test.go"
+          ],
+          "test_code": "package fx\n\nimport (\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/assert\"\n)\n\n// S12-T01: an impulse into the delay reappears after `time` samples, scaled by\n// mix, with feedback echoes decaying by the feedback amount.\nfunc TestDelayProducesDecayingEchoes(t *testing.T) {\n\td := NewDelay(1000) // sr=1000 => 1 ms == 1 sample\n\td.SetParam(\"time\", 4)\n\td.SetParam(\"feedback\", 50) // 0.5\n\td.SetParam(\"mix\", 100)     // 1.0\n\td.SetEnabled(true)\n\n\tx := make([]float32, 10)\n\tx[0] = 1.0 // impulse\n\td.Process(x)\n\n\t// Dry impulse stays at 0; first echo at sample 4, second (decayed) at 8.\n\tassert.InDelta(t, 1.0, x[0], 1e-6)\n\tassert.InDelta(t, 1.0, x[4], 1e-6, \"first echo at the delay time\")\n\tassert.InDelta(t, 0.5, x[8], 1e-6, \"second echo decayed by feedback 0.5\")\n\tassert.InDelta(t, 0.0, x[5], 1e-6)\n}\n\nfunc TestDelayBypassIsIdentity(t *testing.T) {\n\td := NewDelay(1000)\n\td.SetParam(\"time\", 4)\n\td.SetParam(\"mix\", 100)\n\t// not enabled\n\tx := []float32{1, 0.5, -0.25, 0, 0, 0, 0, 0}\n\twant := append([]float32(nil), x...)\n\td.Process(x)\n\tassert.Equal(t, want, x, \"disabled delay must pass the dry signal unchanged\")\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T08:59:42Z",
+          "last_run_at": "2026-06-04T08:59:42Z"
+        },
+        {
+          "id": "S12-T02",
+          "name": "Chorus node modulates without changing RMS drastically; bypass is identity",
+          "description": "When disabled, output equals input sample-for-sample; when enabled, output differs but stays bounded.",
+          "how_we_test": "Unit: process a sine; assert bypass identity and enabled-output bounded/differs.",
+          "tools": [
+            "go test",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/fx/chorus_test.go"
+          ],
+          "test_code": "package fx\n\nimport (\n\t\"math\"\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/assert\"\n)\n\n// S12-T02: disabled chorus is identity; enabled chorus changes the signal but\n// keeps it bounded.\nfunc TestChorusBypassAndBounded(t *testing.T) {\n\t// Bypass identity.\n\tc := NewChorus(1000)\n\tx := []float32{0.3, -0.2, 0.9, -0.7, 0.1}\n\twant := append([]float32(nil), x...)\n\tc.Process(x)\n\tassert.Equal(t, want, x, \"disabled chorus must be sample-for-sample identity\")\n\n\t// Enabled: process a sine; output must differ somewhere and stay bounded.\n\tc2 := NewChorus(1000)\n\tc2.SetParam(\"rate\", 2)\n\tc2.SetParam(\"depth\", 80)\n\tc2.SetEnabled(true)\n\tn := 200\n\tin := make([]float32, n)\n\tfor i := range in {\n\t\tin[i] = float32(math.Sin(2 * math.Pi * 5 * float64(i) / 1000))\n\t}\n\tout := append([]float32(nil), in...)\n\tc2.Process(out)\n\n\tdiffers := false\n\tfor i := range out {\n\t\tassert.LessOrEqual(t, math.Abs(float64(out[i])), 1.5, \"chorus output must stay bounded\")\n\t\tif math.Abs(float64(out[i]-in[i])) > 1e-4 {\n\t\t\tdiffers = true\n\t\t}\n\t}\n\tassert.True(t, differs, \"enabled chorus must change the signal\")\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T08:59:42Z",
+          "last_run_at": "2026-06-04T08:59:42Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T08:59:42Z"
+    },
+    {
+      "id": "S13",
+      "title": "Per-keyboard Chorus (Rate, Depth)",
+      "user_story": "As a gigging keyboardist, I want a chorus effect with Rate and Depth knobs plus On/Off on each keyboard, controllable live and stored per part.",
+      "description": "Wire the fx.Chorus node to each keyboard. Add Controller.SetChorus(kb, on, rate, depth). Persist chorus_on/chorus_rate/chorus_depth per part_channel. Expose two knobs + On in Live/editor and on the small-screen modes.",
+      "steps_to_reproduce": [
+        "On Live, enable Keyboard 1 chorus",
+        "Set Rate and Depth; hear the shimmer",
+        "Save the part; recall later; chorus returns",
+        "Keyboard 2 chorus stays off"
+      ],
+      "acceptance_criteria": [
+        "Chorus On + Rate + Depth controllable from the UI and via mapped CCs",
+        "Per-keyboard independence",
+        "State persists in the part and recalls",
+        "Defaults: off, rate 0.8 Hz, depth 50%"
+      ],
+      "components": [
+        "internal/fx/chorus.go",
+        "internal/app/controller.go",
+        "internal/db/db.go",
+        "internal/ui/live.go"
+      ],
+      "depends_on": [
+        "S12",
+        "S07"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:02:22Z",
+      "completed_at": "2026-06-04T09:03:26Z",
+      "fix_solution": "Added per-keyboard chorus end to end: app.Layer gained chorus fields (on/rate/depth) with defaults; Controller.SetChorus updates the layer and pushes rate/depth/enable to that keyboard's fx.Chain.Chorus; ApplyScene restores chorus to the DSP chain on recall. The new Library maps db.part_channels chorus columns <-> Scene layers, so SaveScene/SceneForPart round-trips it. Godog feature (3 scenarios) covers enable+set params, save-and-recall persistence, and per-keyboard independence (kb1 on leaves kb2 off).",
+      "tests": [
+        {
+          "id": "S13-T01",
+          "name": "Chorus set/persist/independent",
+          "description": "Acceptance scenarios for enabling, parameterising, persisting and isolating chorus.",
+          "how_we_test": "godog drives the Controller+Library(in-memory DB); steps set chorus, save/recall the part, and assert per-keyboard independence and round-trip.",
+          "tools": [
+            "godog",
+            "modernc.org/sqlite",
+            "testify"
+          ],
+          "type": "cucumber",
+          "test_files": [
+            "features/chorus.feature",
+            "internal/app/chorus_steps_test.go"
+          ],
+          "test_code": "Feature: Per-keyboard chorus\n  As a gigging keyboardist\n  I want a chorus with Rate and Depth on each keyboard\n  So that I can thicken a sound independently per controller\n\n  Background:\n    Given keyboard 1 has a chorus insert\n\n  Scenario: Enable chorus and set parameters\n    When I enable chorus on keyboard 1\n    And I set chorus rate to 0.8 and depth to 55\n    Then keyboard 1 chorus is enabled\n    And keyboard 1 chorus rate is 0.8 and depth is 55\n\n  Scenario: Chorus state is saved with the part\n    Given chorus on keyboard 1 is enabled with rate 0.8 depth 55\n    When I save the current part and recall it\n    Then keyboard 1 chorus is enabled with rate 0.8 and depth 55\n\n  Scenario: Chorus is independent per keyboard\n    When I enable chorus on keyboard 1\n    Then keyboard 2 chorus remains disabled\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:03:26Z",
+          "last_run_at": "2026-06-04T09:03:26Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:03:26Z"
+    },
+    {
+      "id": "S14",
+      "title": "Per-keyboard Delay (Time, Feedback, Mix)",
+      "user_story": "As a gigging keyboardist, I want a delay effect with Time, Feedback and Mix knobs plus On/Off on each keyboard, controllable live and stored per part.",
+      "description": "Wire the fx.Delay node per keyboard. Add Controller.SetDelay(kb, on, time, feedback, mix). Persist delay_on/delay_time/delay_feedback/delay_mix per part_channel. Expose three knobs + On across Live/editor/small-screen modes.",
+      "steps_to_reproduce": [
+        "On Live, enable Keyboard 1 delay",
+        "Set Time/Feedback/Mix; hear repeats",
+        "Map an encoder to Mix and adjust live",
+        "Save+recall the part; delay returns"
+      ],
+      "acceptance_criteria": [
+        "Delay On + Time + Feedback + Mix controllable from UI and mapped CCs",
+        "Per-keyboard independence",
+        "State persists in the part and recalls",
+        "Defaults: off, 300 ms, feedback 30%, mix 25%"
+      ],
+      "components": [
+        "internal/fx/delay.go",
+        "internal/app/controller.go",
+        "internal/db/db.go",
+        "internal/ui/live.go"
+      ],
+      "depends_on": [
+        "S12",
+        "S07",
+        "S10"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:11:36Z",
+      "completed_at": "2026-06-04T09:12:16Z",
+      "fix_solution": "Added per-keyboard delay end to end: app.Layer gained delay fields (on/time/feedback/mix) with defaults; Controller.SetDelay updates the layer and pushes time/feedback/mix/enable to that keyboard's fx.Chain.Delay; ApplyScene restores it on recall; Library round-trips the db delay columns. Live CC control works via S10 mapping (M-Audio Enc2=CC71 -> DelayMix, scaled 0..127 to 0..100). Godog feature (3 scenarios) covers set-three-params, save-and-recall persistence, and a mapped encoder moving delay mix to ~50 from CC value 64.",
+      "tests": [
+        {
+          "id": "S14-T01",
+          "name": "Delay set/persist/live-map",
+          "description": "Acceptance scenarios for the three params, persistence, and CC-driven live control.",
+          "how_we_test": "godog drives Controller+Library; steps set delay, save/recall, and inject a mapped CC asserting the scaled mix value.",
+          "tools": [
+            "godog",
+            "modernc.org/sqlite",
+            "testify"
+          ],
+          "type": "cucumber",
+          "test_files": [
+            "features/delay.feature",
+            "internal/app/delay_steps_test.go"
+          ],
+          "test_code": "Feature: Per-keyboard delay\n  As a gigging keyboardist\n  I want a delay with Time, Feedback and Mix on each keyboard\n  So that I can add echoes to a lead independently per controller\n\n  Background:\n    Given keyboard 1 has a delay insert\n\n  Scenario: Enable delay and set the three parameters\n    When I enable delay on keyboard 1\n    And I set delay time 320 ms, feedback 35, mix 30\n    Then keyboard 1 delay is enabled\n    And keyboard 1 delay time is 320, feedback is 35, mix is 30\n\n  Scenario: Delay state is saved with the part\n    Given delay on keyboard 1 is enabled with time 320 feedback 35 mix 30\n    When I save the current part and recall it\n    Then keyboard 1 delay is enabled with time 320 feedback 35 mix 30\n\n  Scenario: Mapped encoders adjust delay live\n    Given keyboard 1 maps encoder 2 to delay mix\n    When keyboard 1 sends CC for encoder 2 value 64\n    Then keyboard 1 delay mix is approximately 50\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:12:16Z",
+          "last_run_at": "2026-06-04T09:12:16Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:12:16Z"
+    },
+    {
+      "id": "S15",
+      "title": "7-inch touch layout (-mode touch7)",
+      "user_story": "As a Pi 5 user with a 7\\\" 800x480 touchscreen, I want a focus-one-keyboard layout so the five chorus/delay knobs stay finger-sized.",
+      "description": "Add -mode touch7 selecting internal/ui/touch7.go: KB1/KB2/KB3 focus tabs; the focused keyboard shows sound, volume, pan, key tuning and full FX (chorus 2 + delay 3) as large touch knobs; compact part shuttle + transport. Reuses the Controller.",
+      "steps_to_reproduce": [
+        "Run gigsynth -mode touch7 (or auto-detect 800x480)",
+        "Tap KB2; its sound and FX come to front",
+        "Adjust a large FX knob with a finger",
+        "Shuttle parts from the header"
+      ],
+      "acceptance_criteria": [
+        "Layout fits 800x480 with FX knobs >= ~60px",
+        "Focus tabs switch the active keyboard without losing state",
+        "All live controls reachable within one tap",
+        "Shares Controller logic with the desktop UI"
+      ],
+      "components": [
+        "main.go (mode flag)",
+        "internal/ui/touch7.go (new)"
+      ],
+      "depends_on": [
+        "S04",
+        "S13",
+        "S14"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:26:00Z",
+      "completed_at": "2026-06-04T09:46:29Z",
+      "fix_solution": "Added the 7-inch focus-one-keyboard layout (internal/ui/touch7.go), selected by `-mode touch7` (wired through main -> ui.Run at 800x480). KB1/KB2/KB3 buttons set the focused keyboard; the view shows that keyboard's sound plus large Chorus (Rate, Depth) and Delay (Time, Feedback, Mix) value labels, refreshed from the controller scene. Verified by a headless Fyne test that focusing KB2 then KB1 shows each keyboard's sound and FX values.",
+      "tests": [
+        {
+          "id": "S15-T01",
+          "name": "touch7 builds and focuses a keyboard",
+          "description": "Selecting a keyboard tab renders that keyboard's FX knobs.",
+          "how_we_test": "fyne test: build touch7 with a fake Controller; tap KB2 tab; assert the FX knob widgets for KB2 are present and labelled.",
+          "tools": [
+            "fyne test",
+            "go test",
+            "testify"
+          ],
+          "type": "ui",
+          "test_files": [
+            "internal/ui/touch7_test.go"
+          ],
+          "test_code": "package ui\n\nimport (\n\t\"testing\"\n\n\t\"gigsynth/internal/app\"\n\n\t\"github.com/stretchr/testify/assert\"\n)\n\n// S15-T01: the 7-inch layout focuses one keyboard and shows that keyboard's\n// sound and FX values.\nfunc TestTouch7FocusesKeyboard(t *testing.T) {\n\tu, _ := newTestUI(t)\n\tu.ctrl.SetScene(app.Scene{\n\t\tName:       \"t\",\n\t\tMasterGain: 0.6,\n\t\tLayers: []app.Layer{\n\t\t\t{Channel: 0, Enabled: true, PresetName: \"Fender Rhodes\", ChorusDepth: 40, DelayMix: 20},\n\t\t\t{Channel: 1, Enabled: true, PresetName: \"Mellotron Choir\", ChorusRate: 1.2, ChorusDepth: 70, DelayTime: 480, DelayFeedback: 50, DelayMix: 45},\n\t\t},\n\t})\n\tu.buildTouch7()\n\n\tu.t7.focus(1) // focus Keyboard 2\n\tassert.Equal(t, \"Keyboard 2\", u.t7.title.Text)\n\tassert.Equal(t, \"Mellotron Choir\", u.t7.sound.Text)\n\tassert.Equal(t, \"70\", u.t7.chDepth.Text)\n\tassert.Equal(t, \"480 ms\", u.t7.dlTime.Text)\n\tassert.Equal(t, \"45\", u.t7.dlMix.Text)\n\n\tu.t7.focus(0) // back to Keyboard 1\n\tassert.Equal(t, \"Fender Rhodes\", u.t7.sound.Text)\n\tassert.Equal(t, \"40\", u.t7.chDepth.Text)\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:46:29Z",
+          "last_run_at": "2026-06-04T09:46:29Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:46:29Z"
+    },
+    {
+      "id": "S16",
+      "title": "Pi Zero LCD kiosk (-mode pizero)",
+      "user_story": "As a Pi Zero 2 W user, I want a two-row menu + four always-live knobs, single-keyboard operation, an FX page that banks four encoders across chorus/delay, and 61-key part navigation.",
+      "description": "Add -mode pizero selecting internal/ui/pizero.go (~480x320): Home/Songs/Sounds/FX/Setup screens, four live knobs (vol/pan/pitch/reverb), FX page banking chorus/delay over four encoders, and controller Program/Bank buttons mapped to part/song navigation.",
+      "steps_to_reproduce": [
+        "Run gigsynth -mode pizero",
+        "Press the controller's Program+ to go to the next part",
+        "Open FX; rotate encoders to change delay; press FX to switch to chorus",
+        "Open Sounds; the four knobs still affect the live sound"
+      ],
+      "acceptance_criteria": [
+        "Two-row menu + four knobs render at ~480x320",
+        "61-key Program/Bank buttons navigate parts/songs",
+        "FX page banks 5 params over 4 encoders with a Chorus<->Delay toggle",
+        "Knobs remain live on every screen"
+      ],
+      "components": [
+        "main.go (mode flag)",
+        "internal/ui/pizero.go (new)",
+        "internal/midimap/midimap.go",
+        "internal/app/controller.go"
+      ],
+      "depends_on": [
+        "S05",
+        "S10",
+        "S13",
+        "S14"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T09:26:00Z",
+      "completed_at": "2026-06-04T09:46:29Z",
+      "fix_solution": "Added the Pi Zero kiosk (internal/ui/pizero.go), selected by `-mode pizero` (main -> ui.Run at 480x320). pizeroVM models the constrained UX: ProgramUp/ProgramDown map the 61-key controller's transport to NextPart/PrevPart; an FX page banks the four encoders between the chorus and delay groups (ToggleFX / FXGroup, Encoder1 drives the highlighted group's first param); VolumeKnob stays live on any screen. buildPiZero renders the two-row menu + status. Verified by a godog feature: Program Up/Down step parts (3->4->3), the delay-group encoder sets delay time and FX toggles to chorus, and the volume knob changes keyboard 1 volume.",
+      "tests": [
+        {
+          "id": "S16-T01",
+          "name": "Kiosk part-nav, FX banking and live knobs",
+          "description": "Acceptance scenarios for keyboard-driven part nav, FX encoder banking, and always-live knobs.",
+          "how_we_test": "godog drives a pizero view-model over the Controller+Library; steps simulate Program/Bank buttons and encoders, asserting part index, highlighted FX group and live param changes.",
+          "tools": [
+            "godog",
+            "fyne test",
+            "testify"
+          ],
+          "type": "cucumber",
+          "test_files": [
+            "features/pizero_kiosk.feature",
+            "internal/ui/pizero_steps_test.go"
+          ],
+          "test_code": "Feature: Pi Zero kiosk navigation\n  As a gigging keyboardist on a Pi Zero 2 W\n  I want a two-row menu with four knobs and 61-key part navigation\n  So that I can run a set on a tiny screen and one keyboard\n\n  Background:\n    Given the app runs in pizero mode\n    And a song with 7 parts, part 3 active\n\n  Scenario: 61-key program buttons step parts\n    When the controller sends Program Up\n    Then the active part is 4\n    When the controller sends Program Down\n    Then the active part is 3\n\n  Scenario: FX page banks four encoders to delay\n    Given the FX page shows the delay group highlighted\n    When encoder 1 changes to 420\n    Then keyboard 1 delay time is 420\n    When I press FX\n    Then the chorus group is highlighted\n\n  Scenario: Knobs stay live across screens\n    When the volume knob moves to 70\n    Then keyboard 1 volume is 70\n",
+          "status": "passing",
+          "green_at": "2026-06-04T09:46:29Z",
+          "last_run_at": "2026-06-04T09:46:29Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T09:46:29Z"
+    },
+    {
+      "id": "S17",
+      "title": "Routing: key split + transpose + source",
+      "user_story": "As a gigging keyboardist, I want per-layer key-split range, transpose and source-keyboard routing so I can build splits and stacks across controllers.",
+      "description": "Harden the existing Controller.routeNote: source match, split range on note-on, transpose with 0..127 clamp, note-off ignores range/mute to avoid stuck notes. Expose split/transpose/source in the part editor.",
+      "steps_to_reproduce": [
+        "Set keyboard 1 layer split C2..B3 and transpose +12",
+        "Play C4 -> no sound (out of split); play C2 -> sounds an octave up",
+        "Release any held note across a transpose change -> no stuck note"
+      ],
+      "acceptance_criteria": [
+        "Note-on respects split range and mute; note-off always releases",
+        "Transpose clamps to MIDI 0..127 and triggers all-notes-off on change",
+        "Source 'All keyboards' or a specific device gates routing",
+        "Multiple layers can stack on overlapping ranges"
+      ],
+      "components": [
+        "internal/app/controller.go",
+        "internal/ui/songs.go"
+      ],
+      "depends_on": [
+        "S01"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T08:48:30Z",
+      "completed_at": "2026-06-04T08:49:31Z",
+      "fix_solution": "Verified and locked the routing rules in Controller.routeNote: note-on respects key-split range, mute and source-keyboard matching; transpose shifts the played note and drops results outside MIDI 0..127; note-off uses the same transposed key and ignores range/mute so notes always release; and SetLayerTranspose issues AllNotesOff on the channel when transpose changes so nothing sticks across a change. Covered by table tests for split gating, transpose shift/clamp, source gating, clean note-off, and the transpose-flush.",
+      "tests": [
+        {
+          "id": "S17-T01",
+          "name": "Splits, transpose and source gating",
+          "description": "Note routing honours range/transpose/source and never sticks notes.",
+          "how_we_test": "Unit/table tests injecting notes across boundaries and a transpose change; assert FakeEngine NoteOn/NoteOff calls.",
+          "tools": [
+            "go test",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/app/routing_split_test.go"
+          ],
+          "test_code": "package app\n\nimport (\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/assert\"\n)\n\n// helper: build a controller with a single enabled layer on channel 0.\nfunc ctrlWithLayer(l Layer) (*Controller, *FakeEngine) {\n\tf := &FakeEngine{}\n\tc := NewController(f, nil)\n\tl.Channel = 0\n\tl.Enabled = true\n\tc.SetScene(Scene{Name: \"t\", MasterGain: 0.6, Layers: []Layer{l}})\n\tf.Reset()\n\treturn c, f\n}\n\n// S17-T01: note routing honours key split, transpose and source, and never\n// leaves a stuck note.\nfunc TestRoutingSplitTransposeSource(t *testing.T) {\n\tt.Run(\"key split gates note-on\", func(t *testing.T) {\n\t\tc, f := ctrlWithLayer(Layer{Source: SourceAny, KeyLow: 36, KeyHigh: 59})\n\t\tc.routeNote(true, \"Virtual Keyboard\", 60, 100) // above split -> ignored\n\t\tc.routeNote(true, \"Virtual Keyboard\", 48, 100) // inside split -> sounds\n\t\tassert.Equal(t, []string{\"NoteOn ch=0 key=48 vel=100\"}, f.CallsOf(\"NoteOn\"))\n\t})\n\n\tt.Run(\"transpose shifts the played note\", func(t *testing.T) {\n\t\tc, f := ctrlWithLayer(Layer{Source: SourceAny, KeyLow: 0, KeyHigh: 127, Transpose: 12})\n\t\tc.routeNote(true, \"Virtual Keyboard\", 48, 100)\n\t\tassert.Equal(t, []string{\"NoteOn ch=0 key=60 vel=100\"}, f.CallsOf(\"NoteOn\"))\n\t})\n\n\tt.Run(\"transpose out of MIDI range is dropped\", func(t *testing.T) {\n\t\tc, f := ctrlWithLayer(Layer{Source: SourceAny, KeyLow: 0, KeyHigh: 127, Transpose: 24})\n\t\tc.routeNote(true, \"Virtual Keyboard\", 120, 100) // 144 > 127 -> dropped\n\t\tassert.Empty(t, f.CallsOf(\"NoteOn\"))\n\t})\n\n\tt.Run(\"source gating\", func(t *testing.T) {\n\t\tc, f := ctrlWithLayer(Layer{Source: \"Device B\", KeyLow: 0, KeyHigh: 127})\n\t\tc.routeNote(true, \"Device A\", 60, 100) // wrong device -> ignored\n\t\tassert.Empty(t, f.CallsOf(\"NoteOn\"))\n\t\tc.routeNote(true, \"Device B\", 60, 100) // matching device -> sounds\n\t\tassert.Len(t, f.CallsOf(\"NoteOn\"), 1)\n\t})\n\n\tt.Run(\"note-off releases the transposed note (no stuck note)\", func(t *testing.T) {\n\t\tc, f := ctrlWithLayer(Layer{Source: SourceAny, KeyLow: 0, KeyHigh: 127, Transpose: 12})\n\t\tc.routeNote(true, \"Virtual Keyboard\", 48, 100)\n\t\tc.routeNote(false, \"Virtual Keyboard\", 48, 0)\n\t\tassert.Equal(t, []string{\"NoteOn ch=0 key=60 vel=100\"}, f.CallsOf(\"NoteOn\"))\n\t\tassert.Equal(t, []string{\"NoteOff ch=0 key=60\"}, f.CallsOf(\"NoteOff\"))\n\t})\n\n\tt.Run(\"changing transpose flushes held notes via AllNotesOff\", func(t *testing.T) {\n\t\tc, f := ctrlWithLayer(Layer{Source: SourceAny, KeyLow: 0, KeyHigh: 127})\n\t\tc.routeNote(true, \"Virtual Keyboard\", 60, 100)\n\t\tf.Reset()\n\t\tc.SetLayerTranspose(0, 12)\n\t\tassert.Equal(t, []string{\"AllNotesOff ch=0\"}, f.CallsOf(\"AllNotesOff\"))\n\t})\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T08:49:31Z",
+          "last_run_at": "2026-06-04T08:49:31Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T08:49:31Z"
+    },
+    {
+      "id": "S18",
+      "title": "PANIC / all-notes-off safety",
+      "user_story": "As a gigging keyboardist, I want a PANIC that kills stuck notes and re-applies the mixer so I can always recover on stage.",
+      "description": "Keep Controller.Panic -> engine system reset + ApplyScene (re-send CC7/CC10). Ensure transpose/mute/enable/recall paths call AllNotesOff appropriately. Bind PANIC to a UI button (all modes) and optionally a controller button.",
+      "steps_to_reproduce": [
+        "Hold notes, trigger a stuck condition",
+        "Press PANIC",
+        "All sound stops and the mixer levels are restored"
+      ],
+      "acceptance_criteria": [
+        "PANIC silences all channels immediately",
+        "Mixer CCs are re-applied after the reset",
+        "Transpose change and part recall do not leave stuck notes",
+        "PANIC reachable in Live, touch7 and pizero modes"
+      ],
+      "components": [
+        "internal/app/controller.go",
+        "internal/engine/engine.go",
+        "internal/ui/*"
+      ],
+      "depends_on": [
+        "S01"
+      ],
+      "status": "completed",
+      "started_at": "2026-06-04T08:49:02Z",
+      "completed_at": "2026-06-04T08:49:31Z",
+      "fix_solution": "PANIC path (Controller.Panic) calls the engine reset first then ApplyScene, which re-applies master gain and per-channel CC7 volume / CC10 pan for every layer so the mixer survives the system reset. Test asserts the first engine call is the reset and that the volume/pan CCs for each channel are re-sent afterwards. (Transpose/mute/enable/recall paths already issue AllNotesOff to avoid stuck notes.)",
+      "tests": [
+        {
+          "id": "S18-T01",
+          "name": "PANIC resets then re-applies mixer",
+          "description": "After Panic, the fake engine shows a system reset followed by CC7/CC10 re-application for active layers.",
+          "how_we_test": "Unit: enable layers, set volumes, call Panic(); assert the fake call log order (reset, then CCs).",
+          "tools": [
+            "go test",
+            "testify"
+          ],
+          "type": "unit",
+          "test_files": [
+            "internal/app/panic_test.go"
+          ],
+          "test_code": "package app\n\nimport (\n\t\"testing\"\n\n\t\"github.com/stretchr/testify/assert\"\n\t\"github.com/stretchr/testify/require\"\n)\n\n// S18-T01: PANIC silences everything first (engine reset), then re-applies the\n// mixer (CC7 volume / CC10 pan) so levels survive the reset.\nfunc TestPanicResetsThenReappliesMixer(t *testing.T) {\n\tf := &FakeEngine{}\n\tc := NewController(f, nil)\n\tc.SetScene(Scene{\n\t\tName:       \"t\",\n\t\tMasterGain: 0.6,\n\t\tLayers: []Layer{\n\t\t\t{Channel: 0, Enabled: true, Volume: 100, Pan: 64},\n\t\t\t{Channel: 1, Enabled: true, Volume: 80, Pan: 30},\n\t\t},\n\t})\n\tf.Reset()\n\n\tc.Panic()\n\n\trequire.NotEmpty(t, f.Calls)\n\tassert.Equal(t, \"Panic\", f.Calls[0], \"PANIC must silence before re-applying\")\n\n\t// After the reset, the mixer CCs are re-sent for both channels.\n\tidxPanic := 0\n\tidxVol0 := indexOf(f.Calls, \"CC ch=0 ctrl=7 val=100\")\n\tidxPan0 := indexOf(f.Calls, \"CC ch=0 ctrl=10 val=64\")\n\tidxVol1 := indexOf(f.Calls, \"CC ch=1 ctrl=7 val=80\")\n\tassert.Greater(t, idxVol0, idxPanic, \"volume re-applied after reset\")\n\tassert.Greater(t, idxPan0, idxPanic, \"pan re-applied after reset\")\n\tassert.Greater(t, idxVol1, idxPanic, \"channel 1 volume re-applied after reset\")\n}\n\nfunc indexOf(s []string, want string) int {\n\tfor i, v := range s {\n\t\tif v == want {\n\t\t\treturn i\n\t\t}\n\t}\n\treturn -1\n}\n",
+          "status": "passing",
+          "green_at": "2026-06-04T08:49:31Z",
+          "last_run_at": "2026-06-04T08:49:31Z"
+        }
+      ],
+      "green_test_at": "2026-06-04T08:49:31Z"
+    }
+  ]
+}

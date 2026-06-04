@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11151c"/><stop offset="1" stop-color="#0b0e13"/>
+    </linearGradient>
+    <style>
+      .panel  { fill:#1a1f29; stroke:#2b3340; stroke-width:1; }
+      .panel2 { fill:#232a36; stroke:#323b4a; stroke-width:1; }
+      .txt { fill:#e6edf3; } .muted { fill:#8b97a7; } .accent { fill:#4cc2ff; }
+      .lbl { fill:#8b97a7; font-size:12px; } .h { fill:#cdd7e2; font-size:14px; font-weight:600; }
+      .num { fill:#4cc2ff; font-size:13px; font-weight:600; }
+      .fxv { fill:#cdd7e2; font-size:11px; }
+    </style>
+  </defs>
+  <rect width="1280" height="800" fill="url(#bg)"/>
+
+  <!-- Title + tabs -->
+  <rect x="0" y="0" width="1280" height="36" fill="#0a0d12"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f56"/><circle cx="42" cy="18" r="6" fill="#ffbd2e"/><circle cx="62" cy="18" r="6" fill="#27c93f"/>
+  <text x="640" y="23" text-anchor="middle" class="muted" font-size="13">GigSynth — FluidSynth Live Rig</text>
+  <rect x="0" y="36" width="1280" height="44" fill="#141922"/>
+  <text x="72" y="63" text-anchor="middle" class="muted" font-size="14">Live</text>
+  <rect x="122" y="48" width="96" height="22" rx="4" fill="#4cc2ff" opacity="0.16"/>
+  <text x="170" y="63" text-anchor="middle" class="accent" font-size="14" font-weight="600">Songs</text>
+  <text x="268" y="63" text-anchor="middle" class="muted" font-size="14">Settings</text>
+  <rect x="0" y="79" width="1280" height="1" fill="#2b3340"/>
+
+  <!-- ===== Column 1: Songs ===== -->
+  <g transform="translate(24,96)">
+    <rect class="panel" x="0" y="0" width="300" height="668" rx="10"/>
+    <text x="18" y="30" class="h">Songs</text>
+    <rect x="214" y="14" width="70" height="26" rx="6" fill="#1f6f43"/>
+    <text x="249" y="32" text-anchor="middle" fill="#fff" font-size="13">+ New</text>
+    <rect x="10" y="50" width="280" height="40" rx="6" fill="#4cc2ff" opacity="0.16"/>
+    <text x="22" y="75" class="accent" font-size="15" font-weight="600">Shine On You Crazy Diamond</text>
+    <text x="100" y="123" class="txt" font-size="15">Any Colour You Like</text>
+    <text x="100" y="163" class="txt" font-size="15">Comfortably Numb</text>
+    <text x="100" y="203" class="txt" font-size="15">Jump</text>
+    <text x="100" y="243" class="txt" font-size="15">Selling England</text>
+    <text x="100" y="283" class="txt" font-size="15">Save a Prayer</text>
+    <text x="22" y="123" class="muted" font-size="13">7 parts</text>
+    <text x="22" y="163" class="muted" font-size="13">4 parts</text>
+    <text x="22" y="203" class="muted" font-size="13">3 parts</text>
+    <text x="22" y="243" class="muted" font-size="13">5 parts</text>
+    <text x="22" y="283" class="muted" font-size="13">6 parts</text>
+  </g>
+
+  <!-- ===== Column 2: Parts ===== -->
+  <g transform="translate(340,96)">
+    <rect class="panel" x="0" y="0" width="330" height="668" rx="10"/>
+    <text x="18" y="30" class="h">Parts</text>
+    <text x="18" y="48" class="muted" font-size="12">Shine On You Crazy Diamond</text>
+    <rect x="244" y="14" width="70" height="26" rx="6" fill="#1f6f43"/>
+    <text x="279" y="32" text-anchor="middle" fill="#fff" font-size="13">+ Add</text>
+    <g font-size="14">
+      <rect x="10" y="64"  width="310" height="34" rx="6" fill="#232a36"/><text x="22" y="86" class="muted">1</text><text x="48" y="86" class="txt">Intro — Synth Wind</text>
+      <rect x="10" y="102" width="310" height="34" rx="6" fill="#232a36"/><text x="22" y="124" class="muted">2</text><text x="48" y="124" class="txt">Wine Glass Pad</text>
+      <rect x="10" y="140" width="310" height="34" rx="6" fill="#4cc2ff" opacity="0.16"/><text x="22" y="162" class="muted">3</text><text x="48" y="162" class="accent" font-weight="600">Solina Pad</text>
+      <rect x="10" y="178" width="310" height="34" rx="6" fill="#232a36"/><text x="22" y="200" class="muted">4</text><text x="48" y="200" class="txt">Horn Solo + Delay</text>
+      <rect x="10" y="216" width="310" height="34" rx="6" fill="#232a36"/><text x="22" y="238" class="muted">5</text><text x="48" y="238" class="txt">Rhodes Verse</text>
+      <rect x="10" y="254" width="310" height="34" rx="6" fill="#232a36"/><text x="22" y="276" class="muted">6</text><text x="48" y="276" class="txt">Hammond Build</text>
+      <rect x="10" y="292" width="310" height="34" rx="6" fill="#232a36"/><text x="22" y="314" class="muted">7</text><text x="48" y="314" class="txt">Outro Pad</text>
+    </g>
+    <text x="290" y="162" class="muted" font-size="16">⠿</text>
+    <text x="18" y="360" class="muted" font-size="11">Drag ⠿ to reorder · double-click to rename</text>
+    <rect x="10" y="620" width="150" height="34" rx="6" fill="#2d3543"/><text x="85" y="642" text-anchor="middle" class="txt" font-size="13">Duplicate Part</text>
+    <rect x="170" y="620" width="150" height="34" rx="6" fill="#3a2222" stroke="#7a3a3a"/><text x="245" y="642" text-anchor="middle" fill="#ff8a8a" font-size="13">Delete Part</text>
+  </g>
+
+  <!-- ===== Column 3: Part editor ===== -->
+  <g transform="translate(686,96)">
+    <rect class="panel" x="0" y="0" width="570" height="668" rx="10"/>
+    <text x="20" y="30" class="h" font-size="16">Part 3 — Solina Pad</text>
+    <text x="20" y="48" class="muted" font-size="11">Stores the full live state — sounds, mix, pitch, split &amp; per-keyboard FX</text>
+    <rect x="430" y="14" width="120" height="28" rx="6" fill="#1f6f43"/><text x="490" y="33" text-anchor="middle" fill="#fff" font-size="13">Save Part</text>
+    <line x1="20" y1="60" x2="550" y2="60" stroke="#2b3340"/>
+
+    <!-- KB1 -->
+    <g transform="translate(20,72)">
+      <rect class="panel2" x="0" y="0" width="530" height="178" rx="8"/>
+      <circle cx="20" cy="22" r="5" fill="#27c93f"/><text x="34" y="27" class="h">Keyboard 1</text>
+      <text x="516" y="27" text-anchor="end" class="muted" font-size="11">M-Audio Keystation 61 · usb:1.4.2</text>
+      <text x="16" y="54" class="lbl">SOUND</text>
+      <rect x="16" y="62" width="300" height="28" rx="6" fill="#161b23" stroke="#323b4a"/><text x="30" y="81" class="txt" font-size="13">Solina String Ensemble ▾</text>
+      <text x="332" y="54" class="lbl">VOLUME</text><rect x="332" y="70" width="120" height="6" rx="3" fill="#2d3543"/><rect x="332" y="70" width="100" height="6" rx="3" fill="#4cc2ff"/><text x="480" y="76" class="num">108</text>
+      <text x="16" y="112" class="lbl">PITCH</text><rect x="60" y="98" width="60" height="22" rx="5" fill="#161b23" stroke="#323b4a"/><text x="90" y="114" text-anchor="middle" class="txt" font-size="12">+0 st</text>
+      <text x="134" y="112" class="lbl">SPLIT</text><rect x="176" y="98" width="100" height="22" rx="5" fill="#161b23" stroke="#323b4a"/><text x="226" y="114" text-anchor="middle" class="txt" font-size="12">C2 — C7</text>
+      <text x="290" y="112" class="lbl">PAN</text><rect x="324" y="98" width="80" height="22" rx="5" fill="#161b23" stroke="#323b4a"/><text x="364" y="114" text-anchor="middle" class="txt" font-size="12">Center</text>
+      <!-- FX row -->
+      <line x1="16" y1="132" x2="514" y2="132" stroke="#2b3340"/>
+      <text x="16" y="152" class="lbl">CHORUS</text>
+      <rect x="74" y="142" width="30" height="14" rx="7" fill="#143040" stroke="#4cc2ff"/><text x="89" y="153" text-anchor="middle" class="accent" font-size="9">On</text>
+      <text x="114" y="152" class="fxv">Rate 0.8Hz · Depth 55%</text>
+      <text x="290" y="152" class="lbl">DELAY</text>
+      <rect x="334" y="142" width="30" height="14" rx="7" fill="#143040" stroke="#4cc2ff"/><text x="349" y="153" text-anchor="middle" class="accent" font-size="9">On</text>
+      <text x="374" y="152" class="fxv">320ms · FB 35 · Mix 30</text>
+    </g>
+
+    <!-- KB2 -->
+    <g transform="translate(20,262)">
+      <rect class="panel2" x="0" y="0" width="530" height="178" rx="8"/>
+      <circle cx="20" cy="22" r="5" fill="#27c93f"/><text x="34" y="27" class="h">Keyboard 2</text>
+      <text x="516" y="27" text-anchor="end" class="muted" font-size="11">Nord Stage · usb:1.4.3</text>
+      <text x="16" y="54" class="lbl">SOUND</text>
+      <rect x="16" y="62" width="300" height="28" rx="6" fill="#161b23" stroke="#323b4a"/><text x="30" y="81" class="txt" font-size="13">Mellotron Choir ▾</text>
+      <text x="332" y="54" class="lbl">VOLUME</text><rect x="332" y="70" width="120" height="6" rx="3" fill="#2d3543"/><rect x="332" y="70" width="78" height="6" rx="3" fill="#4cc2ff"/><text x="480" y="76" class="num">84</text>
+      <text x="16" y="112" class="lbl">PITCH</text><rect x="60" y="98" width="60" height="22" rx="5" fill="#161b23" stroke="#323b4a"/><text x="90" y="114" text-anchor="middle" class="txt" font-size="12">+12 st</text>
+      <text x="134" y="112" class="lbl">SPLIT</text><rect x="176" y="98" width="100" height="22" rx="5" fill="#161b23" stroke="#323b4a"/><text x="226" y="114" text-anchor="middle" class="txt" font-size="12">C4 — C7</text>
+      <text x="290" y="112" class="lbl">PAN</text><rect x="324" y="98" width="80" height="22" rx="5" fill="#161b23" stroke="#323b4a"/><text x="364" y="114" text-anchor="middle" class="txt" font-size="12">L18</text>
+      <line x1="16" y1="132" x2="514" y2="132" stroke="#2b3340"/>
+      <text x="16" y="152" class="lbl">CHORUS</text>
+      <rect x="74" y="142" width="30" height="14" rx="7" fill="#2d3543"/><text x="89" y="153" text-anchor="middle" class="muted" font-size="9">Off</text>
+      <text x="114" y="152" class="muted" font-size="11">—</text>
+      <text x="290" y="152" class="lbl">DELAY</text>
+      <rect x="334" y="142" width="30" height="14" rx="7" fill="#143040" stroke="#4cc2ff"/><text x="349" y="153" text-anchor="middle" class="accent" font-size="9">On</text>
+      <text x="374" y="152" class="fxv">480ms · FB 50 · Mix 45</text>
+    </g>
+
+    <!-- KB3 -->
+    <g transform="translate(20,452)">
+      <rect class="panel2" x="0" y="0" width="530" height="178" rx="8" opacity="0.6"/>
+      <circle cx="20" cy="22" r="5" fill="#5a6678"/><text x="34" y="27" class="h">Keyboard 3</text>
+      <text x="516" y="27" text-anchor="end" class="muted" font-size="11">disabled in this part</text>
+      <text x="16" y="54" class="lbl">SOUND</text>
+      <rect x="16" y="62" width="300" height="28" rx="6" fill="#161b23" stroke="#323b4a"/><text x="30" y="81" class="muted" font-size="13">— none —</text>
+      <rect x="332" y="58" width="160" height="36" rx="6" fill="#2d3543"/><text x="412" y="81" text-anchor="middle" class="txt" font-size="13">Enable Keyboard</text>
+      <line x1="16" y1="132" x2="514" y2="132" stroke="#2b3340"/>
+      <text x="16" y="152" class="lbl">CHORUS</text><rect x="74" y="142" width="30" height="14" rx="7" fill="#2d3543"/><text x="89" y="153" text-anchor="middle" class="muted" font-size="9">Off</text>
+      <text x="290" y="152" class="lbl">DELAY</text><rect x="334" y="142" width="30" height="14" rx="7" fill="#2d3543"/><text x="349" y="153" text-anchor="middle" class="muted" font-size="9">Off</text>
+    </g>
+  </g>
+</svg>

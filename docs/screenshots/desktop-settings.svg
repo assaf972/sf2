@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11151c"/><stop offset="1" stop-color="#0b0e13"/>
+    </linearGradient>
+    <style>
+      .panel  { fill:#1a1f29; stroke:#2b3340; stroke-width:1; }
+      .panel2 { fill:#232a36; stroke:#323b4a; stroke-width:1; }
+      .txt { fill:#e6edf3; } .muted { fill:#8b97a7; } .accent { fill:#4cc2ff; }
+      .lbl { fill:#8b97a7; font-size:12px; } .h { fill:#cdd7e2; font-size:15px; font-weight:600; }
+      .fld { fill:#161b23; stroke:#323b4a; stroke-width:1; }
+      .num { fill:#4cc2ff; font-size:13px; font-weight:600; }
+    </style>
+  </defs>
+  <rect width="1280" height="800" fill="url(#bg)"/>
+
+  <!-- Title + tabs -->
+  <rect x="0" y="0" width="1280" height="36" fill="#0a0d12"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f56"/><circle cx="42" cy="18" r="6" fill="#ffbd2e"/><circle cx="62" cy="18" r="6" fill="#27c93f"/>
+  <text x="640" y="23" text-anchor="middle" class="muted" font-size="13">GigSynth — FluidSynth Live Rig</text>
+  <rect x="0" y="36" width="1280" height="44" fill="#141922"/>
+  <text x="72" y="63" text-anchor="middle" class="muted" font-size="14">Live</text>
+  <text x="170" y="63" text-anchor="middle" class="muted" font-size="14">Songs</text>
+  <rect x="220" y="48" width="96" height="22" rx="4" fill="#4cc2ff" opacity="0.16"/>
+  <text x="268" y="63" text-anchor="middle" class="accent" font-size="14" font-weight="600">Settings</text>
+  <rect x="0" y="79" width="1280" height="1" fill="#2b3340"/>
+
+  <!-- ===== Left column: SoundFont + Audio + Storage ===== -->
+  <g transform="translate(24,96)">
+    <!-- SoundFont -->
+    <rect class="panel" x="0" y="0" width="600" height="150" rx="10"/>
+    <text x="20" y="32" class="h">SoundFont</text>
+    <text x="20" y="60" class="lbl">SF2 / SF3 FILE LOCATION</text>
+    <rect class="fld" x="20" y="70" width="450" height="34" rx="6"/>
+    <text x="34" y="92" class="txt" font-size="13">/opt/gigsynth/soundfonts/GrandPianos.sf2</text>
+    <rect x="482" y="70" width="98" height="34" rx="6" fill="#2d3543"/>
+    <text x="531" y="92" text-anchor="middle" class="txt" font-size="13">Browse…</text>
+    <text x="20" y="130" class="muted" font-size="12">298 presets loaded · 14.6 MB · banks 0–3</text>
+
+    <!-- Audio -->
+    <rect class="panel" x="0" y="166" width="600" height="244" rx="10"/>
+    <text x="20" y="198" class="h">Audio Engine</text>
+    <text x="20" y="228" class="lbl">DRIVER</text>
+    <rect class="fld" x="20" y="238" width="260" height="34" rx="6"/>
+    <text x="34" y="260" class="txt" font-size="13">CoreAudio (platform default) ▾</text>
+    <text x="300" y="228" class="lbl">SAMPLE RATE</text>
+    <rect class="fld" x="300" y="238" width="280" height="34" rx="6"/>
+    <text x="314" y="260" class="txt" font-size="13">48000 Hz ▾</text>
+
+    <text x="20" y="300" class="lbl">PERIOD SIZE (LATENCY)</text>
+    <rect class="fld" x="20" y="310" width="260" height="34" rx="6"/>
+    <text x="34" y="332" class="txt" font-size="13">64 frames ▾</text>
+    <text x="300" y="300" class="lbl">PERIODS</text>
+    <rect class="fld" x="300" y="310" width="280" height="34" rx="6"/>
+    <text x="314" y="332" class="txt" font-size="13">2 ▾</text>
+    <text x="20" y="372" class="muted" font-size="12">Polyphony</text>
+    <rect class="fld" x="120" y="358" width="120" height="28" rx="6"/>
+    <text x="180" y="377" text-anchor="middle" class="txt" font-size="13">256</text>
+    <text x="300" y="377" class="accent" font-size="12">≈ 2.7 ms output latency</text>
+    <text x="20" y="400" class="muted" font-size="12">FX engine: per-keyboard <tspan fill="#cdd7e2">Chorus</tspan> (2) + <tspan fill="#cdd7e2">Delay</tspan> (3) inserts · set live / per Part</text>
+
+    <!-- Storage -->
+    <rect class="panel" x="0" y="430" width="600" height="234" rx="10"/>
+    <text x="20" y="462" class="h">Storage &amp; App</text>
+    <text x="20" y="492" class="lbl">DATABASE (SQLite)</text>
+    <rect class="fld" x="20" y="502" width="450" height="34" rx="6"/>
+    <text x="34" y="524" class="txt" font-size="13">~/.config/gigsynth/gigsynth.db</text>
+    <rect x="482" y="502" width="98" height="34" rx="6" fill="#2d3543"/>
+    <text x="531" y="524" text-anchor="middle" class="txt" font-size="13">Reveal</text>
+    <text x="20" y="562" class="lbl">DEFAULT MP3 FOLDER</text>
+    <rect class="fld" x="20" y="572" width="450" height="34" rx="6"/>
+    <text x="34" y="594" class="txt" font-size="13">~/Music/BackingTracks</text>
+    <rect x="482" y="572" width="98" height="34" rx="6" fill="#2d3543"/>
+    <text x="531" y="594" text-anchor="middle" class="txt" font-size="13">Browse…</text>
+    <text x="20" y="636" class="lbl">THEME</text>
+    <rect x="80" y="622" width="90" height="26" rx="6" fill="#4cc2ff" opacity="0.18" stroke="#4cc2ff"/>
+    <text x="125" y="640" text-anchor="middle" class="accent" font-size="12">Dark (stage)</text>
+    <rect x="178" y="622" width="70" height="26" rx="6" fill="#2d3543"/>
+    <text x="213" y="640" text-anchor="middle" class="txt" font-size="12">Light</text>
+    <text x="300" y="640" class="lbl">Start on:</text>
+    <text x="360" y="640" class="txt" font-size="12">Live view ▾</text>
+  </g>
+
+  <!-- ===== Right column: 3 keyboards + mapping ===== -->
+  <g transform="translate(640,96)">
+    <rect class="panel" x="0" y="0" width="616" height="568" rx="10"/>
+    <text x="20" y="32" class="h">MIDI Keyboards &amp; Mapping</text>
+    <text x="20" y="52" class="muted" font-size="12">Bind 3 controllers; the CC map drives volume, pan and the Chorus/Delay knobs</text>
+    <rect x="486" y="14" width="110" height="28" rx="6" fill="#2d3543"/>
+    <text x="541" y="33" text-anchor="middle" class="txt" font-size="13">Rescan ⟳</text>
+
+    <!-- KB block template -->
+    <g transform="translate(16,66)">
+      <rect class="panel2" x="0" y="0" width="584" height="152" rx="8"/>
+      <circle cx="18" cy="22" r="5" fill="#27c93f"/>
+      <text x="32" y="27" class="h" font-size="14">Keyboard 1</text>
+      <text x="16" y="56" class="lbl">DEVICE</text>
+      <rect class="fld" x="16" y="64" width="320" height="30" rx="6"/>
+      <text x="30" y="84" class="txt" font-size="13">M-Audio Keystation 61 MK3 · usb:1.4.2 ▾</text>
+      <text x="352" y="56" class="lbl">MAPPING PRESET</text>
+      <rect class="fld" x="352" y="64" width="216" height="30" rx="6"/>
+      <text x="366" y="84" class="txt" font-size="13">M-Audio (default) ▾</text>
+      <text x="16" y="120" class="lbl">CC MAP</text>
+      <text x="16" y="138" class="muted" font-size="12">Vol→CC7 · Pan→CC10 · Enc1→Chorus Depth · Enc2→Delay Mix · Enc3→Delay Time</text>
+    </g>
+
+    <g transform="translate(16,234)">
+      <rect class="panel2" x="0" y="0" width="584" height="152" rx="8"/>
+      <circle cx="18" cy="22" r="5" fill="#27c93f"/>
+      <text x="32" y="27" class="h" font-size="14">Keyboard 2</text>
+      <text x="16" y="56" class="lbl">DEVICE</text>
+      <rect class="fld" x="16" y="64" width="320" height="30" rx="6"/>
+      <text x="30" y="84" class="txt" font-size="13">Nord Stage 3 · usb:1.4.3 ▾</text>
+      <text x="352" y="56" class="lbl">MAPPING PRESET</text>
+      <rect class="fld" x="352" y="64" width="216" height="30" rx="6"/>
+      <text x="366" y="84" class="txt" font-size="13">Generic GM ▾</text>
+      <text x="16" y="120" class="lbl">CC MAP</text>
+      <text x="16" y="138" class="muted" font-size="12">Vol→CC7 · Pan→CC10 · Enc1→Chorus Rate · Enc2→Delay Feedback · Mod→CC1</text>
+    </g>
+
+    <g transform="translate(16,402)">
+      <rect class="panel2" x="0" y="0" width="584" height="152" rx="8" opacity="0.7"/>
+      <circle cx="18" cy="22" r="5" fill="#5a6678"/>
+      <text x="32" y="27" class="h" font-size="14">Keyboard 3</text>
+      <text x="16" y="56" class="lbl">DEVICE</text>
+      <rect class="fld" x="16" y="64" width="320" height="30" rx="6"/>
+      <text x="30" y="84" class="muted" font-size="13">— select a controller — ▾</text>
+      <text x="352" y="56" class="lbl">MAPPING PRESET</text>
+      <rect class="fld" x="352" y="64" width="216" height="30" rx="6"/>
+      <text x="366" y="84" class="muted" font-size="13">Behringer ▾</text>
+      <text x="16" y="120" class="lbl">AVAILABLE PRESETS</text>
+      <text x="16" y="138" class="muted" font-size="12">M-Audio · Behringer · Arturia · Novation · Akai · Generic GM · Custom…</text>
+    </g>
+  </g>
+</svg>

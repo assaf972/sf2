@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GigSynth — Pi Zero 2 W UI Flow</title>
+<style>
+  :root{
+    --bg:#0b0e13; --panel:#161b23; --panel2:#1a1f29; --line:#2b3340;
+    --txt:#e6edf3; --muted:#8b97a7; --accent:#4cc2ff; --green:#27c93f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;line-height:1.6}
+  header{background:linear-gradient(180deg,#11151c,#0b0e13);
+    border-bottom:1px solid var(--line);padding:28px 40px}
+  header h1{margin:0;font-size:26px}
+  header .accent{color:var(--accent)}
+  header p{margin:6px 0 0;color:var(--muted)}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 40px 80px}
+  h2{font-size:21px;margin-top:44px;border-bottom:1px solid var(--line);padding-bottom:8px}
+  h3{font-size:16px;color:var(--accent);margin-top:28px}
+  p{color:#d4dce4}
+  a{color:var(--accent)}
+  code{background:#11151c;border:1px solid var(--line);border-radius:4px;
+    padding:1px 6px;font-size:13px;color:#cdd7e2}
+  .lead{color:var(--muted);font-size:16px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:18px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  figure{margin:0;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:16px}
+  figure img{width:100%;height:auto;border-radius:6px;display:block}
+  figcaption{color:var(--muted);font-size:13px;margin-top:10px}
+  figcaption b{color:var(--txt)}
+  .pill{display:inline-block;background:#143040;border:1px solid var(--accent);
+    color:var(--accent);border-radius:20px;padding:2px 12px;font-size:12px;margin-right:6px}
+  table{border-collapse:collapse;width:100%;margin-top:14px;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left}
+  th{background:var(--panel2);color:var(--accent);font-weight:600}
+  td{color:#d4dce4}
+  .note{background:var(--panel);border-left:3px solid var(--accent);
+    border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;color:#d4dce4}
+  ul li{margin:4px 0}
+  .crumbs{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div class="crumbs"><a href="user-guide.html">← Full user guide</a></div>
+  <h1><span class="accent">GigSynth</span> — Raspberry Pi Zero 2 W UI Flow</h1>
+  <p>The constrained, single-keyboard, two-row + four-knob interface for a small LCD touchscreen.</p>
+</header>
+
+<div class="wrap">
+
+  <p class="lead">On a Pi Zero 2 W the full three-view desktop UI is too heavy and the
+  screen is tiny. GigSynth ships a dedicated <b>kiosk mode</b>
+  (<code>gigsynth -mode pizero</code>) built for a small LCD (≈480×320). It runs with a
+  <b>single 61-key MIDI controller</b>, shows <b>two rows of menus</b> and <b>up to four
+  live knobs</b>, and lets the player walk a song's parts hands-free from the keyboard.</p>
+
+  <div>
+    <span class="pill">1 keyboard</span>
+    <span class="pill">≈480×320 LCD</span>
+    <span class="pill">2 menu rows</span>
+    <span class="pill">4 live knobs</span>
+    <span class="pill">chorus + delay</span>
+    <span class="pill">61-key part nav</span>
+    <span class="pill">same .sf2 &amp; .db as desktop</span>
+  </div>
+
+  <h2>Design principles</h2>
+  <ul>
+    <li><b>One thing per screen.</b> Tiny display, stage lighting, no mouse — every screen
+      shows one decision and the four knobs.</li>
+    <li><b>Knobs are always live.</b> The bottom strip (Volume / Pan / Pitch / Reverb) never
+      goes away, so you can tweak the sound no matter which menu you're in.</li>
+    <li><b>Two menu rows, no deep trees.</b> Row 1 = where you are (categories / songs),
+      Row 2 = what's inside it (presets / parts). Turn an encoder to scroll a row, press to
+      select.</li>
+    <li><b>The 61-key controller is the main remote.</b> You should be able to change parts
+      mid-song without touching the screen.</li>
+  </ul>
+
+  <h2>The screens</h2>
+
+  <div class="grid">
+    <figure>
+      <img src="screenshots/pizero-home.svg" alt="Pi Zero home screen"/>
+      <figcaption><b>Home.</b> Current song, part number, and the active sound for the
+      keyboard. Menu row 1 jumps to Songs / Sounds / <b>FX</b> / Setup; menu row 2 is the
+      fast <b>Prev / Next Part</b> shuttle. The four live knobs sit below.</figcaption>
+    </figure>
+    <figure>
+      <img src="screenshots/pizero-songs.svg" alt="Pi Zero song & part picker"/>
+      <figcaption><b>Songs &amp; Parts.</b> Row 1 scrolls songs; selecting one fills Row 2
+      with its ordered parts. Choosing a part instantly recalls its sounds, volumes, pitch
+      and routing — the same recall path as the desktop app.</figcaption>
+    </figure>
+    <figure>
+      <img src="screenshots/pizero-sound.svg" alt="Pi Zero sound browser"/>
+      <figcaption><b>Sounds.</b> Row 1 is the sound category (Pianos, E.Pianos, Mellotron,
+      Organs, Pads, Leads…), Row 2 lists presets in that category. The pick applies to the
+      keyboard immediately, so you can audition live.</figcaption>
+    </figure>
+    <figure>
+      <img src="screenshots/pizero-knobs.svg" alt="Pi Zero live knob view"/>
+      <figcaption><b>Live (knob focus).</b> Big-knob view for fine mixing on stage —
+      Volume, Pan, Pitch (±semitones) and Reverb for the current sound, with Prev/Next Part
+      and Home along the bottom.</figcaption>
+    </figure>
+    <figure>
+      <img src="screenshots/pizero-fx.svg" alt="Pi Zero effects page"/>
+      <figcaption><b>FX.</b> The keyboard's <b>Chorus</b> (Rate, Depth) and <b>Delay</b>
+      (Time, Feedback, Mix) inserts. Five parameters, four encoders — so the highlighted
+      effect owns the four knobs; <b>FX</b> toggles which effect they address.</figcaption>
+    </figure>
+  </div>
+
+  <h2>Navigation flow</h2>
+  <p>Everything radiates from <b>Home</b>. Two taps (or two encoder presses) reaches any
+  screen, and the knobs stay live throughout.</p>
+
+  <svg viewBox="0 0 900 360" width="100%" font-family="'Segoe UI',Arial,sans-serif" style="background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-top:8px">
+    <defs>
+      <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#4cc2ff"/>
+      </marker>
+      <style>
+        .box{fill:#1a1f29;stroke:#323b4a;stroke-width:1.5}
+        .boxA{fill:#143040;stroke:#4cc2ff;stroke-width:1.5}
+        .bt{fill:#e6edf3;font-size:15px;font-weight:600}
+        .bs{fill:#8b97a7;font-size:11px}
+        .ln{stroke:#4cc2ff;stroke-width:2;fill:none}
+        .el{fill:#8b97a7;font-size:11px}
+      </style>
+    </defs>
+    <!-- Home center -->
+    <rect class="boxA" x="370" y="150" width="160" height="60" rx="10"/>
+    <text x="450" y="178" text-anchor="middle" class="bt" fill="#4cc2ff">HOME</text>
+    <text x="450" y="196" text-anchor="middle" class="bs">song · part · sound</text>
+
+    <!-- Songs (left) -->
+    <rect class="box" x="60" y="40" width="180" height="60" rx="10"/>
+    <text x="150" y="68" text-anchor="middle" class="bt">Songs &amp; Parts</text>
+    <text x="150" y="86" text-anchor="middle" class="bs">pick song → pick part</text>
+    <!-- Sounds (left lower) -->
+    <rect class="box" x="60" y="250" width="180" height="60" rx="10"/>
+    <text x="150" y="278" text-anchor="middle" class="bt">Sounds</text>
+    <text x="150" y="296" text-anchor="middle" class="bs">category → preset</text>
+    <!-- Live knobs (right) -->
+    <rect class="box" x="660" y="40" width="180" height="60" rx="10"/>
+    <text x="750" y="68" text-anchor="middle" class="bt">Live (knobs)</text>
+    <text x="750" y="86" text-anchor="middle" class="bs">vol·pan·pitch·reverb</text>
+    <!-- Setup (right lower) -->
+    <rect class="box" x="660" y="250" width="180" height="60" rx="10"/>
+    <text x="750" y="278" text-anchor="middle" class="bt">Setup</text>
+    <text x="750" y="296" text-anchor="middle" class="bs">device · sf2 · audio</text>
+
+    <!-- arrows (two-way) -->
+    <path class="ln" d="M370,175 C310,140 270,110 240,80" marker-end="url(#arr)"/>
+    <path class="ln" d="M240,95 C280,130 320,160 370,185" marker-end="url(#arr)"/>
+    <path class="ln" d="M375,195 C320,235 270,260 240,278" marker-end="url(#arr)"/>
+    <path class="ln" d="M240,292 C300,290 340,250 372,205" marker-end="url(#arr)"/>
+    <path class="ln" d="M530,175 C590,140 630,110 660,80" marker-end="url(#arr)"/>
+    <path class="ln" d="M660,95 C620,130 580,160 530,185" marker-end="url(#arr)"/>
+    <path class="ln" d="M530,195 C600,235 630,260 660,278" marker-end="url(#arr)"/>
+
+    <!-- prev/next loop on Home -->
+    <path class="ln" d="M390,150 C360,120 420,108 448,148" marker-end="url(#arr)"/>
+    <text x="450" y="120" text-anchor="middle" class="el">◀ / ▶ Part shuttle</text>
+    <text x="300" y="20" text-anchor="middle" class="el">knobs stay live on every screen</text>
+
+    <!-- FX node (bottom centre) -->
+    <rect class="box" x="370" y="278" width="160" height="60" rx="10"/>
+    <text x="450" y="304" text-anchor="middle" class="bt">FX</text>
+    <text x="450" y="322" text-anchor="middle" class="bs">chorus · delay</text>
+    <path class="ln" d="M450,210 L450,278" marker-end="url(#arr)"/>
+  </svg>
+
+  <h2>Driving it from the 61-key controller</h2>
+  <p>The point of Pi Zero mode is hands-on-keys operation. A small block of the controller's
+  keys (or its transport / program buttons, depending on the model's mapping) is reserved
+  for navigation so the player never reaches for the screen mid-song:</p>
+
+  <table>
+    <tr><th>Controller input</th><th>Action</th><th>Notes</th></tr>
+    <tr><td>Program&nbsp;− / Program&nbsp;+ buttons</td><td>Previous / Next <b>Part</b></td><td>The core live move — walks the current song's parts in order.</td></tr>
+    <tr><td>Bank&nbsp;− / Bank&nbsp;+ (or hold + Prog)</td><td>Previous / Next <b>Song</b></td><td>Jump between songs between numbers.</td></tr>
+    <tr><td>Assignable knob 1–4</td><td>Volume · Pan · Pitch · Reverb</td><td>The four on-screen knobs mirror these CCs in real time.</td></tr>
+    <tr><td>Sustain pedal</td><td>Sustain (CC64)</td><td>Passed through to the active sound.</td></tr>
+    <tr><td>On-screen ▲▼ / ◀▶</td><td>Same as above</td><td>Touch fallback when a controller lacks transport buttons.</td></tr>
+  </table>
+
+  <div class="note">
+    <b>Why a 61-key still works for a whole set.</b> Because a <b>part</b> stores the full rig
+    state (sound, volume, pan, pitch, split, reverb), the player only ever needs <i>Next Part</i>
+    between sections — one button press swaps the sound and mix. The four knobs cover the live
+    tweaks. No menu diving during a song.
+  </div>
+
+  <h2>Knob behaviour</h2>
+  <ul>
+    <li><b>Volume</b> — CC7 for the active keyboard's sound (0–127).</li>
+    <li><b>Pan</b> — CC10, centre-detented (L ↔ C ↔ R).</li>
+    <li><b>Pitch</b> — transpose in semitones (±), applied to routed notes; All-Notes-Off fires
+      on change so nothing sticks.</li>
+    <li><b>Reverb</b> — send level for the current sound, for quick room/ballad adjustments.</li>
+  </ul>
+  <p>On the <b>FX</b> page the same four encoders are re-tasked to the effect inserts. Because
+  Chorus (2) + Delay (3) is five parameters but the hardware has four knobs, the page highlights
+  one effect at a time — the four encoders address it, and <b>FX</b> flips between Chorus and
+  Delay. Bigger screens don't need this: the <a href="user-guide.html#pi7">7″ Pi 5 layout</a>
+  shows all five knobs at once, and the desktop shows every keyboard's racks together.</p>
+  <p>Edits made with the knobs are part of the live state; <b>Setup → Save Part</b> writes them
+  back so the next recall remembers them.</p>
+
+  <p style="margin-top:40px"><a href="user-guide.html">← Back to the full user guide</a></p>
+</div>
+</body>
+</html>

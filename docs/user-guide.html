@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GigSynth — User Guide</title>
+<style>
+  :root{
+    --bg:#0b0e13; --panel:#161b23; --panel2:#1a1f29; --line:#2b3340;
+    --txt:#e6edf3; --muted:#8b97a7; --accent:#4cc2ff; --green:#27c93f; --amber:#ffbd2e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;line-height:1.65}
+  header{background:linear-gradient(180deg,#11151c,#0b0e13);
+    border-bottom:1px solid var(--line);padding:34px 40px}
+  header h1{margin:0;font-size:30px}
+  header .accent{color:var(--accent)}
+  header p{margin:8px 0 0;color:var(--muted);font-size:16px;max-width:760px}
+  .layout{display:flex;gap:0;align-items:flex-start}
+  nav{position:sticky;top:0;flex:0 0 250px;height:100vh;overflow:auto;
+    border-right:1px solid var(--line);padding:24px 18px;background:#0d1118}
+  nav h4{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.8px;margin:18px 0 8px}
+  nav a{display:block;color:#c5cfda;text-decoration:none;font-size:14px;padding:5px 10px;border-radius:6px}
+  nav a:hover{background:#1a1f29;color:var(--accent)}
+  main{flex:1;min-width:0;max-width:900px;margin:0 auto;padding:32px 44px 90px}
+  h2{font-size:23px;margin-top:50px;border-bottom:1px solid var(--line);padding-bottom:8px;scroll-margin-top:20px}
+  h3{font-size:17px;color:var(--accent);margin-top:30px}
+  p{color:#d4dce4}
+  a{color:var(--accent)}
+  code{background:#11151c;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:13px;color:#cdd7e2}
+  pre{background:#11151c;border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow:auto}
+  pre code{border:0;background:none;padding:0;font-size:13.5px;color:#d4dce4}
+  figure{margin:22px 0;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  figure img{width:100%;height:auto;border-radius:6px;display:block}
+  figcaption{color:var(--muted);font-size:13px;margin-top:10px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr}.layout{display:block}nav{position:static;height:auto;width:auto;border-right:0;border-bottom:1px solid var(--line)}}
+  table{border-collapse:collapse;width:100%;margin-top:14px;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  th{background:var(--panel2);color:var(--accent);font-weight:600}
+  td{color:#d4dce4}
+  .note{background:var(--panel);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:14px 18px;margin:20px 0;color:#d4dce4}
+  .warn{border-left-color:var(--amber)}
+  .pill{display:inline-block;background:#143040;border:1px solid var(--accent);color:var(--accent);border-radius:20px;padding:2px 12px;font-size:12px;margin:0 6px 6px 0}
+  ul li,ol li{margin:5px 0}
+  kbd{background:#232a36;border:1px solid #3a4452;border-bottom-width:2px;border-radius:5px;padding:1px 7px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="accent">GigSynth</span> — User Guide</h1>
+  <p>A cross-platform FluidSynth live rig for gigging keyboardists. Layer up to four sounds
+  from one SoundFont across up to three MIDI keyboards, recall them per song part, and run a
+  backing track — on Windows, macOS, Linux, Raspberry Pi, and the tiny-screen Pi Zero 2 W.</p>
+</header>
+
+<div class="layout">
+<nav>
+  <h4>Getting started</h4>
+  <a href="#about">What is GigSynth</a>
+  <a href="#install">Install &amp; run</a>
+  <a href="#linux">· Linux</a>
+  <a href="#windows">· Windows (PC)</a>
+  <a href="#pi">· Raspberry Pi (3/4/5)</a>
+  <a href="#pi7">· 7″ touchscreen (Pi 5)</a>
+  <a href="#pizero">· Pi Zero 2 W (LCD)</a>
+  <h4>Using the app</h4>
+  <a href="#concepts">Core concepts</a>
+  <a href="#live">Live view</a>
+  <a href="#fx">Effects (chorus &amp; delay)</a>
+  <a href="#mp3">MP3 backing player</a>
+  <a href="#songs">Songs &amp; Parts view</a>
+  <a href="#settings">Settings view</a>
+  <a href="#midi">MIDI keyboards &amp; mapping</a>
+  <h4>Reference</h4>
+  <a href="#pi7-ui">7″ touch layout</a>
+  <a href="#pizero-ui">Pi Zero UI</a>
+  <a href="#latency">Latency &amp; tuning</a>
+  <a href="#trouble">Troubleshooting</a>
+</nav>
+
+<main>
+
+  <h2 id="about">What is GigSynth</h2>
+  <p>GigSynth turns a laptop, mini-PC, or Raspberry Pi into a self-contained sound module for
+  live performance. You load one SoundFont (<code>.sf2</code>/<code>.sf3</code>) — shipped with
+  the app — and assign its instruments to your keyboards. Save the full rig for each section of
+  a song as a <b>Part</b>, then step through Parts during the gig with a single button. A built-in
+  MP3 player covers backing tracks.</p>
+  <div>
+    <span class="pill">Single binary</span><span class="pill">FluidSynth audio</span>
+    <span class="pill">Up to 3 keyboards</span><span class="pill">Up to 4 layers</span>
+    <span class="pill">Per-keyboard chorus + delay</span>
+    <span class="pill">SQLite song library</span><span class="pill">MP3 backing tracks</span>
+  </div>
+
+  <h2 id="install">Install &amp; run</h2>
+  <p>GigSynth builds to one native binary per platform. FluidSynth and an audio device are the
+  only hard requirements. The same binary serves the full three-view desktop UI; add
+  <code>-mode pizero</code> for the small-screen kiosk.</p>
+  <pre><code>gigsynth                    # launch the desktop UI
+gigsynth -sf2 GrandPianos.sf2   # preload a SoundFont
+gigsynth -mode touch7           # 7-inch touchscreen layout (Pi 5)
+gigsynth -mode pizero           # Pi Zero LCD kiosk (single keyboard)
+gigsynth -audio alsa            # force an audio driver</code></pre>
+
+  <h3 id="linux">Linux</h3>
+  <pre><code># Debian / Ubuntu
+sudo apt install libfluidsynth-dev librtmidi-dev libasound2-dev \
+                 libgl1-mesa-dev xorg-dev pkg-config
+go build -o gigsynth .
+./gigsynth</code></pre>
+  <p>Audio resolves to PipeWire/ALSA automatically. For lowest latency use a USB audio interface
+  and the defaults in <a href="#latency">Latency &amp; tuning</a>.</p>
+
+  <h3 id="windows">Windows (PC)</h3>
+  <p>Install MSYS2 with the FluidSynth + rtmidi dev packages (or use vcpkg) and make sure a C
+  toolchain is on <code>PATH</code> — cgo requires it. Then:</p>
+  <pre><code>go build -o gigsynth.exe .
+gigsynth.exe</code></pre>
+  <p>The audio driver resolves to WASAPI/DirectSound automatically. Double-click the
+  <code>.exe</code> or launch it from a shortcut; <b>Load SoundFont…</b> in Settings on first run.</p>
+
+  <h3 id="pi">Raspberry Pi (3 / 4 / 5)</h3>
+  <p>Build natively on the device — simplest path for cgo:</p>
+  <pre><code>sudo apt install golang libfluidsynth-dev librtmidi-dev libasound2-dev \
+                 libgl1-mesa-dev xorg-dev pkg-config
+go build -o gigsynth .
+./gigsynth</code></pre>
+  <p>A Pi 4/5 with a 7&quot; touchscreen runs the app comfortably. Use a USB audio
+  interface for clean, low-latency output.</p>
+
+  <h3 id="pi7">7-inch touchscreen (Pi 5) — touch layout</h3>
+  <p>The official Raspberry Pi 7&quot; display is <b>800×480</b> — enough for the full app but too
+  small to show three keyboards <i>and</i> five effect knobs at a comfortable finger size. So on a
+  7&quot; screen GigSynth uses a <b>focus-one-keyboard</b> layout: tap <b>KB1 / KB2 / KB3</b> to bring
+  one keyboard to the front, and its sound, mix, key tuning and full FX (Chorus + Delay) appear as
+  large touch targets. The Part shuttle and a compact transport stay on screen at all times.</p>
+  <figure id="pi7-ui">
+    <img src="screenshots/pi7-live.svg" alt="GigSynth 7-inch touchscreen layout"/>
+    <figcaption>7″ Pi 5 layout — keyboard-focus tabs keep the five Chorus/Delay knobs finger-sized.
+    The desktop window shows all three keyboards' effects at once; the 7″ screen shows one at a
+    time.</figcaption>
+  </figure>
+  <pre><code>./gigsynth                  # auto-detects the small screen, or:
+./gigsynth -mode touch7     # force the 7-inch touch layout</code></pre>
+  <div class="note">Why focus-one-keyboard? At 800×480, three side-by-side FX racks would put each
+  knob under ~28&nbsp;px — unusable with a finger on a dim stage. Focusing one keyboard gives each
+  knob ~64&nbsp;px while keeping every parameter one tap away.</div>
+
+  <h3 id="pizero">Raspberry Pi Zero 2 W (small LCD)</h3>
+  <p>The Zero 2 W is CPU- and screen-limited, so run the dedicated kiosk mode designed for a
+  ≈480×320 LCD and a single 61-key controller:</p>
+  <pre><code>./gigsynth -mode pizero -sf2 /opt/gigsynth/soundfonts/Live.sf2</code></pre>
+  <p>It boots straight to the Home screen, shows two menu rows and four live knobs, and lets you
+  shuttle through a song's Parts from the keyboard. See the dedicated
+  <a href="pizero-ui-flow.html">Pi Zero UI Flow</a> document for the full walkthrough.</p>
+  <div class="note">Tip: add the launch command to a <code>systemd</code> user service or
+  <code>~/.config/autostart</code> so the rig comes up ready the moment the Pi powers on at a gig.</div>
+
+  <h2 id="concepts">Core concepts</h2>
+  <table>
+    <tr><th>Term</th><th>What it is</th></tr>
+    <tr><td><b>Layer / channel</b></td><td>One mixer strip = a SoundFont preset + volume, pan, mute, and routing, on its own MIDI channel. Up to four.</td></tr>
+    <tr><td><b>Routing</b></td><td>Which keyboard drives a layer, the key-split range (low/high), and transpose. This is how you build splits and stacks.</td></tr>
+    <tr><td><b>Song</b></td><td>A piece of music, made of ordered <b>Parts</b>.</td></tr>
+    <tr><td><b>Part</b></td><td>A recallable snapshot of the whole rig for one section — each keyboard's sound, volume, pan, pitch, split, and the bound MIDI device. Stepping Parts is the core live move.</td></tr>
+    <tr><td><b>PANIC</b></td><td>Kills all stuck notes and re-applies the mixer.</td></tr>
+    <tr><td><b>Master</b></td><td>Global output gain.</td></tr>
+  </table>
+
+  <h2 id="live">Live view</h2>
+  <figure>
+    <img src="screenshots/desktop-live.svg" alt="GigSynth Live view"/>
+    <figcaption>The Live view — three keyboard columns (each with its own Chorus &amp; Delay), the song/part shuttle, and the MP3 player.</figcaption>
+  </figure>
+  <p>The Live view is the gig screen. From the top:</p>
+  <ul>
+    <li><b>Top bar</b> — the loaded SoundFont, the <b>Master</b> gain slider, and the red
+      <b>PANIC</b> button.</li>
+    <li><b>Song / Part shuttle</b> — <kbd>◀ Part</kbd> and <kbd>Part ▶</kbd> step through the
+      current song's Parts; the centre shows the song and the active Part (e.g. <i>3 / 7</i>).</li>
+    <li><b>Three keyboard columns</b> — one per controller. Each shows the <b>selected sound
+      name</b>, a <b>Volume</b> slider, a centre-detented <b>Pan</b> slider, and
+      <b>Key Tuning</b> (<kbd>−</kbd>/<kbd>+</kbd> in half-steps). A grey dot means that
+      keyboard isn't connected.</li>
+    <li><b>Per-keyboard effects</b> — a <b>Chorus</b> (2 knobs) and a <b>Delay</b> (3 knobs) insert
+      sit at the bottom of every column, each with its own On switch. See
+      <a href="#fx">Effects</a>.</li>
+    <li><b>MP3 player</b> — see below.</li>
+  </ul>
+
+  <h2 id="fx">Effects (chorus &amp; delay)</h2>
+  <p>Every keyboard has its <b>own</b> Chorus and Delay insert, so you can — for example — run a
+  lush chorus on the Rhodes while a dotted-eighth delay sits only on the lead synth. Effects are
+  part of the live state, so they're stored in (and recalled with) each <a href="#songs">Part</a>.</p>
+  <table>
+    <tr><th>Effect</th><th>Knobs</th><th>What they do</th></tr>
+    <tr><td><b>Chorus</b></td><td><b>Rate</b>, <b>Depth</b></td><td>Rate sets the modulation speed (Hz); Depth sets how wide the pitch shimmer is. Plus an On switch.</td></tr>
+    <tr><td><b>Delay</b></td><td><b>Time</b>, <b>Feedback</b>, <b>Mix</b></td><td>Time is the echo spacing (ms); Feedback is how many repeats; Mix is the wet level. Plus an On switch.</td></tr>
+  </table>
+  <p>On the desktop all three keyboards' racks are visible at once. On a <a href="#pi7">7″ Pi 5
+  screen</a> you focus one keyboard so the knobs stay finger-sized; on the
+  <a href="#pizero-ui">Pi Zero</a> the four encoders bank between the Chorus and Delay parameters.
+  The keyboard's own assignable knobs can drive these in real time — see
+  <a href="#midi">MIDI mapping</a>.</p>
+  <div class="note warn"><b>Under the hood.</b> FluidSynth's built-in chorus/reverb are global and it
+  has no delay, so GigSynth realises <i>per-keyboard</i> Chorus + Delay with a dedicated insert
+  chain per keyboard (independent effect units), not the synth's shared global effects.</div>
+
+  <h3 id="mp3">MP3 backing player</h3>
+  <p>Select a track with <b>Browse…</b>, then:</p>
+  <table>
+    <tr><th>Control</th><th>Does</th></tr>
+    <tr><td><b>Start</b> ▶</td><td>Play / resume the track.</td></tr>
+    <tr><td><b>Stop</b> ◼</td><td>Stop and rewind to the start.</td></tr>
+    <tr><td><b>Pitch</b></td><td>Nudge playback ±2 semitones to match your tuning or a singer's key.</td></tr>
+    <tr><td><b>Loop</b> ⟳</td><td>Repeat the track (highlighted when on) — handy for rehearsal sections.</td></tr>
+  </table>
+  <p>The progress bar shows elapsed / total time and can be scrubbed. MP3 output mixes alongside
+  the synth at the OS audio layer.</p>
+
+  <h2 id="songs">Songs &amp; Parts view</h2>
+  <figure>
+    <img src="screenshots/desktop-songs.svg" alt="GigSynth Songs view"/>
+    <figcaption>Songs view — song library, the parts of the selected song, and the per-part editor.</figcaption>
+  </figure>
+  <p>This is where you build your set list. Three columns:</p>
+  <ol>
+    <li><b>Songs</b> — your library. <b>+ New</b> adds a song; each row shows how many parts it has.</li>
+    <li><b>Parts</b> — the ordered sections of the selected song. <b>+ Add</b> appends a part,
+      drag the <b>⠿</b> handle to reorder, double-click to rename, and Duplicate / Delete as needed.</li>
+    <li><b>Part editor</b> — per keyboard (1–3): the <b>sound</b>, <b>volume</b>, <b>pitch</b>
+      (± semitones), key <b>split</b>, <b>pan</b>, and the <b>Chorus</b> / <b>Delay</b> settings,
+      plus the bound MIDI device (down to its USB port). <b>Save Part</b> stores the snapshot.
+      Recalling the part later restores all of it — including each keyboard's effects.</li>
+  </ol>
+  <div class="note">A Part captures the live state exactly, so during a gig you only press
+  <i>Next Part</i> to jump from, say, a Rhodes verse to a Solina-pad chorus — sounds, levels and
+  splits switch in one move.</div>
+
+  <h2 id="settings">Settings view</h2>
+  <figure>
+    <img src="screenshots/desktop-settings.svg" alt="GigSynth Settings view"/>
+    <figcaption>Settings — SoundFont, audio engine, storage, and the three keyboards with their manufacturer mappings.</figcaption>
+  </figure>
+  <ul>
+    <li><b>SoundFont</b> — choose the <code>.sf2</code>/<code>.sf3</code> file location; the app
+      reports presets loaded and banks available.</li>
+    <li><b>Audio Engine</b> — driver, sample rate, period size and periods (latency), and
+      polyphony. The estimated output latency updates as you change them.</li>
+    <li><b>Storage &amp; App</b> — the SQLite database path (your song library), the default MP3
+      folder, theme (dark stage / light), and which view to start on.</li>
+    <li><b>MIDI Keyboards &amp; Mapping</b> — see below.</li>
+  </ul>
+
+  <h2 id="midi">MIDI keyboards &amp; mapping</h2>
+  <p>GigSynth listens to up to three controllers at once and tags every event with its source
+  device, so each keyboard routes independently. In Settings, bind each of the three slots to a
+  detected device and pick a <b>manufacturer mapping preset</b> so the keyboard's own knobs and
+  sliders drive the mix in real time.</p>
+  <table>
+    <tr><th>Preset</th><th>Typical bindings</th></tr>
+    <tr><td>M-Audio</td><td>Vol → CC7, Pan → CC10, Enc1 → Chorus Depth, Enc2 → Delay Mix, Enc3 → Delay Time, Sustain → CC64</td></tr>
+    <tr><td>Behringer</td><td>Vol → CC7, Pan → CC10, encoders → CC70–77 (mapped to Chorus/Delay knobs)</td></tr>
+    <tr><td>Arturia / Novation / Akai</td><td>Vendor default CC banks for faders &amp; encoders</td></tr>
+    <tr><td>Generic GM</td><td>Vol → CC7, Pan → CC10, Expr → CC11, Mod → CC1, Sustain → CC64</td></tr>
+    <tr><td>Custom…</td><td>Hand-map any CC to Volume / Pan / Pitch / Chorus Rate · Depth / Delay Time · Feedback · Mix</td></tr>
+  </table>
+  <p>Use <b>Rescan ⟳</b> after plugging in a controller. Volume and pan coming from the keyboard
+  control the layer mix directly; the on-screen sliders stay in sync.</p>
+
+  <h2 id="pizero-ui">Pi Zero UI (small LCD)</h2>
+  <p>The Pi Zero 2 W runs a purpose-built kiosk for a single keyboard and a tiny screen — two
+  menu rows and four always-live knobs (Volume, Pan, Pitch, Reverb), with Part navigation from
+  the controller.</p>
+  <div class="grid2">
+    <figure><img src="screenshots/pizero-home.svg" alt="Pi Zero home"/><figcaption>Home — current song, part and sound.</figcaption></figure>
+    <figure><img src="screenshots/pizero-knobs.svg" alt="Pi Zero live knobs"/><figcaption>Live knob view for on-stage mixing.</figcaption></figure>
+  </div>
+  <p>Full walkthrough, navigation diagram, and the keyboard-button mapping are in the
+  <a href="pizero-ui-flow.html">Pi Zero 2 W UI Flow</a> document.</p>
+
+  <h2 id="latency">Latency &amp; tuning</h2>
+  <p>The defaults — 48&nbsp;kHz, period size 64, 2 periods — are a good low-latency live starting
+  point (≈2.7&nbsp;ms output). Lower the period size for less latency at the cost of CPU and xrun
+  risk; raise it if you hear dropouts. On a Pi, prefer a USB audio interface over the on-board
+  jack.</p>
+
+  <h2 id="trouble">Troubleshooting</h2>
+  <table>
+    <tr><th>Symptom</th><th>Fix</th></tr>
+    <tr><td>No sound</td><td>Confirm a SoundFont is loaded (Settings) and a layer/keyboard is enabled with volume up. Check the audio driver in Settings.</td></tr>
+    <tr><td>Keyboard not listed</td><td>Plug it in, then <b>Rescan ⟳</b> in Settings. On Linux ensure your user can access the MIDI device.</td></tr>
+    <tr><td>Stuck note</td><td>Hit <b>PANIC</b> — it silences everything and re-applies the mixer.</td></tr>
+    <tr><td>Crackles / dropouts</td><td>Raise period size / periods in Settings → Audio, or use a dedicated USB audio interface.</td></tr>
+    <tr><td>“no audio device” at startup</td><td>Another app may own exclusive audio, or no device is present. Try <code>-audio alsa</code> (Linux) / default driver.</td></tr>
+  </table>
+
+  <p style="margin-top:48px;color:var(--muted)">GigSynth · FluidSynth live rig · this guide
+  covers Linux, Windows, Raspberry Pi and Pi Zero 2 W.</p>
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="860" viewBox="0 0 1280 860" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#11151c"/><stop offset="1" stop-color="#0b0e13"/>
+    </linearGradient>
+    <style>
+      .panel{fill:#1a1f29;stroke:#2b3340;stroke-width:1}
+      .panel2{fill:#232a36;stroke:#323b4a;stroke-width:1}
+      .txt{fill:#e6edf3}.muted{fill:#8b97a7}.accent{fill:#4cc2ff}
+      .lbl{fill:#8b97a7;font-size:12px}.big{fill:#e6edf3;font-size:20px;font-weight:600}
+      .h{fill:#cdd7e2;font-size:14px;font-weight:600}.num{fill:#4cc2ff;font-size:13px;font-weight:600}
+      .kv{fill:#e6edf3;font-size:10px;font-weight:700}.kl{fill:#8b97a7;font-size:9px}
+      .ghdr{fill:#cdd7e2;font-size:11px;font-weight:600;letter-spacing:.5px}
+    </style>
+  </defs>
+  <rect width="1280" height="860" fill="url(#bg)"/>
+
+  <!-- Title bar + tabs -->
+  <rect x="0" y="0" width="1280" height="36" fill="#0a0d12"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f56"/><circle cx="42" cy="18" r="6" fill="#ffbd2e"/><circle cx="62" cy="18" r="6" fill="#27c93f"/>
+  <text x="640" y="23" text-anchor="middle" class="muted" font-size="13">GigSynth — FluidSynth Live Rig</text>
+  <rect x="0" y="36" width="1280" height="44" fill="#141922"/>
+  <rect x="24" y="48" width="96" height="22" rx="4" fill="#4cc2ff" opacity="0.16"/>
+  <text x="72" y="63" text-anchor="middle" class="accent" font-size="14" font-weight="600">Live</text>
+  <text x="170" y="63" text-anchor="middle" class="muted" font-size="14">Songs</text>
+  <text x="268" y="63" text-anchor="middle" class="muted" font-size="14">Settings</text>
+  <rect x="0" y="79" width="1280" height="1" fill="#2b3340"/>
+
+  <!-- Top bar -->
+  <g transform="translate(24,92)">
+    <rect class="panel" x="0" y="0" width="1232" height="52" rx="8"/>
+    <text x="18" y="22" class="lbl">SOUNDFONT</text>
+    <text x="18" y="40" class="txt" font-size="14">GrandPianos.sf2</text>
+    <text x="470" y="22" class="lbl">MASTER</text>
+    <rect x="470" y="30" width="300" height="6" rx="3" fill="#2d3543"/>
+    <rect x="470" y="30" width="186" height="6" rx="3" fill="#4cc2ff"/>
+    <circle cx="656" cy="33" r="9" fill="#e6edf3"/>
+    <text x="788" y="38" class="num">0.62</text>
+    <rect x="1086" y="10" width="130" height="32" rx="6" fill="#b3261e"/>
+    <text x="1151" y="31" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">PANIC</text>
+  </g>
+
+  <!-- Part shuttle -->
+  <g transform="translate(24,156)">
+    <rect class="panel2" x="0" y="0" width="1232" height="54" rx="8"/>
+    <rect x="14" y="11" width="86" height="32" rx="6" fill="#2d3543"/>
+    <text x="57" y="32" text-anchor="middle" class="txt" font-size="15">◀ Part</text>
+    <text x="130" y="22" class="lbl">CURRENT SONG · PART</text>
+    <text x="130" y="43" class="txt" font-size="16" font-weight="600">Shine On You Crazy Diamond <tspan class="muted" font-weight="400">·</tspan> <tspan class="accent">Part 3 — Solina Pad</tspan></text>
+    <text x="980" y="33" text-anchor="end" class="muted" font-size="13">3 / 7</text>
+    <rect x="1132" y="11" width="86" height="32" rx="6" fill="#2d3543"/>
+    <text x="1175" y="32" text-anchor="middle" class="txt" font-size="15">Part ▶</text>
+  </g>
+
+  <!-- Keyboard columns -->
+  <g transform="translate(24,224)">
+    <!-- ===== KB1 ===== -->
+    <g transform="translate(0,0)">
+      <rect class="panel" x="0" y="0" width="400" height="408" rx="10"/>
+      <rect x="0" y="0" width="400" height="40" rx="10" fill="#202734"/><rect x="0" y="20" width="400" height="20" fill="#202734"/>
+      <circle cx="22" cy="20" r="5" fill="#27c93f"/><text x="38" y="25" class="h">Keyboard 1</text>
+      <text x="382" y="25" text-anchor="end" class="muted" font-size="11">M-Audio Keystation 61</text>
+      <text x="20" y="66" class="lbl">SELECTED SOUND</text>
+      <text x="20" y="94" class="big">Fender Rhodes</text>
+      <text x="20" y="112" class="muted" font-size="11">Electric Pianos · 001:005</text>
+      <text x="20" y="140" class="lbl">VOLUME</text><text x="380" y="140" text-anchor="end" class="num">108</text>
+      <rect x="20" y="148" width="360" height="6" rx="3" fill="#2d3543"/><rect x="20" y="148" width="306" height="6" rx="3" fill="#4cc2ff"/><circle cx="326" cy="151" r="8" fill="#e6edf3"/>
+      <text x="20" y="176" class="lbl">PAN</text><text x="380" y="176" text-anchor="end" class="num">C</text>
+      <rect x="20" y="184" width="360" height="6" rx="3" fill="#2d3543"/><circle cx="200" cy="187" r="8" fill="#e6edf3"/>
+      <text x="20" y="210" class="lbl">KEY TUNING (½-STEP)</text>
+      <rect x="20" y="218" width="40" height="32" rx="6" fill="#2d3543"/><text x="40" y="240" text-anchor="middle" class="txt" font-size="18">−</text>
+      <rect x="68" y="218" width="264" height="32" rx="6" fill="#161b23"/><text x="200" y="239" text-anchor="middle" class="txt" font-size="14">+0 st · (C → C)</text>
+      <rect x="340" y="218" width="40" height="32" rx="6" fill="#2d3543"/><text x="360" y="240" text-anchor="middle" class="txt" font-size="18">+</text>
+      <!-- FX -->
+      <line x1="20" y1="266" x2="380" y2="266" stroke="#2b3340"/>
+      <text x="20" y="284" class="lbl">EFFECTS — PER-KEYBOARD INSERTS</text>
+      <text x="20" y="306" class="ghdr">CHORUS</text>
+      <rect x="78" y="296" width="34" height="15" rx="7" fill="#143040" stroke="#4cc2ff"/><text x="95" y="307" text-anchor="middle" class="accent" font-size="9">On</text>
+      <text x="212" y="306" class="ghdr">DELAY</text>
+      <rect x="262" y="296" width="34" height="15" rx="7" fill="#143040" stroke="#4cc2ff"/><text x="279" y="307" text-anchor="middle" class="accent" font-size="9">On</text>
+      <line x1="195" y1="290" x2="195" y2="398" stroke="#2b3340"/>
+      <!-- chorus knobs -->
+      <g transform="translate(70,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-linecap="round" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="18" fill="none" stroke="#4cc2ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="33.9 113.1" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">0.8</text><text y="32" text-anchor="middle" class="kl">RATE</text></g>
+      <g transform="translate(145,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-linecap="round" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="18" fill="none" stroke="#4cc2ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="46.6 113.1" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">55</text><text y="32" text-anchor="middle" class="kl">DEPTH</text></g>
+      <!-- delay knobs -->
+      <g transform="translate(240,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-linecap="round" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="18" fill="none" stroke="#4cc2ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="38.2 113.1" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">320</text><text y="32" text-anchor="middle" class="kl">TIME ms</text></g>
+      <g transform="translate(310,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-linecap="round" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="18" fill="none" stroke="#4cc2ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="29.7 113.1" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">35</text><text y="32" text-anchor="middle" class="kl">F.BACK</text></g>
+      <g transform="translate(372,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-linecap="round" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="18" fill="none" stroke="#4cc2ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="25.4 113.1" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">30</text><text y="32" text-anchor="middle" class="kl">MIX</text></g>
+    </g>
+
+    <!-- ===== KB2 ===== -->
+    <g transform="translate(416,0)">
+      <rect class="panel" x="0" y="0" width="400" height="408" rx="10"/>
+      <rect x="0" y="0" width="400" height="40" rx="10" fill="#202734"/><rect x="0" y="20" width="400" height="20" fill="#202734"/>
+      <circle cx="22" cy="20" r="5" fill="#27c93f"/><text x="38" y="25" class="h">Keyboard 2</text>
+      <text x="382" y="25" text-anchor="end" class="muted" font-size="11">Nord Stage (USB)</text>
+      <text x="20" y="66" class="lbl">SELECTED SOUND</text>
+      <text x="20" y="94" class="big">Solina String Ens.</text>
+      <text x="20" y="112" class="muted" font-size="11">Synth Pads · 002:001</text>
+      <text x="20" y="140" class="lbl">VOLUME</text><text x="380" y="140" text-anchor="end" class="num">96</text>
+      <rect x="20" y="148" width="360" height="6" rx="3" fill="#2d3543"/><rect x="20" y="148" width="272" height="6" rx="3" fill="#4cc2ff"/><circle cx="292" cy="151" r="8" fill="#e6edf3"/>
+      <text x="20" y="176" class="lbl">PAN</text><text x="380" y="176" text-anchor="end" class="num">L18</text>
+      <rect x="20" y="184" width="360" height="6" rx="3" fill="#2d3543"/><circle cx="150" cy="187" r="8" fill="#e6edf3"/>
+      <text x="20" y="210" class="lbl">KEY TUNING (½-STEP)</text>
+      <rect x="20" y="218" width="40" height="32" rx="6" fill="#2d3543"/><text x="40" y="240" text-anchor="middle" class="txt" font-size="18">−</text>
+      <rect x="68" y="218" width="264" height="32" rx="6" fill="#161b23"/><text x="200" y="239" text-anchor="middle" class="txt" font-size="14">+12 st · (up 1 oct)</text>
+      <rect x="340" y="218" width="40" height="32" rx="6" fill="#2d3543"/><text x="360" y="240" text-anchor="middle" class="txt" font-size="18">+</text>
+      <line x1="20" y1="266" x2="380" y2="266" stroke="#2b3340"/>
+      <text x="20" y="284" class="lbl">EFFECTS — PER-KEYBOARD INSERTS</text>
+      <text x="20" y="306" class="ghdr">CHORUS</text>
+      <rect x="78" y="296" width="34" height="15" rx="7" fill="#2d3543"/><text x="95" y="307" text-anchor="middle" class="muted" font-size="9">Off</text>
+      <text x="212" y="306" class="ghdr">DELAY</text>
+      <rect x="262" y="296" width="34" height="15" rx="7" fill="#143040" stroke="#4cc2ff"/><text x="279" y="307" text-anchor="middle" class="accent" font-size="9">On</text>
+      <line x1="195" y1="290" x2="195" y2="398" stroke="#2b3340"/>
+      <g opacity="0.4">
+        <g transform="translate(70,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-linecap="round" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">0.4</text><text y="32" text-anchor="middle" class="kl">RATE</text></g>
+        <g transform="translate(145,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-linecap="round" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">40</text><text y="32" text-anchor="middle" class="kl">DEPTH</text></g>
+      </g>
+      <g transform="translate(240,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-linecap="round" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="18" fill="none" stroke="#4cc2ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="55.1 113.1" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">480</text><text y="32" text-anchor="middle" class="kl">TIME ms</text></g>
+      <g transform="translate(310,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-linecap="round" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="18" fill="none" stroke="#4cc2ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="42.4 113.1" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">50</text><text y="32" text-anchor="middle" class="kl">F.BACK</text></g>
+      <g transform="translate(372,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-linecap="round" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="18" fill="none" stroke="#4cc2ff" stroke-width="4" stroke-linecap="round" stroke-dasharray="38.2 113.1" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="3" text-anchor="middle" class="kv">45</text><text y="32" text-anchor="middle" class="kl">MIX</text></g>
+    </g>
+
+    <!-- ===== KB3 ===== -->
+    <g transform="translate(832,0)" opacity="0.55">
+      <rect class="panel" x="0" y="0" width="400" height="408" rx="10"/>
+      <rect x="0" y="0" width="400" height="40" rx="10" fill="#202734"/><rect x="0" y="20" width="400" height="20" fill="#202734"/>
+      <circle cx="22" cy="20" r="5" fill="#5a6678"/><text x="38" y="25" class="h">Keyboard 3</text>
+      <text x="382" y="25" text-anchor="end" class="muted" font-size="11">not connected</text>
+      <text x="20" y="66" class="lbl">SELECTED SOUND</text>
+      <text x="20" y="94" class="big">Hammond B-3</text>
+      <text x="20" y="112" class="muted" font-size="11">Organs · 003:001</text>
+      <text x="20" y="140" class="lbl">VOLUME</text>
+      <rect x="20" y="148" width="360" height="6" rx="3" fill="#2d3543"/><circle cx="20" cy="151" r="8" fill="#5a6678"/>
+      <text x="20" y="176" class="lbl">PAN</text>
+      <rect x="20" y="184" width="360" height="6" rx="3" fill="#2d3543"/><circle cx="200" cy="187" r="8" fill="#5a6678"/>
+      <text x="20" y="210" class="lbl">KEY TUNING (½-STEP)</text>
+      <rect x="68" y="218" width="264" height="32" rx="6" fill="#161b23"/><text x="200" y="239" text-anchor="middle" class="muted" font-size="13">— enable to play —</text>
+      <line x1="20" y1="266" x2="380" y2="266" stroke="#2b3340"/>
+      <text x="20" y="284" class="lbl">EFFECTS — PER-KEYBOARD INSERTS</text>
+      <text x="20" y="306" class="ghdr">CHORUS</text><text x="212" y="306" class="ghdr">DELAY</text>
+      <line x1="195" y1="290" x2="195" y2="398" stroke="#2b3340"/>
+      <g transform="translate(70,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="32" text-anchor="middle" class="kl">RATE</text></g>
+      <g transform="translate(145,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="32" text-anchor="middle" class="kl">DEPTH</text></g>
+      <g transform="translate(240,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="32" text-anchor="middle" class="kl">TIME</text></g>
+      <g transform="translate(310,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="32" text-anchor="middle" class="kl">F.BACK</text></g>
+      <g transform="translate(372,352)"><circle r="18" fill="none" stroke="#2d3543" stroke-width="4" stroke-dasharray="84.8 28.3" transform="rotate(135)"/><circle r="11" fill="#232a36"/><text y="32" text-anchor="middle" class="kl">MIX</text></g>
+    </g>
+  </g>
+
+  <!-- MP3 player -->
+  <g transform="translate(24,648)">
+    <rect class="panel2" x="0" y="0" width="1232" height="142" rx="10"/>
+    <text x="20" y="28" class="h">Backing Track — MP3 Player</text>
+    <rect x="20" y="42" width="470" height="32" rx="6" fill="#161b23" stroke="#323b4a"/>
+    <text x="34" y="63" class="txt" font-size="13">02 - Comfortably Numb (backing).mp3</text>
+    <rect x="500" y="42" width="90" height="32" rx="6" fill="#2d3543"/><text x="545" y="63" text-anchor="middle" class="txt" font-size="13">Browse…</text>
+    <rect x="620" y="40" width="80" height="36" rx="6" fill="#2d3543"/><rect x="649" y="51" width="14" height="14" fill="#e6edf3"/><text x="680" y="94" text-anchor="middle" class="muted" font-size="11">Stop</text>
+    <rect x="712" y="40" width="80" height="36" rx="6" fill="#1f6f43"/><path d="M 743 49 L 743 67 L 759 58 Z" fill="#fff"/><text x="752" y="94" text-anchor="middle" class="muted" font-size="11">Start</text>
+    <rect x="804" y="40" width="80" height="36" rx="6" fill="#2d3543"/><text x="844" y="63" text-anchor="middle" class="txt" font-size="13">Pitch</text><text x="844" y="94" text-anchor="middle" class="muted" font-size="11">−2 … +2</text>
+    <rect x="896" y="40" width="80" height="36" rx="6" fill="#4cc2ff" opacity="0.18" stroke="#4cc2ff"/><text x="936" y="63" text-anchor="middle" class="accent" font-size="13">Loop ⟳</text><text x="936" y="94" text-anchor="middle" class="muted" font-size="11">on</text>
+    <text x="20" y="120" class="muted" font-size="12">1:48</text>
+    <rect x="58" y="112" width="1100" height="6" rx="3" fill="#2d3543"/><rect x="58" y="112" width="430" height="6" rx="3" fill="#4cc2ff"/><circle cx="488" cy="115" r="8" fill="#e6edf3"/>
+    <text x="1212" y="120" text-anchor="end" class="muted" font-size="12">5:32</text>
+  </g>
+</svg>

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="480" viewBox="0 0 800 480" font-family="'Segoe UI','DejaVu Sans',Arial,sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#11151c"/><stop offset="1" stop-color="#0b0e13"/></linearGradient>
+    <style>
+      .panel{fill:#1a1f29;stroke:#2b3340;stroke-width:1}.panel2{fill:#161b23;stroke:#2b3340;stroke-width:1}
+      .txt{fill:#e6edf3}.muted{fill:#8b97a7}.accent{fill:#4cc2ff}
+      .lbl{fill:#8b97a7;font-size:10px;letter-spacing:.5px}
+      .tab{fill:#232a36;stroke:#323b4a}.tabA{fill:#143040;stroke:#4cc2ff}
+      .kv{fill:#e6edf3;font-size:15px;font-weight:700}.kl{fill:#cdd7e2;font-size:11px}.ks{fill:#8b97a7;font-size:9px}
+    </style>
+  </defs>
+  <rect width="800" height="480" fill="url(#bg)"/>
+
+  <!-- header -->
+  <rect x="0" y="0" width="800" height="40" fill="#0a0d12"/>
+  <text x="14" y="26" class="accent" font-size="15" font-weight="700">GIGSYNTH <tspan class="muted" font-weight="400" font-size="12">· Pi 5 · 7″ touch</tspan></text>
+  <rect x="486" y="7" width="40" height="26" rx="6" fill="#2d3543"/><text x="506" y="25" text-anchor="middle" class="txt" font-size="16">◀</text>
+  <rect x="530" y="7" width="150" height="26" rx="6" fill="#161b23" stroke="#2b3340"/><text x="605" y="25" text-anchor="middle" class="txt" font-size="12">Part 3/7 · Solina Pad</text>
+  <rect x="684" y="7" width="40" height="26" rx="6" fill="#2d3543"/><text x="704" y="25" text-anchor="middle" class="txt" font-size="16">▶</text>
+  <rect x="732" y="7" width="58" height="26" rx="6" fill="#b3261e"/><text x="761" y="25" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">PANIC</text>
+
+  <!-- keyboard focus tabs -->
+  <g transform="translate(12,48)">
+    <rect class="tabA" x="0"   y="0" width="256" height="40" rx="8"/><text x="16" y="25" class="accent" font-size="14" font-weight="700">KB1 · Fender Rhodes</text>
+    <rect class="tab"  x="262" y="0" width="256" height="40" rx="8"/><text x="278" y="25" class="txt" font-size="14">KB2 · Solina</text>
+    <rect class="tab"  x="524" y="0" width="252" height="40" rx="8"/><text x="540" y="25" class="muted" font-size="14">KB3 · —</text>
+  </g>
+  <text x="600" y="76" class="muted" font-size="10">tap a keyboard to focus its sound &amp; effects</text>
+
+  <!-- sound + mix row -->
+  <g transform="translate(12,98)">
+    <rect class="panel" x="0" y="0" width="764" height="86" rx="10"/>
+    <text x="16" y="24" class="lbl">SOUND — KEYBOARD 1</text>
+    <text x="16" y="52" class="txt" font-size="22" font-weight="700">Fender Rhodes</text>
+    <rect x="16" y="60" width="120" height="20" rx="5" fill="#2d3543"/><text x="76" y="74" text-anchor="middle" class="txt" font-size="11">Change ▾</text>
+    <!-- vol -->
+    <text x="300" y="24" class="lbl">VOLUME</text><text x="470" y="24" text-anchor="end" class="accent" font-size="11" font-weight="600">108</text>
+    <rect x="300" y="32" width="170" height="8" rx="4" fill="#2d3543"/><rect x="300" y="32" width="144" height="8" rx="4" fill="#4cc2ff"/><circle cx="444" cy="36" r="9" fill="#e6edf3"/>
+    <!-- pan -->
+    <text x="300" y="60" class="lbl">PAN</text><text x="470" y="60" text-anchor="end" class="accent" font-size="11" font-weight="600">C</text>
+    <rect x="300" y="68" width="170" height="8" rx="4" fill="#2d3543"/><circle cx="385" cy="72" r="9" fill="#e6edf3"/>
+    <!-- tune -->
+    <text x="520" y="24" class="lbl">KEY TUNING ½-STEP</text>
+    <rect x="520" y="32" width="44" height="44" rx="8" fill="#2d3543"/><text x="542" y="61" text-anchor="middle" class="txt" font-size="22">−</text>
+    <rect x="570" y="32" width="120" height="44" rx="8" fill="#161b23"/><text x="630" y="60" text-anchor="middle" class="txt" font-size="16">+0 st</text>
+    <rect x="696" y="32" width="44" height="44" rx="8" fill="#2d3543"/><text x="718" y="61" text-anchor="middle" class="txt" font-size="22">+</text>
+  </g>
+
+  <!-- FX panel -->
+  <g transform="translate(12,196)">
+    <rect class="panel" x="0" y="0" width="764" height="186" rx="10"/>
+    <text x="16" y="26" class="lbl">EFFECTS — PER-KEYBOARD INSERTS (KEYBOARD 1)</text>
+
+    <!-- CHORUS group -->
+    <text x="80" y="56" text-anchor="middle" class="txt" font-size="14" font-weight="700">CHORUS</text>
+    <rect x="150" y="44" width="52" height="22" rx="11" fill="#143040" stroke="#4cc2ff"/><text x="176" y="59" text-anchor="middle" class="accent" font-size="11">On</text>
+    <g transform="translate(80,128)"><circle r="32" fill="none" stroke="#2d3543" stroke-width="7" stroke-linecap="round" stroke-dasharray="150.8 50.3" transform="rotate(135)"/><circle r="32" fill="none" stroke="#4cc2ff" stroke-width="7" stroke-linecap="round" stroke-dasharray="60.3 201.1" transform="rotate(135)"/><circle r="20" fill="#232a36"/><text y="0" text-anchor="middle" class="kv">0.8</text><text y="13" text-anchor="middle" class="ks">Hz</text><text y="52" text-anchor="middle" class="kl">RATE</text></g>
+    <g transform="translate(176,128)"><circle r="32" fill="none" stroke="#2d3543" stroke-width="7" stroke-linecap="round" stroke-dasharray="150.8 50.3" transform="rotate(135)"/><circle r="32" fill="none" stroke="#4cc2ff" stroke-width="7" stroke-linecap="round" stroke-dasharray="82.9 201.1" transform="rotate(135)"/><circle r="20" fill="#232a36"/><text y="0" text-anchor="middle" class="kv">55</text><text y="13" text-anchor="middle" class="ks">%</text><text y="52" text-anchor="middle" class="kl">DEPTH</text></g>
+
+    <line x1="262" y1="40" x2="262" y2="172" stroke="#2b3340"/>
+
+    <!-- DELAY group -->
+    <text x="360" y="56" text-anchor="middle" class="txt" font-size="14" font-weight="700">DELAY</text>
+    <rect x="424" y="44" width="52" height="22" rx="11" fill="#143040" stroke="#4cc2ff"/><text x="450" y="59" text-anchor="middle" class="accent" font-size="11">On</text>
+    <g transform="translate(360,128)"><circle r="32" fill="none" stroke="#2d3543" stroke-width="7" stroke-linecap="round" stroke-dasharray="150.8 50.3" transform="rotate(135)"/><circle r="32" fill="none" stroke="#4cc2ff" stroke-width="7" stroke-linecap="round" stroke-dasharray="67.9 201.1" transform="rotate(135)"/><circle r="20" fill="#232a36"/><text y="0" text-anchor="middle" class="kv">320</text><text y="13" text-anchor="middle" class="ks">ms</text><text y="52" text-anchor="middle" class="kl">TIME</text></g>
+    <g transform="translate(508,128)"><circle r="32" fill="none" stroke="#2d3543" stroke-width="7" stroke-linecap="round" stroke-dasharray="150.8 50.3" transform="rotate(135)"/><circle r="32" fill="none" stroke="#4cc2ff" stroke-width="7" stroke-linecap="round" stroke-dasharray="52.8 201.1" transform="rotate(135)"/><circle r="20" fill="#232a36"/><text y="0" text-anchor="middle" class="kv">35</text><text y="13" text-anchor="middle" class="ks">%</text><text y="52" text-anchor="middle" class="kl">FEEDBACK</text></g>
+    <g transform="translate(656,128)"><circle r="32" fill="none" stroke="#2d3543" stroke-width="7" stroke-linecap="round" stroke-dasharray="150.8 50.3" transform="rotate(135)"/><circle r="32" fill="none" stroke="#4cc2ff" stroke-width="7" stroke-linecap="round" stroke-dasharray="45.2 201.1" transform="rotate(135)"/><circle r="20" fill="#232a36"/><text y="0" text-anchor="middle" class="kv">30</text><text y="13" text-anchor="middle" class="ks">%</text><text y="52" text-anchor="middle" class="kl">MIX</text></g>
+  </g>
+
+  <!-- MP3 transport -->
+  <g transform="translate(12,390)">
+    <rect class="panel2" x="0" y="0" width="764" height="78" rx="10"/>
+    <text x="16" y="24" class="lbl">BACKING TRACK</text>
+    <text x="16" y="48" class="txt" font-size="13">02 - Comfortably Numb (backing).mp3</text>
+    <rect x="16" y="56" width="430" height="6" rx="3" fill="#2d3543"/><rect x="16" y="56" width="168" height="6" rx="3" fill="#4cc2ff"/><circle cx="184" cy="59" r="6" fill="#e6edf3"/>
+    <rect x="500" y="20" width="58" height="40" rx="8" fill="#2d3543"/><rect x="521" y="33" width="16" height="14" fill="#e6edf3"/>
+    <rect x="566" y="20" width="58" height="40" rx="8" fill="#1f6f43"/><path d="M 590 30 L 590 50 L 608 40 Z" fill="#fff"/>
+    <rect x="632" y="20" width="58" height="40" rx="8" fill="#2d3543"/><text x="661" y="45" text-anchor="middle" class="txt" font-size="12">Pitch</text>
+    <rect x="698" y="20" width="58" height="40" rx="8" fill="#4cc2ff" opacity="0.18" stroke="#4cc2ff"/><text x="727" y="45" text-anchor="middle" class="accent" font-size="14">⟳</text>
+  </g>
+</svg>

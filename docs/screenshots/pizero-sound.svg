@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 480 320" font-family="'DejaVu Sans', 'Segoe UI', Arial, sans-serif">
+  <defs>
+    <style>
+      .scr { fill:#0b0e13; } .txt { fill:#e6edf3; } .muted { fill:#7f8b9b; }
+      .accent { fill:#4cc2ff; } .lbl { fill:#7f8b9b; font-size:9px; letter-spacing:.5px; }
+      .btn { fill:#232a36; stroke:#323b4a; } .btnA { fill:#143040; stroke:#4cc2ff; }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="480" height="320" rx="10" fill="#000"/>
+  <rect x="4" y="4" width="472" height="312" rx="7" class="scr"/>
+
+  <rect x="4" y="4" width="472" height="26" rx="7" fill="#11151c"/>
+  <rect x="4" y="16" width="472" height="14" fill="#11151c"/>
+  <text x="14" y="22" class="accent" font-size="13" font-weight="700">GIGSYNTH</text>
+  <text x="468" y="21" text-anchor="end" class="muted" font-size="10">SOUNDS  ▸  category → preset</text>
+
+  <!-- ROW 1 : CATEGORIES -->
+  <text x="14" y="48" class="lbl">CATEGORY</text>
+  <g font-size="10.5" transform="translate(0,54)">
+    <rect class="btn"  x="12"  y="0" width="74" height="30" rx="6"/><text x="49"  y="20" text-anchor="middle" class="txt">Pianos</text>
+    <rect class="btnA" x="92"  y="0" width="86" height="30" rx="6"/><text x="135" y="20" text-anchor="middle" class="accent" font-weight="700">E.Pianos</text>
+    <rect class="btn"  x="184" y="0" width="86" height="30" rx="6"/><text x="227" y="20" text-anchor="middle" class="txt">Mellotron</text>
+    <rect class="btn"  x="276" y="0" width="70" height="30" rx="6"/><text x="311" y="20" text-anchor="middle" class="txt">Organs</text>
+    <rect class="btn"  x="352" y="0" width="64" height="30" rx="6"/><text x="384" y="20" text-anchor="middle" class="txt">Pads</text>
+    <rect class="btn"  x="422" y="0" width="46" height="30" rx="6"/><text x="445" y="20" text-anchor="middle" class="txt">Leads</text>
+  </g>
+
+  <!-- ROW 2 : PRESETS in category -->
+  <text x="14" y="112" class="lbl">ELECTRIC PIANOS — KEYBOARD 1</text>
+  <g font-size="11" transform="translate(0,118)">
+    <rect class="btnA" x="12"  y="0" width="148" height="34" rx="6"/><text x="86"  y="22" text-anchor="middle" class="accent" font-weight="700">Fender Rhodes</text>
+    <rect class="btn"  x="168" y="0" width="148" height="34" rx="6"/><text x="242" y="22" text-anchor="middle" class="txt">Clavinet E-200</text>
+    <rect class="btn"  x="324" y="0" width="144" height="34" rx="6"/><text x="396" y="22" text-anchor="middle" class="txt">CP70 Electric</text>
+  </g>
+  <g font-size="11" transform="translate(0,160)">
+    <rect class="btn"  x="12"  y="0" width="148" height="34" rx="6"/><text x="86"  y="22" text-anchor="middle" class="txt">Rhodes + Chorus</text>
+    <rect class="btn"  x="168" y="0" width="148" height="34" rx="6"/><text x="242" y="22" text-anchor="middle" class="txt">Wurlitzer 200A</text>
+    <rect class="btn"  x="324" y="0" width="144" height="34" rx="6"/><text x="396" y="22" text-anchor="middle" class="txt">DX7 E.Piano</text>
+  </g>
+
+  <rect class="btn" x="12" y="198" width="120" height="26" rx="6"/>
+  <text x="72" y="215" text-anchor="middle" class="txt" font-size="11">◀ Back / Home</text>
+  <text x="468" y="215" text-anchor="end" class="muted" font-size="10">applies to current keyboard live</text>
+
+  <!-- knob row -->
+  <rect x="4" y="226" width="472" height="90" rx="7" fill="#0e1219"/>
+  <text x="14" y="240" class="lbl">LIVE KNOBS  (always active)</text>
+  <g transform="translate(70,278)"><circle r="24" fill="none" stroke="#2d3543" stroke-width="5" stroke-linecap="round" stroke-dasharray="113.1 37.7" transform="rotate(135)"/><circle r="24" fill="none" stroke="#4cc2ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="103 150.8" transform="rotate(135)"/><circle r="15" fill="#232a36"/><text y="4" text-anchor="middle" class="txt" font-size="12" font-weight="700">108</text><text y="32" text-anchor="middle" class="muted" font-size="10">VOLUME</text></g>
+  <g transform="translate(180,278)"><circle r="24" fill="none" stroke="#2d3543" stroke-width="5" stroke-linecap="round" stroke-dasharray="113.1 37.7" transform="rotate(135)"/><circle r="24" fill="none" stroke="#4cc2ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="56.5 150.8" transform="rotate(135)"/><circle r="15" fill="#232a36"/><text y="4" text-anchor="middle" class="txt" font-size="11" font-weight="700">C</text><text y="32" text-anchor="middle" class="muted" font-size="10">PAN</text></g>
+  <g transform="translate(300,278)"><circle r="24" fill="none" stroke="#2d3543" stroke-width="5" stroke-linecap="round" stroke-dasharray="113.1 37.7" transform="rotate(135)"/><circle r="24" fill="none" stroke="#4cc2ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="56.5 150.8" transform="rotate(135)"/><circle r="15" fill="#232a36"/><text y="4" text-anchor="middle" class="txt" font-size="11" font-weight="700">+0</text><text y="32" text-anchor="middle" class="muted" font-size="10">PITCH</text></g>
+  <g transform="translate(410,278)"><circle r="24" fill="none" stroke="#2d3543" stroke-width="5" stroke-linecap="round" stroke-dasharray="113.1 37.7" transform="rotate(135)"/><circle r="24" fill="none" stroke="#4cc2ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="22.6 150.8" transform="rotate(135)"/><circle r="15" fill="#232a36"/><text y="4" text-anchor="middle" class="txt" font-size="12" font-weight="700">20</text><text y="32" text-anchor="middle" class="muted" font-size="10">REVERB</text></g>
+</svg>
