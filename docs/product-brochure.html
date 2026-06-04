@@ -196,9 +196,8 @@
   ≈ $85 · 5″ DSI ≈ $50 · HiFiBerry DAC2 ≈ $45 · pisound ≈ $120. All offline estimates.</div>
 
   <h2 id="plan">Changes needed on top of the current plan</h2>
-  <p>Relative to the shipped <code>plan.json</code> (18 stories / 25 tests, all green), the product
-  line adds the following — the software stories are <b>already implemented and green</b>; the
-  hardware stories are proposed:</p>
+  <p>Relative to the original shipped <code>plan.json</code> (18 stories / 25 tests), the product line
+  added seven stories — <b>all implemented and green</b>:</p>
   <table>
     <tr><th>Story</th><th>Scope</th><th>Status</th></tr>
     <tr><td><b>S19 — Per-keyboard Phaser</b></td>
@@ -209,19 +208,24 @@
         <td><span class="new">DONE · green</span></td></tr>
     <tr><td><b>S21 — MIDI + audio recording</b></td>
         <td>New <code>internal/recording</code> package (Recorder/Store/Player), Live REC toggle, and a
-        Recordings view; controller taps the MIDI path and audio sink.</td>
+        Recordings view; controller taps the MIDI path.</td>
         <td><span class="new">DONE · green</span></td></tr>
-    <tr><td>S22 — Pi build &amp; provisioning image (proposed)</td>
-        <td>A flashed microSD image: kiosk autostart, the GigSynth binary, default <code>.sf2</code>,
-        DAC/pisound overlays, per-model control-surface mapping presets.</td><td>proposed</td></tr>
-    <tr><td>S23 — Onboard control-surface mapping (proposed)</td>
-        <td>Per-model factory map for the 4/8 knobs + 4/8 sliders to layer mix + FX, plus a calibration
-        screen. Builds on the existing <code>internal/midimap</code> presets.</td><td>proposed</td></tr>
-    <tr><td>S24 — Audio capture tap at the engine (proposed)</td>
-        <td>Stream the mixed render buffer into <code>Controller.CaptureAudio</code> and flush takes to
-        WAV on disk (the recording metadata/timeline path already exists in S21).</td><td>proposed</td></tr>
+    <tr><td><b>S22 — Pi provisioning</b></td>
+        <td>Embedded systemd unit + install script rendered per model via <code>gigsynth -provision</code>;
+        see <a href="products/provisioning.html">provisioning</a>.</td><td><span class="new">DONE · green</span></td></tr>
+    <tr><td><b>S23 — Onboard control-surface mapping</b></td>
+        <td>Factory <code>midimap</code> presets (GS-49/GS-61/GS-Desktop) binding the knobs/sliders to
+        mix + the full four-effect chain, incl. Phaser/Flanger CCs.</td><td><span class="new">DONE · green</span></td></tr>
+    <tr><td><b>S24 — Audio capture + WAV export</b></td>
+        <td>Pure-Go PCM16 WAV encoder; takes retain samples and export to <code>.wav</code>. The live
+        engine→<code>CaptureAudio</code> driver tap is the one remaining hardware-bound step.</td>
+        <td><span class="new">DONE · green</span></td></tr>
+    <tr><td><b>S25 — Phaser/Flanger on small screens</b></td>
+        <td>The 7″ (touch7) and Pi Zero layouts now surface/bank the Phaser and Flanger, not just the
+        desktop.</td><td><span class="new">DONE · green</span></td></tr>
   </table>
-  <p>Summary after the implemented work: <b>21 stories / 29 tests, all green</b>.</p>
+  <p>Summary after the implemented work: <b>25 stories / 35 tests, all green</b>. The only deferred
+  item is the live audio-driver callback feeding <code>CaptureAudio</code> on real hardware (S24).</p>
 
   <footer>
     GigSynth hardware brochure · mockup renders are hand-authored SVG · all prices are 2026 offline

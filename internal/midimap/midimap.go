@@ -17,6 +17,13 @@ const (
 	DelayFeedback
 	DelayMix
 	Sustain
+	PhaserRate
+	PhaserDepth
+	PhaserFeedback
+	FlangerRate
+	FlangerDepth
+	FlangerFeedback
+	FlangerMix
 )
 
 // Map binds CC numbers to actions for one keyboard.
@@ -63,11 +70,40 @@ var presets = map[string]Map{
 		7: Volume, 10: Pan, 64: Sustain,
 		20: ChorusDepth, 21: DelayMix, 22: DelayTime, 23: DelayFeedback,
 	}},
+
+	// Factory presets for the GigSynth hardware product line. The onboard knobs
+	// and sliders are wired so the control surface fully drives the app for the
+	// keyboard it's bound to. Volume is CC7 and pan CC10 (GM standards); the rest
+	// of the surface covers the four-effect chain.
+	"GigSynth GS-49": {Name: "GigSynth GS-49", CC: map[int]Action{
+		// 4 sliders
+		7: Volume, 11: ChorusDepth, 12: DelayMix, 13: DelayTime,
+		// 4 knobs
+		10: Pan, 20: PhaserDepth, 21: FlangerMix, 22: PhaserRate,
+		64: Sustain,
+	}},
+	"GigSynth GS-61": {Name: "GigSynth GS-61", CC: map[int]Action{
+		// 8 sliders
+		7: Volume, 11: ChorusRate, 12: ChorusDepth, 13: DelayTime,
+		14: DelayFeedback, 15: DelayMix, 16: PhaserRate, 17: PhaserDepth,
+		// 8 knobs
+		10: Pan, 20: PhaserFeedback, 21: FlangerRate, 22: FlangerDepth,
+		23: FlangerFeedback, 24: FlangerMix, 25: ChorusRate, 26: DelayMix,
+		64: Sustain,
+	}},
+	"GigSynth GS-Desktop": {Name: "GigSynth GS-Desktop", CC: map[int]Action{
+		// 4 sliders
+		7: Volume, 11: ChorusDepth, 12: DelayMix, 13: PhaserDepth,
+		// 4 knobs
+		10: Pan, 20: FlangerMix, 21: DelayTime, 22: ChorusRate,
+		64: Sustain,
+	}},
 }
 
 // Names returns the available preset names (for the Settings dropdown).
 func Names() []string {
-	return []string{"Generic GM", "M-Audio", "Behringer", "Arturia", "Novation", "Akai"}
+	return []string{"Generic GM", "M-Audio", "Behringer", "Arturia", "Novation", "Akai",
+		"GigSynth GS-49", "GigSynth GS-61", "GigSynth GS-Desktop"}
 }
 
 // Presets returns a copy-friendly view of all bundled maps.

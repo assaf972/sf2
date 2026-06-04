@@ -76,6 +76,7 @@
   <a href="#midi">MIDI keyboards &amp; mapping</a>
   <h4>Hardware</h4>
   <a href="product-brochure.html">GigSynth instruments →</a>
+  <a href="products/provisioning.html">Pi provisioning →</a>
   <h4>Reference</h4>
   <a href="#pi7-ui">7″ touch layout</a>
   <a href="#pizero-ui">Pi Zero UI</a>
@@ -244,7 +245,11 @@ go build -o gigsynth .
     <tr><td><b>Play ▶</b> / <b>Stop ◼</b></td><td>Replay the selected take from the start, or halt it.</td></tr>
     <tr><td><b>Loop ⟳</b></td><td>Repeat the take seamlessly — handy for practice.</td></tr>
     <tr><td><b>Delete</b> / <b>Delete all</b></td><td>Remove one take, or clear the whole library.</td></tr>
+    <tr><td><b>Export</b></td><td>Write a take's captured audio to a <code>.wav</code> file to keep or share.</td></tr>
   </table>
+  <div class="note">On the GigSynth instruments, recording works the same; on a desktop build the
+  audio is captured from the live output. See <a href="product-brochure.html">the product line</a> and
+  <a href="products/provisioning.html">Pi provisioning</a> for the hardware.</div>
 
   <h3 id="mp3">MP3 backing player</h3>
   <p>Select a track with <b>Browse…</b>, then:</p>

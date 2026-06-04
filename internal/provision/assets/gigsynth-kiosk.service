@@ -1,0 +1,14 @@
+[Unit]
+Description=__DESC__
+After=sound.target graphical.target
+
+[Service]
+Type=simple
+ExecStart=__EXECSTART__
+Restart=on-failure
+RestartSec=2
+# Run on the first display so the rig comes up ready at power-on.
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=default.target

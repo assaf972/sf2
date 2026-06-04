@@ -5,6 +5,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -12,6 +13,7 @@ import (
 	"gigsynth/internal/db"
 	"gigsynth/internal/engine"
 	"gigsynth/internal/midiio"
+	"gigsynth/internal/provision"
 	"gigsynth/internal/ui"
 )
 
@@ -19,7 +21,26 @@ func main() {
 	sf := flag.String("sf2", "", "path to a SoundFont (.sf2) to load on startup")
 	driver := flag.String("audio", "", "fluidsynth audio driver (empty = platform default)")
 	mode := flag.String("mode", "", "ui mode: \"\" (desktop), touch7 (7-inch), pizero (small LCD)")
+	prov := flag.String("provision", "", "write Pi setup files for a hardware model and exit (gs-49|gs-61|gs-desktop|pizero)")
+	provOut := flag.String("provision-out", ".", "directory to write provisioning files into")
 	flag.Parse()
+
+	// -provision writes the systemd unit + install script and exits (no audio).
+	if *prov != "" {
+		bin, err := os.Executable()
+		if err != nil || bin == "" {
+			bin = "/opt/gigsynth/gigsynth"
+		}
+		paths, err := provision.Install(*prov, bin, *sf, *provOut)
+		if err != nil {
+			log.Fatalf("provision: %v", err)
+		}
+		for _, p := range paths {
+			fmt.Println("wrote", p)
+		}
+		fmt.Printf("Next: run %s/install.sh on the Pi to enable autostart.\n", *provOut)
+		return
+	}
 
 	cfg := engine.DefaultConfig()
 	if *driver != "" {

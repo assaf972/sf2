@@ -23,6 +23,13 @@ type touch7 struct {
 	dlTime  *widget.Label
 	dlFb    *widget.Label
 	dlMix   *widget.Label
+	phRate  *widget.Label
+	phDepth *widget.Label
+	phFb    *widget.Label
+	flRate  *widget.Label
+	flDepth *widget.Label
+	flFb    *widget.Label
+	flMix   *widget.Label
 }
 
 func (u *UI) buildTouch7() fyne.CanvasObject {
@@ -35,6 +42,13 @@ func (u *UI) buildTouch7() fyne.CanvasObject {
 		dlTime:  widget.NewLabel("-"),
 		dlFb:    widget.NewLabel("-"),
 		dlMix:   widget.NewLabel("-"),
+		phRate:  widget.NewLabel("-"),
+		phDepth: widget.NewLabel("-"),
+		phFb:    widget.NewLabel("-"),
+		flRate:  widget.NewLabel("-"),
+		flDepth: widget.NewLabel("-"),
+		flFb:    widget.NewLabel("-"),
+		flMix:   widget.NewLabel("-"),
 	}
 	u.t7 = t
 
@@ -44,15 +58,23 @@ func (u *UI) buildTouch7() fyne.CanvasObject {
 		tabs[i] = widget.NewButton(fmt.Sprintf("KB%d", i+1), func() { t.focus(i) })
 	}
 
-	fx := container.NewGridWithColumns(5,
-		labeled("Rate", t.chRate), labeled("Depth", t.chDepth),
-		labeled("Time", t.dlTime), labeled("F.Back", t.dlFb), labeled("Mix", t.dlMix),
+	chorusDelay := container.NewGridWithColumns(5,
+		labeled("Ch Rate", t.chRate), labeled("Ch Depth", t.chDepth),
+		labeled("Dl Time", t.dlTime), labeled("Dl F.Back", t.dlFb), labeled("Dl Mix", t.dlMix),
+	)
+	phaserFlanger := container.NewGridWithColumns(5,
+		labeled("Ph Rate", t.phRate), labeled("Ph Depth", t.phDepth), labeled("Ph F.Back", t.phFb),
+		labeled("Fl Rate", t.flRate), labeled("Fl Depth", t.flDepth),
+	)
+	phaserFlanger2 := container.NewGridWithColumns(5,
+		labeled("Fl F.Back", t.flFb), labeled("Fl Mix", t.flMix),
 	)
 	t.focus(0)
 	return container.NewVBox(
 		container.NewGridWithColumns(app.MaxKeyboards, tabs...),
 		widget.NewCard("", "", container.NewVBox(t.title, t.sound)),
-		widget.NewCard("Chorus + Delay", "", fx),
+		widget.NewCard("Chorus + Delay", "", chorusDelay),
+		widget.NewCard("Phaser + Flanger", "", container.NewVBox(phaserFlanger, phaserFlanger2)),
 	)
 }
 
@@ -82,4 +104,11 @@ func (t *touch7) refresh() {
 	t.dlTime.SetText(fmt.Sprintf("%d ms", l.DelayTime))
 	t.dlFb.SetText(fmt.Sprintf("%d", l.DelayFeedback))
 	t.dlMix.SetText(fmt.Sprintf("%d", l.DelayMix))
+	t.phRate.SetText(fmt.Sprintf("%.1f Hz", l.PhaserRate))
+	t.phDepth.SetText(fmt.Sprintf("%d", l.PhaserDepth))
+	t.phFb.SetText(fmt.Sprintf("%d", l.PhaserFeedback))
+	t.flRate.SetText(fmt.Sprintf("%.1f Hz", l.FlangerRate))
+	t.flDepth.SetText(fmt.Sprintf("%d", l.FlangerDepth))
+	t.flFb.SetText(fmt.Sprintf("%d", l.FlangerFeedback))
+	t.flMix.SetText(fmt.Sprintf("%d", l.FlangerMix))
 }
