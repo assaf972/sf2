@@ -32,12 +32,23 @@ type Layer struct {
 
 	// Per-keyboard effects (S13 chorus / S14 delay).
 	ChorusOn      bool    `json:"chorusOn"`
-	ChorusRate    float64 `json:"chorusRate"`    // Hz
-	ChorusDepth   int     `json:"chorusDepth"`   // %
+	ChorusRate    float64 `json:"chorusRate"`  // Hz
+	ChorusDepth   int     `json:"chorusDepth"` // %
 	DelayOn       bool    `json:"delayOn"`
 	DelayTime     int     `json:"delayTime"`     // ms
 	DelayFeedback int     `json:"delayFeedback"` // %
 	DelayMix      int     `json:"delayMix"`      // %
+
+	// Per-keyboard modulation effects (S19 phaser / S20 flanger).
+	PhaserOn        bool    `json:"phaserOn"`
+	PhaserRate      float64 `json:"phaserRate"`     // Hz
+	PhaserDepth     int     `json:"phaserDepth"`    // %
+	PhaserFeedback  int     `json:"phaserFeedback"` // %
+	FlangerOn       bool    `json:"flangerOn"`
+	FlangerRate     float64 `json:"flangerRate"`     // Hz
+	FlangerDepth    int     `json:"flangerDepth"`    // %
+	FlangerFeedback int     `json:"flangerFeedback"` // %
+	FlangerMix      int     `json:"flangerMix"`      // %
 }
 
 // Scene is a recallable performance patch: the full set of layer assignments
@@ -63,11 +74,18 @@ func defaultLayer(slot int) Layer {
 		KeyHigh:   127,
 		Transpose: 0,
 		// FX defaults: off, with musically sensible starting values.
-		ChorusRate:    0.8,
-		ChorusDepth:   50,
-		DelayTime:     300,
-		DelayFeedback: 30,
-		DelayMix:      25,
+		ChorusRate:      0.8,
+		ChorusDepth:     50,
+		DelayTime:       300,
+		DelayFeedback:   30,
+		DelayMix:        25,
+		PhaserRate:      0.5,
+		PhaserDepth:     60,
+		PhaserFeedback:  30,
+		FlangerRate:     0.25,
+		FlangerDepth:    70,
+		FlangerFeedback: 40,
+		FlangerMix:      50,
 	}
 }
 

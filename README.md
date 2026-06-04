@@ -26,6 +26,12 @@ main.go
 A **Layer** = one mixer channel (a SoundFont preset + volume/pan/mute + routing).
 A **Scene** = a recallable set of 4 layers; this is the "preset" you pick per song.
 
+Each keyboard has its own **four-effect insert chain** — Chorus → Phaser → Flanger →
+Delay (`internal/fx`) — and you can **record** all MIDI + audio to replayable takes
+(`internal/recording`, the Recordings view). There's also a hardware product line
+(GS-49 / GS-61 / GS-Desktop) — see [docs/product-brochure.html](docs/product-brochure.html)
+and the BOM in [docs/products/bom.md](docs/products/bom.md).
+
 ## Concepts
 
 - **Layers / channels** — 4 strips, each on its own MIDI channel (0–3). Pick a
@@ -37,6 +43,10 @@ A **Scene** = a recallable set of 4 layers; this is the "preset" you pick per so
   multiple controllers.
 - **Scenes** — save the whole rig with **Save As…**, recall instantly from the
   dropdown. Stored as JSON under your user config dir (`gigsynth/scenes`).
+- **Effects** — per-keyboard Chorus, Phaser, Delay and Flanger inserts, each with its
+  own On switch and knobs, stored in (and recalled with) every Part.
+- **Recording** — a red **REC** toggle on the Live view captures all MIDI + audio; manage,
+  replay, loop and delete takes in the **Recordings** view.
 - **PANIC** — kills all stuck notes and re-applies the mixer.
 - **Master** — global output gain.
 

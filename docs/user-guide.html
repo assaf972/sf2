@@ -68,11 +68,14 @@
   <h4>Using the app</h4>
   <a href="#concepts">Core concepts</a>
   <a href="#live">Live view</a>
-  <a href="#fx">Effects (chorus &amp; delay)</a>
+  <a href="#fx">Effects (chorus · delay · phaser · flanger)</a>
+  <a href="#recording">Recording (MIDI &amp; audio)</a>
   <a href="#mp3">MP3 backing player</a>
   <a href="#songs">Songs &amp; Parts view</a>
   <a href="#settings">Settings view</a>
   <a href="#midi">MIDI keyboards &amp; mapping</a>
+  <h4>Hardware</h4>
+  <a href="product-brochure.html">GigSynth instruments →</a>
   <h4>Reference</h4>
   <a href="#pi7-ui">7″ touch layout</a>
   <a href="#pizero-ui">Pi Zero UI</a>
@@ -91,7 +94,8 @@
   <div>
     <span class="pill">Single binary</span><span class="pill">FluidSynth audio</span>
     <span class="pill">Up to 3 keyboards</span><span class="pill">Up to 4 layers</span>
-    <span class="pill">Per-keyboard chorus + delay</span>
+    <span class="pill">Per-keyboard chorus · delay · phaser · flanger</span>
+    <span class="pill">MIDI + audio recording</span>
     <span class="pill">SQLite song library</span><span class="pill">MP3 backing tracks</span>
   </div>
 
@@ -191,23 +195,56 @@ go build -o gigsynth .
     <li><b>MP3 player</b> — see below.</li>
   </ul>
 
-  <h2 id="fx">Effects (chorus &amp; delay)</h2>
-  <p>Every keyboard has its <b>own</b> Chorus and Delay insert, so you can — for example — run a
-  lush chorus on the Rhodes while a dotted-eighth delay sits only on the lead synth. Effects are
-  part of the live state, so they're stored in (and recalled with) each <a href="#songs">Part</a>.</p>
+  <h2 id="fx">Effects (chorus · delay · phaser · flanger)</h2>
+  <p>Every keyboard has its <b>own</b> four-effect insert chain — <b>Chorus → Phaser → Flanger →
+  Delay</b> — so you can, for example, run a lush chorus on the Rhodes, a slow phaser on a pad, and a
+  dotted-eighth delay only on the lead synth. Effects are part of the live state, so they're stored in
+  (and recalled with) each <a href="#songs">Part</a>.</p>
+  <figure>
+    <img src="screenshots/desktop-fx-rack.svg" alt="GigSynth four-effect FX rack: Chorus, Phaser, Flanger, Delay"/>
+    <figcaption>One keyboard's full FX rack — Chorus, Phaser, Flanger and Delay, each with its own On
+    switch and knobs. Phaser and Flanger are new in this release.</figcaption>
+  </figure>
   <table>
     <tr><th>Effect</th><th>Knobs</th><th>What they do</th></tr>
     <tr><td><b>Chorus</b></td><td><b>Rate</b>, <b>Depth</b></td><td>Rate sets the modulation speed (Hz); Depth sets how wide the pitch shimmer is. Plus an On switch.</td></tr>
+    <tr><td><b>Phaser</b></td><td><b>Rate</b>, <b>Depth</b>, <b>Feedback</b></td><td>A swept four-stage all-pass: Rate moves the notches, Depth sets sweep width, Feedback adds resonance. Plus an On switch.</td></tr>
+    <tr><td><b>Flanger</b></td><td><b>Rate</b>, <b>Depth</b>, <b>Feedback</b>, <b>Mix</b></td><td>A short swept delay for the classic "jet" sound: Rate/Depth shape the sweep, Feedback the intensity, Mix the wet level. Plus an On switch.</td></tr>
     <tr><td><b>Delay</b></td><td><b>Time</b>, <b>Feedback</b>, <b>Mix</b></td><td>Time is the echo spacing (ms); Feedback is how many repeats; Mix is the wet level. Plus an On switch.</td></tr>
   </table>
   <p>On the desktop all three keyboards' racks are visible at once. On a <a href="#pi7">7″ Pi 5
   screen</a> you focus one keyboard so the knobs stay finger-sized; on the
-  <a href="#pizero-ui">Pi Zero</a> the four encoders bank between the Chorus and Delay parameters.
+  <a href="#pizero-ui">Pi Zero</a> the four encoders bank across the effect parameters.
   The keyboard's own assignable knobs can drive these in real time — see
   <a href="#midi">MIDI mapping</a>.</p>
   <div class="note warn"><b>Under the hood.</b> FluidSynth's built-in chorus/reverb are global and it
-  has no delay, so GigSynth realises <i>per-keyboard</i> Chorus + Delay with a dedicated insert
-  chain per keyboard (independent effect units), not the synth's shared global effects.</div>
+  has no delay, phaser or flanger, so GigSynth realises <i>per-keyboard</i> Chorus, Phaser, Flanger and
+  Delay with a dedicated DSP insert chain per keyboard (independent effect units), not the synth's
+  shared global effects.</div>
+
+  <h2 id="recording">Recording (MIDI &amp; audio)</h2>
+  <p>GigSynth can capture your whole performance — every MIDI event from every keyboard, plus the
+  rendered audio — into a take you can replay later. Recording is one tap from the gig screen: the
+  red <b>REC</b> toggle sits on the Live top bar next to PANIC.</p>
+  <figure>
+    <img src="screenshots/live-recording-toggle.svg" alt="The REC toggle on the Live top bar"/>
+    <figcaption>Arm capture from the Live view — the REC toggle shows an armed state and elapsed time.</figcaption>
+  </figure>
+  <p>Stopped takes appear in the new <b>Recordings</b> view, where you can play, loop, or delete them
+  (or <b>Delete all</b>). Each take notes whether it holds a MIDI track, an audio track, or both, with
+  its duration.</p>
+  <figure>
+    <img src="screenshots/desktop-recordings.svg" alt="The Recordings view: take list and transport"/>
+    <figcaption>The Recordings view — the library of takes on the left, a transport (Play / Stop / Loop
+    / Delete) on the right.</figcaption>
+  </figure>
+  <table>
+    <tr><th>Control</th><th>Does</th></tr>
+    <tr><td><b>REC</b> ● (Live)</td><td>Arm a new take; press again to stop and file it.</td></tr>
+    <tr><td><b>Play ▶</b> / <b>Stop ◼</b></td><td>Replay the selected take from the start, or halt it.</td></tr>
+    <tr><td><b>Loop ⟳</b></td><td>Repeat the take seamlessly — handy for practice.</td></tr>
+    <tr><td><b>Delete</b> / <b>Delete all</b></td><td>Remove one take, or clear the whole library.</td></tr>
+  </table>
 
   <h3 id="mp3">MP3 backing player</h3>
   <p>Select a track with <b>Browse…</b>, then:</p>

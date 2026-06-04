@@ -10,6 +10,7 @@ import (
 	"gigsynth/internal/fx"
 	"gigsynth/internal/midiio"
 	"gigsynth/internal/midimap"
+	"gigsynth/internal/recording"
 )
 
 // Controller is the application core. It owns the synth engine and MIDI
@@ -26,6 +27,10 @@ type Controller struct {
 
 	// chains holds the per-keyboard effects insert chain (chorus -> delay).
 	chains [NumLayers]*fx.Chain
+
+	// rec captures live MIDI + audio (S21); recStore holds finished takes.
+	rec      *recording.Recorder
+	recStore *recording.Store
 
 	// maps holds the per-keyboard manufacturer CC mapping.
 	maps [NumLayers]midimap.Map
@@ -46,9 +51,11 @@ var errNoLibrary = fmt.Errorf("controller: no library attached")
 // engine.Synth, so tests can pass a FakeEngine with no audio device.
 func NewController(eng engine.Synth, m *midiio.Manager) *Controller {
 	c := &Controller{
-		eng:   eng,
-		midi:  m,
-		scene: DefaultScene(),
+		eng:      eng,
+		midi:     m,
+		scene:    DefaultScene(),
+		rec:      recording.NewRecorder(engine.DefaultConfig().SampleRate, nil),
+		recStore: recording.NewStore(),
 	}
 	for i := range c.chains {
 		c.chains[i] = fx.NewChain(engine.DefaultConfig().SampleRate)
@@ -135,6 +142,8 @@ func (c *Controller) ApplyScene() {
 		c.eng.SetChannelPan(l.Channel, l.Pan)
 		// Restore the per-keyboard effects chain for this layer.
 		c.applyChorus(i, l.ChorusOn, l.ChorusRate, l.ChorusDepth)
+		c.applyPhaser(i, l.PhaserOn, l.PhaserRate, l.PhaserDepth, l.PhaserFeedback)
+		c.applyFlanger(i, l.FlangerOn, l.FlangerRate, l.FlangerDepth, l.FlangerFeedback, l.FlangerMix)
 		c.applyDelay(i, l.DelayOn, l.DelayTime, l.DelayFeedback, l.DelayMix)
 	}
 }
@@ -304,6 +313,62 @@ func (c *Controller) applyChorus(idx int, on bool, rate float64, depth int) {
 	ch.SetParam("depth", float64(depth))
 }
 
+// SetPhaser updates a keyboard's phaser state and pushes it to the DSP chain.
+func (c *Controller) SetPhaser(idx int, on bool, rate float64, depth, feedback int) {
+	c.mu.Lock()
+	if idx < 0 || idx >= len(c.scene.Layers) {
+		c.mu.Unlock()
+		return
+	}
+	c.scene.Layers[idx].PhaserOn = on
+	c.scene.Layers[idx].PhaserRate = rate
+	c.scene.Layers[idx].PhaserDepth = depth
+	c.scene.Layers[idx].PhaserFeedback = feedback
+	c.mu.Unlock()
+	c.applyPhaser(idx, on, rate, depth, feedback)
+	c.notify()
+}
+
+// SetFlanger updates a keyboard's flanger state and pushes it to the DSP chain.
+func (c *Controller) SetFlanger(idx int, on bool, rate float64, depth, feedback, mix int) {
+	c.mu.Lock()
+	if idx < 0 || idx >= len(c.scene.Layers) {
+		c.mu.Unlock()
+		return
+	}
+	c.scene.Layers[idx].FlangerOn = on
+	c.scene.Layers[idx].FlangerRate = rate
+	c.scene.Layers[idx].FlangerDepth = depth
+	c.scene.Layers[idx].FlangerFeedback = feedback
+	c.scene.Layers[idx].FlangerMix = mix
+	c.mu.Unlock()
+	c.applyFlanger(idx, on, rate, depth, feedback, mix)
+	c.notify()
+}
+
+func (c *Controller) applyPhaser(idx int, on bool, rate float64, depth, feedback int) {
+	if idx < 0 || idx >= len(c.chains) || c.chains[idx] == nil {
+		return
+	}
+	p := c.chains[idx].Phaser
+	p.SetEnabled(on)
+	p.SetParam("rate", rate)
+	p.SetParam("depth", float64(depth))
+	p.SetParam("feedback", float64(feedback))
+}
+
+func (c *Controller) applyFlanger(idx int, on bool, rate float64, depth, feedback, mix int) {
+	if idx < 0 || idx >= len(c.chains) || c.chains[idx] == nil {
+		return
+	}
+	f := c.chains[idx].Flanger
+	f.SetEnabled(on)
+	f.SetParam("rate", rate)
+	f.SetParam("depth", float64(depth))
+	f.SetParam("feedback", float64(feedback))
+	f.SetParam("mix", float64(mix))
+}
+
 func (c *Controller) applyDelay(idx int, on bool, timeMs, feedback, mix int) {
 	if idx < 0 || idx >= len(c.chains) || c.chains[idx] == nil {
 		return
@@ -358,17 +423,60 @@ func (c *Controller) VirtualNoteOff(key int) {
 func (c *Controller) handleMIDI(ev midiio.Event) {
 	switch ev.Type {
 	case midiio.NoteOn:
+		c.rec.RecordMIDI("noteon", ev.Device, ev.Key, ev.Velocity, 0)
 		c.routeNote(true, ev.Device, ev.Key, ev.Velocity)
 	case midiio.NoteOff:
+		c.rec.RecordMIDI("noteoff", ev.Device, ev.Key, 0, 0)
 		c.routeNote(false, ev.Device, ev.Key, 0)
 	case midiio.ControlChange:
+		c.rec.RecordMIDI("cc", ev.Device, ev.Control, ev.Value, 0)
 		c.applyCC(ev.Device, ev.Control, ev.Value)
 	case midiio.PitchBend:
+		c.rec.RecordMIDI("pitch", ev.Device, ev.Value, 0, 0)
 		c.forwardToLayers(ev.Device, func(ch int) {
 			c.eng.PitchBend(ch, ev.Value)
 		})
 	}
 }
+
+// ---- Recording (S21) ----
+
+// StartRecording arms a new MIDI+audio take.
+func (c *Controller) StartRecording(name string) {
+	c.rec.Start(name)
+	c.notify()
+}
+
+// StopRecording ends the current take and files it in the recordings store,
+// returning the saved recording id (empty if nothing was recording).
+func (c *Controller) StopRecording() string {
+	r, ok := c.rec.Stop()
+	if !ok {
+		return ""
+	}
+	saved := c.recStore.Add(r)
+	c.notify()
+	return saved.ID
+}
+
+// IsRecording reports whether a take is currently being captured.
+func (c *Controller) IsRecording() bool { return c.rec.IsRecording() }
+
+// RecordingElapsedMs is how long the current take has been running.
+func (c *Controller) RecordingElapsedMs() int64 { return c.rec.ElapsedMs() }
+
+// Recordings lists saved takes (newest first) for the Recordings view.
+func (c *Controller) Recordings() []recording.Recording { return c.recStore.List() }
+
+// DeleteRecording removes one saved take by id.
+func (c *Controller) DeleteRecording(id string) bool { return c.recStore.Delete(id) }
+
+// DeleteAllRecordings clears every saved take ("Delete all").
+func (c *Controller) DeleteAllRecordings() int { return c.recStore.DeleteAll() }
+
+// CaptureAudio feeds rendered audio frames to the recorder (called from the
+// audio sink when armed; a no-op otherwise).
+func (c *Controller) CaptureAudio(buf []float32) { c.rec.RecordAudio(buf) }
 
 // routeNote sends a note to every layer whose source and (for note-on) key
 // range match. Note-offs ignore the range/mute so notes can never get stuck.

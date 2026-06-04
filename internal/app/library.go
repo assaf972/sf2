@@ -61,6 +61,8 @@ func layerFromChannel(idx int, c db.Channel) Layer {
 		Source: src, KeyLow: c.KeyLow, KeyHigh: c.KeyHigh, Transpose: c.Transpose,
 		ChorusOn: c.ChorusOn, ChorusRate: c.ChorusRate, ChorusDepth: c.ChorusDepth,
 		DelayOn: c.DelayOn, DelayTime: c.DelayTime, DelayFeedback: c.DelayFeedback, DelayMix: c.DelayMix,
+		PhaserOn: c.PhaserOn, PhaserRate: c.PhaserRate, PhaserDepth: c.PhaserDepth, PhaserFeedback: c.PhaserFeedback,
+		FlangerOn: c.FlangerOn, FlangerRate: c.FlangerRate, FlangerDepth: c.FlangerDepth, FlangerFeedback: c.FlangerFeedback, FlangerMix: c.FlangerMix,
 	}
 }
 
@@ -71,5 +73,7 @@ func channelFromLayer(channel int, l Layer) db.Channel {
 		Source: l.Source, KeyLow: l.KeyLow, KeyHigh: l.KeyHigh, Transpose: l.Transpose,
 		ChorusOn: l.ChorusOn, ChorusRate: l.ChorusRate, ChorusDepth: l.ChorusDepth,
 		DelayOn: l.DelayOn, DelayTime: l.DelayTime, DelayFeedback: l.DelayFeedback, DelayMix: l.DelayMix,
+		PhaserOn: l.PhaserOn, PhaserRate: l.PhaserRate, PhaserDepth: l.PhaserDepth, PhaserFeedback: l.PhaserFeedback,
+		FlangerOn: l.FlangerOn, FlangerRate: l.FlangerRate, FlangerDepth: l.FlangerDepth, FlangerFeedback: l.FlangerFeedback, FlangerMix: l.FlangerMix,
 	}
 }
