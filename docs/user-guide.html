@@ -70,7 +70,9 @@
   <a href="#live">Live view</a>
   <a href="#fx">Effects (chorus · delay · phaser · flanger)</a>
   <a href="#recording">Recording (MIDI &amp; audio)</a>
+  <a href="#drumming">Drumming (e-drum module) <span style="color:#ffbd2e">(planned)</span></a>
   <a href="#rig">Guitar &amp; bass rig <span style="color:#ffbd2e">(planned)</span></a>
+  <a href="#liveguitar">Live Guitar Rig <span style="color:#ffbd2e">(planned)</span></a>
   <a href="#mp3">MP3 backing player</a>
   <a href="#songs">Songs &amp; Parts view</a>
   <a href="#settings">Settings view</a>
@@ -93,11 +95,16 @@
   the app — and assign its instruments to your keyboards. Save the full rig for each section of
   a song as a <b>Part</b>, then step through Parts during the gig with a single button. A built-in
   MP3 player covers backing tracks.</p>
+  <p>Beyond keyboards, the same engine drives two more instruments: a <a href="#drumming">Drumming</a>
+  module that plays a multi-velocity <code>drums.sf2</code> from any electronic kit, and a
+  <a href="#liveguitar">Live Guitar Rig</a> that uses the ¼″ input with NAM amp captures, cabinet IRs and
+  a four-slot pedalboard for recording and tracking.</p>
   <div>
     <span class="pill">Single binary</span><span class="pill">FluidSynth audio</span>
     <span class="pill">Up to 3 keyboards</span><span class="pill">Up to 4 layers</span>
     <span class="pill">Per-keyboard chorus · delay · phaser · flanger</span>
     <span class="pill">MIDI + audio recording</span>
+    <span class="pill">E-drum module (drums.sf2)</span><span class="pill">Live guitar rig (NAM + IR)</span>
     <span class="pill">SQLite song library</span><span class="pill">MP3 backing tracks</span>
   </div>
 
@@ -252,6 +259,48 @@ go build -o gigsynth .
   audio is captured from the live output. See <a href="product-brochure.html">the product line</a> and
   <a href="products/provisioning.html">Pi provisioning</a> for the hardware.</div>
 
+  <h2 id="drumming">Drumming — electronic-drum module <span class="pill" style="border-color:var(--amber);color:var(--amber)">planned</span></h2>
+  <p>The <b>Drumming</b> view turns GigSynth into a high-end sound module for an electronic drum kit.
+  Plug your kit's USB-MIDI (or 5-pin DIN) into the device, load a multi-velocity <code>drums.sf2</code>,
+  and your pads trigger studio drum samples on <b>MIDI channel 10</b> with full velocity response.</p>
+  <div class="note warn"><b>Status: planned.</b> This describes the designed experience — stories
+  <b>S32–S34</b> in the <a href="plan.html">build plan</a>. The drum-trigger map reference is in
+  <a href="drum-midi-mapping.md">drum-midi-mapping.md</a>.</div>
+
+  <figure>
+    <img src="screenshots/desktop-drumming.svg" alt="Desktop Drumming view: kit summary, MIDI mapping table, MP3 player"/>
+    <figcaption>Desktop Drumming view — the selected kit summary (left), the live MIDI mapping table for
+    the chosen manufacturer preset (centre), and an MP3 backing player with start/stop/loop (right).</figcaption>
+  </figure>
+
+  <table>
+    <tr><th>Panel</th><th>What it shows</th></tr>
+    <tr><td><b>Kit summary</b></td><td>Kit name, mapped pieces, velocity-layer counts, drum channel and the active hi-hat controller.</td></tr>
+    <tr><td><b>MIDI mapping</b></td><td>Pad / zone → incoming note → SF2 voice for the selected preset, with a manufacturer picker.</td></tr>
+    <tr><td><b>MP3 player</b></td><td>Backing-track transport: start / stop / loop, position scrub and track volume.</td></tr>
+  </table>
+
+  <h3>Pick your kit</h3>
+  <p>Choose the preset that matches your module — GigSynth ships factory drum-trigger maps for the major
+  brands. Most kits follow the <b>General MIDI</b> percussion map for the core pieces (kick 36, snare 38,
+  hi-hat 42/46/44, toms, crash 49, ride 51); the presets add the brand-specific zones (rim shots,
+  cross-stick, cymbal bell/bow/edge) and fold any out-of-range notes onto an audible voice so no pad
+  is ever silent.</p>
+  <table>
+    <tr><th>Brand</th><th>Models</th><th>Notes</th></tr>
+    <tr><td><b>Roland</b></td><td>TD-17 / 25 / 27 / 50, VAD</td><td>The de-facto reference map; hi-hat edge uses notes 26 / 22 (folded to 46 / 42).</td></tr>
+    <tr><td><b>Yamaha</b></td><td>DTX series</td><td>Crash bow/edge swapped vs Roland, and the map differs between MIDI-DIN and USB — pick the matching column.</td></tr>
+    <tr><td><b>Alesis</b></td><td>Nitro / Command / Crimson / Strike</td><td>Follows Roland closely; hi-hat splash 21 / half-open 23 folded to 46.</td></tr>
+    <tr><td><b>Millenium</b></td><td>MPS-150 / 600 / 750 / 850</td><td>Pure GM for the core pieces; extra zones GM-aligned.</td></tr>
+    <tr><td><b>Donner</b></td><td>DED-80 / 200 / 200X</td><td>GM-aligned with Roland-style crash/ride zoning.</td></tr>
+  </table>
+
+  <h3>On small screens</h3>
+  <div class="grid2">
+    <figure><img src="screenshots/touch7-drumming.svg" alt="7-inch Drumming view"/><figcaption>7″ Pi 5 — kit summary, mapping table and a large-target MP3 player.</figcaption></figure>
+    <figure><img src="screenshots/pizero-drumming.svg" alt="Pi Zero Drumming page"/><figcaption>Pi Zero — kit + preset, last-hit velocity meter, a compact map and the transport row.</figcaption></figure>
+  </div>
+
   <h2 id="rig">Guitar &amp; bass rig (audio input) <span class="pill" style="border-color:var(--amber);color:var(--amber)">planned</span></h2>
   <p>Every GigSynth instrument — the keyboards <i>and</i> the desktop module — has a <b>¼″ guitar/bass
   input</b>, so you can build a full amp-and-cabinet rig right on the device. The signal runs through an
@@ -286,14 +335,44 @@ go build -o gigsynth .
   </div>
   <figure><img src="screenshots/pizero-rig.svg" alt="Pi Zero Rig page"/><figcaption>Pi Zero — two menu rows (amp models / cabinet IRs) and four always-live encoders: Gain · Gate · Amp · Level.</figcaption></figure>
 
+  <h2 id="liveguitar">Live Guitar Rig <span class="pill" style="border-color:var(--amber);color:var(--amber)">planned</span></h2>
+  <p>The <b>Live Guitar Rig</b> is the performance-focused front end to the rig above — built for recording,
+  tracking and creating song parts. It gives you <b>four effect slots</b>, the four hardware knobs/sliders,
+  a NAM amp and cabinet IR, storable combinations, and a backing-track player that can drop the original
+  guitar so you can play over it.</p>
+  <div class="note warn"><b>Status: planned.</b> Stories <b>S35–S38</b> in the <a href="plan.html">build plan</a>.
+  The audio backend (NAM, IR, FAUST effects, duplex I/O) and licensing are in
+  <a href="guitar-audio-stack.md">guitar-audio-stack.md</a>.</div>
+
+  <figure>
+    <img src="screenshots/desktop-live-guitar-rig.svg" alt="Desktop Live Guitar Rig: four pedal slots, amp, cab, hardware knobs, combinations, MP3 player"/>
+    <figcaption>Desktop Live Guitar Rig — four effect slots over an amp/cab + hardware-control band, with
+    storable combinations and a pro MP3 player (loop · pitch · remove-guitar).</figcaption>
+  </figure>
+
+  <table>
+    <tr><th>Element</th><th>What it does</th></tr>
+    <tr><td><b>4 effect slots</b></td><td><b>Fuzz · Overdrive · Distortion · Modulation</b> — each toggles on/off with its own parameters. Focus a slot to map it to the knobs.</td></tr>
+    <tr><td><b>4 knobs / sliders</b></td><td>The onboard controls bind to the focused slot's parameters (e.g. Drive · Tone · Level · Mix).</td></tr>
+    <tr><td><b>Amp + Cab</b></td><td>Pick a NAM amp capture (<code>.nam</code>) and a cabinet IR (<code>.wav</code>); set amp Gain / Master and IR mix.</td></tr>
+    <tr><td><b>Combinations</b></td><td>Save and recall named setups (Clean, Crunch, Lead, Bass DI…) — the four slots plus amp/cab.</td></tr>
+    <tr><td><b>MP3 player</b></td><td>Start / stop / loop A–B, <b>pitch shift</b> (tempo preserved) and <b>Remove guitar/vocal</b> (centre-channel cancel) so you can track over the backing.</td></tr>
+  </table>
+
+  <div class="grid2">
+    <figure><img src="screenshots/touch7-live-guitar-rig.svg" alt="7-inch Live Guitar Rig view"/><figcaption>7″ Pi 5 — large pedal tap-targets, amp/cab pickers, combinations and the MP3 transport.</figcaption></figure>
+    <figure><img src="screenshots/pizero-live-guitar-rig.svg" alt="Pi Zero Live Guitar Rig page"/><figcaption>Pi Zero — the four encoders address the focused slot; MP3 strip carries pitch and a "no guitar" toggle.</figcaption></figure>
+  </div>
+
   <h3 id="mp3">MP3 backing player</h3>
   <p>Select a track with <b>Browse…</b>, then:</p>
   <table>
     <tr><th>Control</th><th>Does</th></tr>
     <tr><td><b>Start</b> ▶</td><td>Play / resume the track.</td></tr>
     <tr><td><b>Stop</b> ◼</td><td>Stop and rewind to the start.</td></tr>
-    <tr><td><b>Pitch</b></td><td>Nudge playback ±2 semitones to match your tuning or a singer's key.</td></tr>
-    <tr><td><b>Loop</b> ⟳</td><td>Repeat the track (highlighted when on) — handy for rehearsal sections.</td></tr>
+    <tr><td><b>Pitch</b></td><td>Nudge playback ±2 semitones to match your tuning or a singer's key (tempo preserved).</td></tr>
+    <tr><td><b>Loop</b> ⟳</td><td>Repeat the track or an A–B section (highlighted when on) — handy for rehearsal sections.</td></tr>
+    <tr><td><b>Remove guitar/vocal</b></td><td>On the Live Guitar Rig, cancels the centre-channel content so you can play the part yourself over the rest of the mix.</td></tr>
   </table>
   <p>The progress bar shows elapsed / total time and can be scrubbed. MP3 output mixes alongside
   the synth at the OS audio layer.</p>
